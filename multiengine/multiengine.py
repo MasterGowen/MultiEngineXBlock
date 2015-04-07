@@ -103,11 +103,13 @@ class MultiEngineXBlock(XBlock):
                 display_name = self.display_name or 'MultiEngine'
                 question = self.question or 'Are you ready?'
                 max_points = self.max_points or 100
+                correct_answer = self.correct_answer
 
                 frag = Fragment(unicode(html_str).format(
                     display_name=display_name,
                     question=question,
-                    max_points=max_points
+                    max_points=max_points,
+                    correct_answer=correct_answer
                 ))
 
                 js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine_edit.js")
@@ -134,4 +136,6 @@ class MultiEngineXBlock(XBlock):
     def studio_submit(self, data, suffix=''):
         self.display_name = data.get('display_name')
         self.question = data.get('question')
+        self.max_points = data.get('max_points')
+        self.correct_answer = data.get('correct_answer')
         return {'result': 'success'}
