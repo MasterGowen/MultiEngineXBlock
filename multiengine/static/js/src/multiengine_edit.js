@@ -4,6 +4,8 @@ function MultiEngineXBlockEdit(runtime, element) {
     var data = {
       display_name: $(element).find('input[name=display_name]').val(),
       question: $(element).find('textarea[id=question-area]').val(),
+      max_points: $(element).find('input[name=max_points]').val(),
+      correct_answer: $(element).find('textarea[id=correct_answer]').val(),
     };
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
       window.location.reload(false);

@@ -1,20 +1,36 @@
 <div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab">
   <ul class="list-input settings-list">
+
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="display_name">Display name:</label>
         <input class="input setting-input" name="display_name" id="display_name" value="{display_name}" type="text" />
       </div>
     </li>
-            <li class="field comp-setting-entry is-set">
+
+    <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="question">Question:</label>
+        <label class="label setting-label" for="question-area">Question:</label>
 		<textarea id="question-area" class="input setting-input" rows=10 cols=50>{question}</textarea>
-        <input class="input setting-input" name="question" id="question" value="{question}" type="hidden" />
+      </div>
+    </li>
+
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="max_points">Max points:</label>
+		<input class="input setting-input" name="max_points" id="max_points" value="{max_points}" type="range" min="2" max="10" step="1" />
+      </div>
+    </li>
+
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="correct_answer">Correct answer:</label>
+		<textarea id="correct_answer" class="input setting-input" rows=10 cols=50>{correct_answer}</textarea>
       </div>
     </li>
 	
   </ul>
+
   <div class="xblock-actions">
     <ul>
       <li class="action-item">
@@ -26,3 +42,5 @@
     </ul>
   </div>
 </div>
+
+
