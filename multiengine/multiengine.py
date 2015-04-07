@@ -25,13 +25,13 @@ class MultiEngineXBlock(XBlock):
     display_name = String(
         display_name="Имя XBlock",
         help="Тут будет имя XBlock",
-        default='',
+        default='MultiEngine',
         scope=Scope.content
         )
     question = String(
         display_name="Вопрос",
         help="Тут вопрос",
-        default='',
+        default='Are you ready?',
         scope=Scope.content
         )
 
