@@ -18,36 +18,59 @@ class MultiEngineXBlock(XBlock):
 
     # TO-DO: delete count, and define your own fields.
 
-    """
-    points = Integer(
-        display_name="Maximum score",
-        help=("Maximum grade score given to assignment by staff."),
-        default=100,
-        scope=Scope.settings
-    )
-    https://github.com/mitodl/edx-sga/blob/master/edx_sga/sga.py
 
+    #https://github.com/mitodl/edx-sga/blob/master/edx_sga/sga.py
 
-
-    content
-        display_name
-        question
-        correct_answer
-
-    settings
-        max_points
-        grade_steps = Integer(
-            display_name=u"Шаг оценивания",
-            help=(u"Тута будет текст"),
-            default=0,
-            scope=Scope.settings
+#content
+    display_name = String(
+        display_name="Имя XBlock",
+        help="Тут будет имя XBlock",
+        default='',
+        scope=Scope.content
+        )
+    question = String(
+        display_name="Вопрос",
+        help="Тут вопрос",
+        default='',
+        scope=Scope.content
         )
 
-    user_state
-        points
-        answer
+    correct_answer = JSONField(
+        display_name="Правильный ответ",
+        help="Тут правильный ответ",
+        default={},
+        scope=Scope.content
+        )
 
-    """
+#settings
+    max_points = Integer(
+        display_name="Максимальное количество баллов",
+        help=(u"Тута будет максимальное количество баллов"),
+        default=0,
+        scope=Scope.settings
+        )
+
+    grade_steps = Integer(
+        display_name=u"Шаг оценивания",
+        help=(u"Тута будет текст"),
+        default=0,
+        scope=Scope.settings
+        )
+
+#user_state
+    points = Integer(
+        display_name="Количество баллов студента",
+        help=(u"Тута будет количество баллов студента"),
+        default=None,
+        scope=Scope.user_state
+        )
+
+    answer = JSONField(
+        display_name="Ответ пользователя",
+        help="Тут ответ пользователя",
+        default={},
+        scope=Scope.user_state
+        )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
