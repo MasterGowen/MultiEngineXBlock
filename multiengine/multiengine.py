@@ -3,6 +3,8 @@
 
 import pkg_resources
 
+import json
+
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, Float, JSONField
 from xblock.fragment import Fragment
@@ -137,5 +139,5 @@ class MultiEngineXBlock(XBlock):
         self.display_name = data.get('display_name')
         self.question = data.get('question')
         self.max_points = data.get('max_points')
-        self.correct_answer = data.get('correct_answer')
+        self.correct_answer = json.loads(data.get('correct_answer'))
         return {'result': 'success'}
