@@ -13,4 +13,15 @@ function MultiEngineXBlockEdit(runtime, element) {
   $(element).find('.cancel-button').bind('click', function() {
     runtime.notify('cancel', {});
   });
+
+  var area = document.getElementById('question-area');
+    if (area.addEventListener) {
+        area.addEventListener('input', function() {
+            document.getElementById('question').value = area.value;
+        }, false);
+    } else if (area.attachEvent) {
+        area.attachEvent('onpropertychange', function() {
+        document.getElementById('question').value = area.value;
+        });
+    }
 }
