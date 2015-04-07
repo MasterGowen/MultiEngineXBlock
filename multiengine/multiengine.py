@@ -90,6 +90,31 @@ class MultiEngineXBlock(XBlock):
         frag.initialize_js('MultiEngineXBlock')
         return frag
 
+    def studio_view(self, context):
+                html = self.resource_string("static/html/multiengine.html")
+                frag = Fragment(html.format(self=self))
+                css_str = pkg_resources.resource_string(__name__, "static/css/multiengine.css")
+                frag.add_css(unicode(css_str))
+                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
+                frag.add_javascript(unicode(js_str))
+                frag.initialize_js('audioplayer')
+
+                html_str = pkg_resources.resource_string(__name__, "static/html/multiengine_edit.html")
+                display_name = self.display_name or 'MultiEngine'
+                question = self.question or 'Are you ready?'
+                max_points = self.max_points or 100
+
+                frag = Fragment(unicode(html_str).format(
+                    display_name=display_name,
+                    question=question,
+                    max_points=max_points
+                ))
+
+                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
+                frag.add_javascript(unicode(js_str))
+                frag.initialize_js('MultiEngineXBlock')
+                return frag
+
     # TO-DO: change this handler to perform your own actions.  You may need more
     # than one handler, or you may not need any handlers at all.
     @XBlock.json_handler
