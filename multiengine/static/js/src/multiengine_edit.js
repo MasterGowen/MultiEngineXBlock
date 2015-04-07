@@ -14,6 +14,5 @@ function MultiEngineXBlockEdit(runtime, element) {
     runtime.notify('cancel', {});
   });
 
-  tinyMCE.init({delector:"#question-area"});
-    }
+  //tinyMCE.init({selector:"#question-area"});
 }

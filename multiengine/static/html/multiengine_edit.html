@@ -9,9 +9,11 @@
             <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="question">Question:</label>
-        <input class="input setting-input" name="question" id="question" value="{question}" type="text" />
+		<textarea id="question-area" class="input setting-input" rows=10 cols=50>{question}</textarea>
+        <input class="input setting-input" name="question" id="question" value="{question}" type="hidden" />
       </div>
     </li>
+	
   </ul>
   <div class="xblock-actions">
     <ul>
