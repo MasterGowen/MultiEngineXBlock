@@ -97,7 +97,7 @@ class MultiEngineXBlock(XBlock):
                 frag.add_css(unicode(css_str))
                 js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
                 frag.add_javascript(unicode(js_str))
-                frag.initialize_js('audioplayer')
+                frag.initialize_js('MultiEngineXBlock')
 
                 html_str = pkg_resources.resource_string(__name__, "static/html/multiengine_edit.html")
                 display_name = self.display_name or 'MultiEngine'
@@ -110,9 +110,9 @@ class MultiEngineXBlock(XBlock):
                     max_points=max_points
                 ))
 
-                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
+                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine_edit.js")
                 frag.add_javascript(unicode(js_str))
-                frag.initialize_js('MultiEngineXBlock')
+                frag.initialize_js('MultiEngineXBlockEdit')
                 return frag
 
     # TO-DO: change this handler to perform your own actions.  You may need more
