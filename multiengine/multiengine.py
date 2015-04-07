@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 """TO-DO: Write a description of what this XBlock is."""
 
 import pkg_resources
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer
+from xblock.fields import Scope, Integer, String, Float, JSONField
 from xblock.fragment import Fragment
 
 
@@ -16,10 +17,37 @@ class MultiEngineXBlock(XBlock):
     # self.<fieldname>.
 
     # TO-DO: delete count, and define your own fields.
-    count = Integer(
-        default=0, scope=Scope.user_state,
-        help="A simple counter, to show something happening",
+
+    """
+    points = Integer(
+        display_name="Maximum score",
+        help=("Maximum grade score given to assignment by staff."),
+        default=100,
+        scope=Scope.settings
     )
+    https://github.com/mitodl/edx-sga/blob/master/edx_sga/sga.py
+
+
+
+    content
+        display_name
+        question
+        correct_answer
+
+    settings
+        max_points
+        grade_steps = Integer(
+            display_name=u"Шаг оценивания",
+            help=(u"Тута будет текст"),
+            default=0,
+            scope=Scope.settings
+        )
+
+    user_state
+        points
+        answer
+
+    """
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
