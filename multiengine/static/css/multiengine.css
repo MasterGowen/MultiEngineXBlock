@@ -1,0 +1,9 @@
+/* CSS for MultiEngineXBlock */
+
+.multiengine_block .count {
+    font-weight: bold;
+}
+
+.multiengine_block p {
+    cursor: pointer;
+}
