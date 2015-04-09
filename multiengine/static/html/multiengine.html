@@ -1,5 +1,16 @@
 <div class="multiengine_block">
     <h2>{self.display_name}</h3>
-<p id="question">{self.question}</p>
-<textarea id="answer"></textarea>
+	<p id="question">{self.question}</p>
+	<div id="correct_answer">Правильный ответ: {self.correct_answer}</div>
+	<div>Ответ студента: </div>
+	<textarea id="answer" class="answer" type="text">{self.answer}</textarea>
+	
+	<div class="xblock-actions">
+	<ul>
+      <li class="action-item">
+        <a class="button save">SAVE</a>
+      </li>
+    </ul>
+	</div>
 </div>
+
