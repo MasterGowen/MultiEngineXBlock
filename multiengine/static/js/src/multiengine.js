@@ -15,7 +15,7 @@ var handlerUrl = runtime.handlerUrl(element, 'student_submit');
             type: "POST",
             url: handlerUrl,
             data: JSON.stringify(data),
-            success: success_func
+            success: success_func 
         });
   });
 }
