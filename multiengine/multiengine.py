@@ -208,8 +208,11 @@ class MultiEngineXBlock(XBlock):
                     else:
                         checked += len(correct_answer[key])
 
+                return correct / float(checked)
+
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
                 result = int(round(result * self.max_points))
+                self.points = result
                 return result
 
             if settings['sequence'] is True:
