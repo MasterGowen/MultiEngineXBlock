@@ -85,6 +85,8 @@ class MultiEngineXBlock(XBlock):
         The primary view of the MultiEngineXBlock, shown to students
         when viewing courses.
         """
+        max_points_string = '({0} Points Possible)'.format(int(self.max_points))
+
         html = self.resource_string("static/html/multiengine.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/multiengine.css"))
