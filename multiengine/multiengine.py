@@ -186,14 +186,15 @@ class MultiEngineXBlock(XBlock):
                 """
                 for key in correct_answer:
                     student_answer_true = []
-                    for answer_item in student_answer[key]:
-                        if answer_item in correct_answer[key]:
-                            student_answer_true.append(answer_item)
-                            checked += 1
-                            correct += 1
-                        else:
-                            checked += 1
-                    #TODO add 40% k
+                    if len(correct_answer):
+                        for answer_item in student_answer[key]:
+                            if answer_item in correct_answer[key]:
+                                student_answer_true.append(answer_item)
+                                checked += 1
+                                correct += 1
+                            else:
+                                checked += 1
+
                     if len(student_answer_true) == len(correct_answer[key]):
                         try:
                             answer_condition = ''.join(student_answer_true) == ''.join(correct_answer[key])
