@@ -1,10 +1,11 @@
 function MultiEngineXBlockEdit(runtime, element) {
+  
   $(element).find('.save-button').bind('click', function() {
     var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
     var data = {
       display_name: $(element).find('input[name=display_name]').val(),
       question: $(element).find('textarea[id=question-area]').val(),
-      max_points: $(element).find('input[name=max_points]').val(),
+      weight: $(element).find('input[name=weight]').val(),
       correct_answer: $(element).find('textarea[id=correct_answer]').val(),
     };
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {

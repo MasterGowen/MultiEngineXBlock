@@ -45,7 +45,7 @@ class MultiEngineXBlock(XBlock):
         )
 
 #settings
-    max_points = Integer(
+    weight = Integer(
         display_name="Максимальное количество баллов",
         help=("Тут будет максимальное количество баллов"),
         default=0,
@@ -74,6 +74,8 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.user_state
         )
 
+    has_score = True
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
@@ -85,7 +87,6 @@ class MultiEngineXBlock(XBlock):
         The primary view of the MultiEngineXBlock, shown to students
         when viewing courses.
         """
-        max_points_string = '({0} Points Possible)'.format(int(self.max_points))
 
         html = self.resource_string("static/html/multiengine.html")
         frag = Fragment(html.format(self=self))
@@ -106,13 +107,13 @@ class MultiEngineXBlock(XBlock):
                 html_str = pkg_resources.resource_string(__name__, "static/html/multiengine_edit.html")
                 display_name = self.display_name or 'MultiEngine'
                 question = self.question or 'Are you ready?'
-                max_points = self.max_points or 100
+                weight = self.weight or 100
                 correct_answer = self.correct_answer
 
                 frag = Fragment(unicode(html_str).format(
                     display_name=display_name,
                     question=question,
-                    max_points=max_points,
+                    weight=weight,
                     correct_answer=correct_answer
                 ))
 
@@ -140,7 +141,7 @@ class MultiEngineXBlock(XBlock):
     def studio_submit(self, data, suffix=''):
         self.display_name = data.get('display_name')
         self.question = data.get('question')
-        self.max_points = data.get('max_points')
+        self.weight = data.get('weight')
         self.correct_answer = data.get('correct_answer')
         return {'result': 'success'}
 
@@ -154,6 +155,7 @@ class MultiEngineXBlock(XBlock):
         student_json = json.loads(data) 
 
         student_answer = student_json["answer"]
+        self.answer = data
         correct_answer = json.loads(self.correct_answer);
         correct_answer = correct_answer["answer"]
 
@@ -204,18 +206,22 @@ class MultiEngineXBlock(XBlock):
                             answer_condition = str(student_answer_true) == str(correct_answer[key])
 
                         if answer_condition:
-                            checked += len(student_answer_true)
-                            correct += len(student_answer_true)
+                            checked += len(correct_answer[key])
+                            correct += len(correct_answer[key])
                         else:
-                            checked += len(student_answer_true)
+                            checked += len(correct_answer[key])
                     else:
                         checked += len(correct_answer[key])
 
                 return correct / float(checked)
 
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
-                result = int(round(result * self.max_points))
+                result = int(round(result * self.weight))
                 self.points = result
+                self.runtime.publish(self, 'grade', {
+                    'value': self.points,
+                    'max_value': self.weight,
+                })
                 return result
 
             if settings['sequence'] is True:
@@ -228,8 +234,6 @@ class MultiEngineXBlock(XBlock):
             return _result_postproduction(result)
 
         correct = multicheck(student_answer, correct_answer, settings={'sequence': True})
-       
-       # response = {'result': 'success', 'correct': None}
-       # response['correct'] = str(self.answer)
-        return {'result': 'success', 'correct': correct}
+        
+        return {'result': 'success', 'correct': correct, 'weight': self.weight}
 
