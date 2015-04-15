@@ -221,7 +221,7 @@ class MultiEngineXBlock(XBlock):
 
             return _result_postproduction(result)
 
-        correct = multicheck(student_answer, correct_answer, settings={'sequence': False})
+        correct = multicheck(student_answer, correct_answer, settings={'sequence': True})
        
        # response = {'result': 'success', 'correct': None}
        # response['correct'] = str(self.answer)
