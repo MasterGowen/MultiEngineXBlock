@@ -184,7 +184,29 @@ class MultiEngineXBlock(XBlock):
                 Вычисляет долю выполненных заданий с учетом
                 последовательности элементов в области
                 """
-                pass
+                for key in correct_answer:
+                    student_answer_true = []
+                    for answer_item in student_answer[key]:
+                        if answer_item in correct_answer[key]:
+                            student_answer_true.append(answer_item)
+                            checked += 1
+                            correct += 1
+                        else:
+                            checked += 1
+                    #TODO add 40% k
+                    if len(student_answer_true) == len(correct_answer[key]):
+                        try:
+                            answer_condition = ''.join(student_answer_true) == ''.join(correct_answer[key])
+                        except:
+                            answer_condition = str(student_answer_true) == str(correct_answer[key])
+
+                        if answer_condition:
+                            checked += len(student_answer_true)
+                            correct += len(student_answer_true)
+                        else:
+                            checked += len(student_answer_true)
+                    else:
+                        checked += len(correct_answer[key])
 
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
                 result = int(round(result * self.max_points))
