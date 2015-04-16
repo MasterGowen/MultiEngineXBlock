@@ -1,6 +1,5 @@
 /* Javascript for MultiEngineXBlock. */
 function MultiEngineXBlock(runtime, element) {
-
     function success_func(result) {
     		console.log("Correct: " + result.correct/result.weight*100 + "%")
 

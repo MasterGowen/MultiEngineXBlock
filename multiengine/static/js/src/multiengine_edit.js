@@ -1,13 +1,15 @@
 function MultiEngineXBlockEdit(runtime, element) {
-  
+
   $(element).find('.save-button').bind('click', function() {
-    var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
-    var data = {
-      display_name: $(element).find('input[name=display_name]').val(),
-      question: $(element).find('textarea[id=question-area]').val(),
-      weight: $(element).find('input[name=weight]').val(),
-      correct_answer: $(element).find('textarea[id=correct_answer]').val(),
-    };
+    var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
+        data = {
+            display_name: $(element).find('input[name=display_name]').val(),
+            question: $(element).find('textarea[id=question-area]').val(),
+            weight: $(element).find('input[name=weight]').val(),
+            correct_answer: $(element).find('textarea[id=correct_answer]').val(),
+            sequence: document.getElementById("sequence").checked
+                };
+
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
       window.location.reload(false);
     });
@@ -16,6 +18,4 @@ function MultiEngineXBlockEdit(runtime, element) {
   $(element).find('.cancel-button').bind('click', function() {
     runtime.notify('cancel', {});
   });
-
-  //tinyMCE.init({selector:"#question-area"});
 }

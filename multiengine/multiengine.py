@@ -6,7 +6,7 @@ import pkg_resources
 import json
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String, Float, JSONField
+from xblock.fields import Scope, Integer, String, Float, JSONField,Boolean
 from xblock.fragment import Fragment
 
 
@@ -74,6 +74,9 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.user_state
         )
 
+    sequence = Boolean(
+        default=False
+        )
     has_score = True
 
     def resource_string(self, path):
@@ -96,31 +99,42 @@ class MultiEngineXBlock(XBlock):
         return frag
 
     def studio_view(self, context):
-                html = self.resource_string("static/html/multiengine.html")
-                frag = Fragment(html.format(self=self))
-                css_str = pkg_resources.resource_string(__name__, "static/css/multiengine.css")
-                frag.add_css(unicode(css_str))
-                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
-                frag.add_javascript(unicode(js_str))
-                frag.initialize_js('MultiEngineXBlock')
+        html = self.resource_string("static/html/multiengine.html")
+        frag = Fragment(html.format(self=self))
+        css_str = pkg_resources.resource_string(__name__, "static/css/multiengine.css")
+        frag.add_css(unicode(css_str))
+        js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine.js")
+        frag.add_javascript(unicode(js_str))
+        frag.initialize_js('MultiEngineXBlock')
 
-                html_str = pkg_resources.resource_string(__name__, "static/html/multiengine_edit.html")
-                display_name = self.display_name or 'MultiEngine'
-                question = self.question or 'Are you ready?'
-                weight = self.weight or 100
-                correct_answer = self.correct_answer
+        html_str = pkg_resources.resource_string(__name__, "static/html/multiengine_edit.html")
+        display_name = self.display_name or 'MultiEngine'
+        question = self.question or 'Are you ready?'
+        weight = self.weight or 100
+        #correct_answer = self.correct_answer
+        sequence=self.sequence
 
-                frag = Fragment(unicode(html_str).format(
-                    display_name=display_name,
-                    question=question,
-                    weight=weight,
-                    correct_answer=correct_answer
-                ))
+        correct_answer = json.loads(self.correct_answer)
 
-                js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine_edit.js")
-                frag.add_javascript(unicode(js_str))
-                frag.initialize_js('MultiEngineXBlockEdit')
-                return frag
+        if sequence:
+            sequence_view = 'checked="checked"'
+        else:
+            sequence_view = ''
+
+        correct_answer = json.dumps(correct_answer)
+
+        frag = Fragment(unicode(html_str).format(
+            display_name=display_name,
+            question=question,
+            weight=weight,
+            correct_answer=correct_answer,
+            sequence=sequence_view
+        ))
+
+        js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine_edit.js")
+        frag.add_javascript(unicode(js_str))
+        frag.initialize_js('MultiEngineXBlockEdit')
+        return frag
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
@@ -143,6 +157,7 @@ class MultiEngineXBlock(XBlock):
         self.question = data.get('question')
         self.weight = data.get('weight')
         self.correct_answer = data.get('correct_answer')
+        self.sequence = data.get('sequence')
         return {'result': 'success'}
 
     
@@ -156,10 +171,15 @@ class MultiEngineXBlock(XBlock):
 
         student_answer = student_json["answer"]
         self.answer = data
-        correct_answer = json.loads(self.correct_answer);
-        correct_answer = correct_answer["answer"]
+        
+        correct_json = json.loads(self.correct_answer)
+        correct_answer = correct_json["answer"]
 
-        def multicheck(student_answer, correct_answer, settings={}):
+        settings = correct_json["settings"]
+        settings['sequence'] = self.sequence
+
+
+        def multicheck(student_answer, correct_answer, settings):
             """
             Сравнивает 2 словаря вида:
                 {"name1": ["param1", "param2"], "name2": ["param3", "param4"]}
@@ -190,7 +210,7 @@ class MultiEngineXBlock(XBlock):
                 """
                 for key in correct_answer:
                     student_answer_true = []
-                    if len(correct_answer):
+                    if len(correct_answer) > 1:
                         for answer_item in student_answer[key]:
                             if answer_item in correct_answer[key]:
                                 student_answer_true.append(answer_item)
@@ -198,6 +218,10 @@ class MultiEngineXBlock(XBlock):
                                 correct += 1
                             else:
                                 checked += 1
+                    elif len(correct_answer) == 1:
+                        student_answer_true = student_answer[key]
+                    else:
+                        pass # TODO exception
 
                     if len(student_answer_true) == len(correct_answer[key]):
                         try:
@@ -233,7 +257,7 @@ class MultiEngineXBlock(XBlock):
 
             return _result_postproduction(result)
 
-        correct = multicheck(student_answer, correct_answer, settings={'sequence': True})
+        correct = multicheck(student_answer, correct_answer, settings) #={'sequence': True})
         
-        return {'result': 'success', 'correct': correct, 'weight': self.weight}
+        return {'result': 'success', 'correct': correct, 'weight': self.weight, 'test': settings['sequence']}
 
