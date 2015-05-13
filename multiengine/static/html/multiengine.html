@@ -1,15 +1,14 @@
 <div class="multiengine_block">
-    <h2 class="problem-header">{self.display_name} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">(Максимальное кoличество баллов: {self.weight})</span></h2>
-        
+    <h2 class="problem-header">{self.display_name} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">(Max кoличество баллов: {self.weight})</span></h2>  
 	<p id="question">{self.question}</p>
-	<div id="correct_answer">Правильный ответ: {self.correct_answer}</div>
+	<div id="correct_answer">Правильный ответ-с: {self.correct_answer}</div>
 	<div>Ответ студента: </div>
 	<textarea id="answer" class="answer" type="text" rows=10 cols=50>{self.answer}</textarea>
 	
 	<div class="xblock-actions" style="padding-top:2em;">
 	<ul>
       <li class="action-item">
-        <input class="check Check" type="button" value="Проверить">
+        {self.send_button}
       </li>
     </ul>
 	</div>

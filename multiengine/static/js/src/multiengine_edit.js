@@ -7,7 +7,8 @@ function MultiEngineXBlockEdit(runtime, element) {
             question: $(element).find('textarea[id=question-area]').val(),
             weight: $(element).find('input[name=weight]').val(),
             correct_answer: $(element).find('textarea[id=correct_answer]').val(),
-            sequence: document.getElementById("sequence").checked
+            sequence: document.getElementById("sequence").checked,
+            scenario:$(element).find('input[name=scenario]').val(),
                 };
 
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {

@@ -63,11 +63,14 @@ class MultiEngineXBlock(XBlock):
 
 	grade_steps = Integer(
 		display_name=u"Шаг оценивания",
-		help=("Тута будет текст"),
+		help=("Тут будет текст"),
 		default=0,
 		scope=Scope.settings
 		)
+	scenario = String(
 
+		scope=Scope.settings
+		)
 #user_state
 	points = Integer(
 		display_name="Количество баллов студента",
@@ -83,13 +86,14 @@ class MultiEngineXBlock(XBlock):
 		scope=Scope.user_state
 		)
 
-	answer_opportunity = Boolean(
-		default = True
-		)
-	
 	sequence = Boolean(
 		default=False
 		)
+
+	"""answer_opportunity = Boolean(
+		default=True
+		)"""
+
 	has_score = True
 	
 
@@ -110,6 +114,10 @@ class MultiEngineXBlock(XBlock):
 		frag.add_css(self.resource_string("static/css/multiengine.css"))
 		frag.add_javascript(self.resource_string("static/js/src/multiengine.js"))
 		frag.initialize_js('MultiEngineXBlock')
+		if past_due():
+			send_button = '<input class="check Check" type="button" value="Проверить">'
+		else:
+			send_button = ''
 		return frag
 
 	def studio_view(self, context):
@@ -127,8 +135,14 @@ class MultiEngineXBlock(XBlock):
 		weight = self.weight or 100
 		#correct_answer = self.correct_answer
 		sequence=self.sequence
-
-		correct_answer = json.loads(self.correct_answer)
+		scenario = self.scenario
+		#answer_opportunity = self.answer_opportunity
+		#answer_opportunity = str(self.past_due())
+		#self.answer_opportunity = answer_opportunity
+		try:
+		    correct_answer = json.loads(self.correct_answer)
+		except:
+			correct_answer = json.loads('{}')
 
 		if sequence:
 			sequence_view = 'checked="checked"'
@@ -142,14 +156,15 @@ class MultiEngineXBlock(XBlock):
 			question=question,
 			weight=weight,
 			correct_answer=correct_answer,
-			sequence=sequence_view
+			sequence=sequence_view,
+			scenario = scenario,
+			#answer_opportunity=answer_opportunity
 		))
 
 		js_str = pkg_resources.resource_string(__name__, "static/js/src/multiengine_edit.js")
 		frag.add_javascript(unicode(js_str))
 		frag.initialize_js('MultiEngineXBlockEdit')
 		return frag
-	def student_state(self):
 
 	# TO-DO: change this to create the scenarios you'd like to see in the
 	# workbench while developing your XBlock.
@@ -173,13 +188,14 @@ class MultiEngineXBlock(XBlock):
 		self.weight = data.get('weight')
 		self.correct_answer = data.get('correct_answer')
 		self.sequence = data.get('sequence')
+		self.scenario = data.get('scenario')
 		return {'result': 'success'}
 
 	@XBlock.json_handler
 	def student_submit(self, data, suffix=''):
 		#str_answer = data.get('answer')
 		#self.answer = str(data.get('answer'))
-
+		#self.answer_opportunity = data.get('answer_opportunity')
 		student_json = json.loads(data) 
 
 		student_answer = student_json["answer"]
@@ -188,7 +204,11 @@ class MultiEngineXBlock(XBlock):
 		correct_json = json.loads(self.correct_answer)
 		correct_answer = correct_json["answer"]
 
-		settings = correct_json["settings"]
+		try:
+		    settings = correct_json["settings"]
+		except:
+			settings = {}
+
 		settings['sequence'] = self.sequence
 
 
@@ -272,11 +292,14 @@ class MultiEngineXBlock(XBlock):
 
 		correct = multicheck(student_answer, correct_answer, settings) #={'sequence': True})
 		
-		answer_opportunity = str(self.past_due())
+		#answer_opportunity = str(self.past_due())
 
-		return {'result': 'success', 'correct': correct, 'weight': self.weight, 'test': answer_opportunity}
+		return {'result': 'success', 'correct': correct, 'weight': self.weight}
 	
 	def past_due(self):
+			"""
+			Return whether due date has passed.
+			"""
 			due = get_extended_due_date(self)
 			if due is not None:
 				if(_now() > due):
