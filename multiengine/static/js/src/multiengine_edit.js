@@ -9,6 +9,7 @@ function MultiEngineXBlockEdit(runtime, element) {
             correct_answer: $(element).find('textarea[id=correct_answer]').val(),
             sequence: document.getElementById("sequence").checked,
             scenario:$(element).find('input[name=scenario]').val(),
+            max_attempts:$(element).find('input[name=max_attempts]').val(),
                 };
 
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {

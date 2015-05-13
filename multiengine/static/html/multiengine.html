@@ -1,16 +1,34 @@
 <div class="multiengine_block">
-    <h2 class="problem-header">{self.display_name} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">(Max кoличество баллов: {self.weight})</span></h2>  
-	<p id="question">{self.question}</p>
-	<div id="correct_answer">Правильный ответ-с: {self.correct_answer}</div>
+    <h2 class="problem-header">{{display_name}} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">
+        {% if points %}
+            Набрано баллов:{{points}}
+        {% else %}
+            (Max кoличество баллов: {{weight}})</span></h2>
+        {% endif %}
+	<p id="question">{{question}}</p>
+        {% if answer_opportunity %}
+            Можно отвечать
+        {% else %}
+            Нельзя отвечать
+        {% endif %}
+	<div id="correct_answer">Правильный ответ: {{correct_answer}}</div>
 	<div>Ответ студента: </div>
-	<textarea id="answer" class="answer" type="text" rows=10 cols=50>{self.answer}</textarea>
+    
+	<textarea id="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
 	
 	<div class="xblock-actions" style="padding-top:2em;">
 	<ul>
-      <li class="action-item">
-        {self.send_button}
+      <li class="action-item send_button" >
+        {% if past_due and answer_opportunity %}
+            <input class="check Check" type="button" value="Проверить"> <p>Попыток: <span class="attempts">{{attempts}}</span> из {{max_attempts}}</p>
+        {% elif past_due %}
+            <p><strong>Попытки исчерпаны</strong></p>
+        {% elif answer_opportunity %}
+            <p><strong>Время для ответа истекло</strong></p>
+        {% endif %}
       </li>
     </ul>
+
 	</div>
 </div>
 
