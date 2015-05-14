@@ -88,10 +88,22 @@ class MultiEngineXBlock(XBlock):
         scope = Scope.user_state
         )
 
+    student_view_json = String(
+        display_name = u"student_view_json",
+        help = ("Тут будет текст"),
+        scope = Scope.content
+        )
+
+    student_view_template = String(
+        display_name = u"student_view_template",
+        help = ("Тут будет текст"),
+        default='',
+        scope = Scope.content
+        )
+
     sequence = Boolean(
         default=False
         )
-
 
     """answer_opportunity = Boolean(
         default=True
@@ -113,14 +125,18 @@ class MultiEngineXBlock(XBlock):
         when viewing courses.
         """
 
+        #self.student_view_template = r'<script>var element_json =' + str(self.student_view_json) + r'</script>'
+
         context = {
             "display_name": self.display_name,
             "weight": self.weight,
             "question": self.question,
-            "correct_answer":self.correct_answer,
-            "answer":self.answer,
-            "max_attempts":self.max_attempts,
-            "attempts":self.attempts,
+            "correct_answer": self.correct_answer,
+            "answer": self.answer,
+            "max_attempts": self.max_attempts,
+            "attempts": self.attempts,
+            "student_view_json": self.student_view_json,
+            "student_view_template": self.student_view_template,
         }
 
         if self.past_due():
@@ -156,6 +172,8 @@ class MultiEngineXBlock(XBlock):
             "sequence": self.sequence,
             "scenario": self.scenario,
             "max_attempts":self.max_attempts,
+            "student_view_json": self.student_view_json,
+            "student_view_template": self.student_view_template,
         }
 
         fragment = Fragment()
@@ -205,6 +223,8 @@ class MultiEngineXBlock(XBlock):
         self.sequence = data.get('sequence')
         self.scenario = data.get('scenario')
         self.max_attempts = data.get('max_attempts')
+        self.student_view_json = data.get('student_view_json')
+        self.student_view_template = data.get('student_view_template')
         return {'result': 'success'}
 
     @XBlock.json_handler

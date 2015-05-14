@@ -1,7 +1,7 @@
 <div class="multiengine_block">
     <h2 class="problem-header">{{display_name}} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">
         {% if points %}
-            Набрано баллов:{{points}}
+            <span class="poitns">Набрано баллов: {{points}}</span>
         {% else %}
             (Max кoличество баллов: {{weight}})</span></h2>
         {% endif %}
@@ -14,7 +14,7 @@
 	<div id="correct_answer">Правильный ответ: {{correct_answer}}</div>
 	<div>Ответ студента: </div>
     
-	<textarea id="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
+	<textarea name="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
 	
 	<div class="xblock-actions" style="padding-top:2em;">
 	<ul>
@@ -28,7 +28,8 @@
         {% endif %}
       </li>
     </ul>
-
+{{student_view_template|safe}}
+<div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
 	</div>
 </div>
 
