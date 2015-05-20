@@ -1,40 +1,73 @@
-<div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab">
-  <ul class="list-input settings-list">
-
+<div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab" style="height: 800px !important">
+  <ul class="list-input settings-list" style="height: 100% !important">
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="display_name">Display name:</label>
-        <input class="input setting-input" name="display_name" id="display_name" value="{display_name}" type="text" />
+        <label class="label setting-label" for="display_name">Название:</label>
+        <input class="input setting-input" name="display_name" id="display_name" value="{{display_name}}" type="text" />
       </div>
     </li>
 
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="question-area">Question:</label>
-		<textarea id="question-area" class="input setting-input" rows=10 cols=50>{question}</textarea>
+        <label class="label setting-label" for="student_view_template">student_view_template:</label>
+    <textarea name="student_view_template" id="student_view_template" class="input setting-input" rows=10 cols=50>{{student_view_template}}"</textarea>
       </div>
     </li>
 
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="weight">Max points (0-100):</label>
-		<input class="input setting-input" name="weight" id="weight" value="{weight}" type="number" min="0" max="100" />
+        <label class="label setting-label" for="correct_answer">Правильный ответ:</label>
+    <input id="correct_answer" class="input setting-input" value="{{correct_answer}}" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="student_view_json">student_view_json:</label>
+    <input name="student_view_json" class="input setting-input" value="{{student_view_json}}"/>
       </div>
     </li>
 
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="sequence">&#x41F;&#x440;&#x43E;&#x432;&#x435;&#x440;&#x44F;&#x442;&#x44C; &#x43F;&#x43E;&#x441;&#x43B;&#x435;&#x434;&#x43E;&#x432;&#x430;&#x442;&#x435;&#x43B;&#x44C;&#x43D;&#x43E;&#x441;&#x442;&#x44C;:</label>
-    <input class="input setting-input" style="height:20px" name="sequence" id="sequence" {sequence} type="checkbox" />
+        <label class="label setting-label" for="question-area">Вопрос:</label>
+		<textarea id="question-area" class="input setting-input" rows=10 cols=50>{{question}}</textarea>
       </div>
     </li>
 
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="correct_answer">Correct answer:</label>
-		<textarea id="correct_answer" class="input setting-input" rows=10 cols=50>{correct_answer}</textarea>
+        <label class="label setting-label" for="weight">Максимальное количество баллов (0-100):</label>
+		<input class="input setting-input" name="weight" id="weight" value="{{weight}}" type="number" min="0" max="100" />
       </div>
     </li>
+
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="max_attempts">Количество попыток:</label>
+        <input class="input setting-input" name="max_attempts" id="max_attempts" value="{{max_attempts}}" type="number" min="0" />
+      </div>
+    </li>
+
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="sequence">Проверять последовательность:</label>
+        {% if sequence %}
+            <input class="input setting-input" style="height:20px" name="sequence" id="sequence" checked="checked" type="checkbox" />
+        {% else %}
+            <input class="input setting-input" style="height:20px" name="sequence" id="sequence" type="checkbox" />
+        {% endif %}
+      </div>
+    </li>
+
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="scenario">Используемый сценарий:</label>
+        <input class="input setting-input" name="scenario" id="scenario" value="{{scenario}}" type="text" />
+      </div>
+    </li>
+
+
+
 	
   </ul>
 

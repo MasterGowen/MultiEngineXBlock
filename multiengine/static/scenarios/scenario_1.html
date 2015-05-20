@@ -1,0 +1,116 @@
+    <style>
+    table {
+        width: 100%;
+    }
+    div.answer-area ul{
+        border: 1px solid #eee;
+        /*width: 142px;*/
+        max-width: 450px;
+        min-width: 200px;
+        min-height: 20px;
+        font-size: 1.2em;
+        list-style-type: none;
+        margin: 0;
+        padding: 5px;
+        
+        margin-right: 10px;
+        background-color: #F2F2F2;
+    }
+    div.answer-area ul li {
+        padding: 5px;
+        font-size: 1.2em;
+        /*width: 120px;*/
+        max-width: 450px;
+        min-width: 200px;
+        list-style: none;
+    }
+    </style>
+
+    <script>
+    var state = {};
+      state.answer={};
+
+    function stateItems(idBlock, tag){
+        $("."+idBlock+">"+tag).each(function(i){
+        
+            var arr = [];
+            $("#"+this.id+">li").each(function(i){
+            //console.log("#"+this.id+">li");
+                arr.push(this.id)
+            })
+        state.answer[this.id] = arr
+        })
+        
+        $('textarea[name=answer]').html(JSON.stringify(state))
+        
+        return console.log(JSON.stringify(state))
+        
+
+    
+    }
+
+    $(function() {
+
+        $( "div.answer-area>ul" ).sortable({
+            connectWith: ".connectedSortable",
+            stop: function(){stateItems("answer-area", "ul")}
+        }).disableSelection();
+        
+        
+
+        $(document).ready(function(){
+        var position = JSON.parse($(".answer").val());
+
+        $('textarea[name=answer]').html(JSON.stringify(position))
+
+        position = position["answer"]
+            for (var key in position){
+            if (position[key].length != 0)
+            {
+                for (var item in position[key]){
+                    $("#"+key).append($("#"+position[key][item]));
+                    //console.log(item)
+                }
+            }
+        }
+            
+            
+            });
+    
+    
+    });
+    
+    </script>
+<table>
+    <tr>
+        <td>
+            <div class="answer-area">
+                <p>Param 1</p>
+                <ul id="param1" class="connectedSortable ui-sortable">
+                </ul>
+                <p>Param 2</p>
+                <ul id="param2" class="connectedSortable ui-sortable">
+                </ul>
+                <p>Param 3</p>
+                <ul id="param3" class="connectedSortable ui-sortable">
+                </ul>
+            </div>
+        </td>
+        <td>
+            <div class="answer-area">
+                <p>Answers: </p>
+                <ul id="sortable4" class="connectedSortable ui-sortable">
+                    <li id="g001" class="ui-state-highlight ui-sortable-handle">Item 1 <i class="js-remove">X</i></li>
+                    <li id="g002" class="ui-state-highlight ui-sortable-handle">Item 2 <i class="js-remove">X</i></li>
+                    <li id="g003" class="ui-state-highlight ui-sortable-handle">Item 3 <i class="js-remove">X</i></li>
+                    <li id="g004" class="ui-state-highlight ui-sortable-handle">Item 4 <i class="js-remove">X</i></li>
+                    <li id="g005" class="ui-state-highlight ui-sortable-handle">Item 5 <i class="js-remove">X</i></li>
+                </ul>
+                <p id="result"></p>
+                <!--
+                <textarea name="answer_area" class="answer_area" type="text" rows=10 cols=50>{{answer}}</textarea>
+                -->
+            </div>
+        </td>
+    </tr>
+</table>""
