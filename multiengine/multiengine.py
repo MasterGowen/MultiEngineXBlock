@@ -81,6 +81,25 @@ class MultiEngineXBlock(XBlock):
         default={},
         scope=Scope.user_state
         )
+    attempts = Integer(
+        display_name = "Количество сделанных попыток",
+        help = "Тут будет текст",
+        default=0,
+        scope = Scope.user_state
+        )
+
+    student_view_json = String(
+        display_name = u"student_view_json",
+        help = ("Тут будет текст"),
+        scope = Scope.content
+        )
+
+    student_view_template = String(
+        display_name = u"student_view_template",
+        help = ("Тут будет текст"),
+        default='',
+        scope = Scope.content
+        )
 
     attempts = Integer(
         display_name = "Количество сделанных попыток",
@@ -105,6 +124,10 @@ class MultiEngineXBlock(XBlock):
     sequence = Boolean(
         default=False,
         scope = Scope.settings
+        )
+
+    answer_opportunity = Boolean(
+        default=True
         )
 
     has_score = True
@@ -135,6 +158,7 @@ class MultiEngineXBlock(XBlock):
             "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
         }
+
 
         if self.max_attempts != 0:
             context["max_attempts"] = self.max_attempts
@@ -172,7 +196,6 @@ class MultiEngineXBlock(XBlock):
 
         for js_url in js_urls:
             fragment.add_javascript(_resource(js_url))
-
 
         fragment.initialize_js('MultiEngineXBlock')
         
@@ -217,8 +240,6 @@ class MultiEngineXBlock(XBlock):
         for css_url in css_urls:
             fragment.add_css(_resource(css_url))
 
-        #fragment.add_css(_resource("static/css/multiengine.css"))
-        #fragment.add_javascript(_resource("static/js/src/multiengine_edit.js"))
         fragment.initialize_js('MultiEngineXBlockEdit')
 
         try:
@@ -424,6 +445,7 @@ def render_template(template_path, context=None):  # pragma: NO COVER
     template_str = load_resource(template_path)
     template = Template(template_str)
     return template.render(Context(context))
+
 
 def load_resource(resource_path): 
     """
