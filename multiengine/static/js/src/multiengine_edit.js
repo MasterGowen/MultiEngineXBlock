@@ -17,7 +17,7 @@ function MultiEngineXBlockEdit(runtime, element) {
             scenario:$(element).find('input[name=scenario]').val(),
             max_attempts:$(element).find('input[name=max_attempts]').val(),
             student_view_json:$(element).find('input[name=student_view_json]').val(),
-            student_view_template:$(element).find('textarea[name=student_view_template]').val(),
+            student_view_template:editor.getValue(),
                 };
 
             $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
