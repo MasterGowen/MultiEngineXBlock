@@ -20,6 +20,7 @@ from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
 
+
 class MultiEngineXBlock(XBlock):
 
 #content
@@ -309,6 +310,16 @@ class MultiEngineXBlock(XBlock):
 
             возвращает долю совпавших значений
             """
+
+            KEYWORDS = ('or', 'and', 'not')
+
+            def max_length(lst):
+                length = 0
+                for element in lst:
+                    if len(element) > length:
+                        length = len(element)
+                return length
+
             def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
                 """
                 Вычисляет долю выполненных заданий без учета
@@ -316,7 +327,20 @@ class MultiEngineXBlock(XBlock):
                 """
                 for key in correct_answer:
                     for value in correct_answer[key]:
-                        if value in student_answer[key]:
+                        if value in KEYWORDS:
+                            keyword = value
+                            correct_values = correct_answer[key][keyword]
+                            for correct_value in correct_values:
+                                if len(set(correct_value) - set(student_answer[key])) == 0:
+                                    with_keyword = True
+                                    break
+                            if with_keyword:
+                                checked += len(student_answer[key])
+                                correct += len(student_answer[key])
+                            else:
+                                checked += len(student_answer[key])
+
+                        elif value in student_answer[key]:
                             checked += 1
                             correct += 1
                         else:
@@ -328,34 +352,42 @@ class MultiEngineXBlock(XBlock):
                 Вычисляет долю выполненных заданий с учетом
                 последовательности элементов в области
                 """
+                answer_condition = False
+
                 for key in correct_answer:
                     student_answer_true = []
-                    if len(correct_answer) > 1:
+
+                    if not isinstance(correct_answer[key], dict):
                         for answer_item in student_answer[key]:
                             if answer_item in correct_answer[key]:
                                 student_answer_true.append(answer_item)
-                                checked += 1
-                                correct += 1
-                            else:
-                                checked += 1
-                    elif len(correct_answer) == 1:
-                        student_answer_true = student_answer[key]
-                    else:
-                        pass # TODO exception
 
-                    if len(student_answer_true) == len(correct_answer[key]):
                         try:
                             answer_condition = ''.join(student_answer_true) == ''.join(correct_answer[key])
                         except:
                             answer_condition = str(student_answer_true) == str(correct_answer[key])
 
                         if answer_condition:
-                            checked += len(correct_answer[key])
                             correct += len(correct_answer[key])
-                        else:
-                            checked += len(correct_answer[key])
-                    else:
                         checked += len(correct_answer[key])
+
+                    else:
+                        for keyword in KEYWORDS:
+                            if keyword in correct_answer[key].keys():
+                                correct_values = correct_answer[key][keyword]
+
+                                for correct_value in correct_values:
+                                    try:
+                                        answer_condition = ''.join(student_answer[key]) == ''.join(correct_value)
+                                    except:
+                                        answer_condition = str(student_answer[key]) == str(correct_value)
+                                    if answer_condition:
+                                        break
+
+                                checked += max_length(correct_values)
+
+                                if answer_condition:
+                                    correct += len(student_answer[key])
 
                 return correct / float(checked)
 
@@ -377,18 +409,19 @@ class MultiEngineXBlock(XBlock):
 
             return _result_postproduction(result)
 
+
         if answer_opportunity(self):
             correct = multicheck(student_answer, correct_answer, settings) #={'sequence': True})
             self.attempts = self.attempts + 1
             return {
-            		'result': 'success',
-            		'correct': correct,
-            		'weight': self.weight,
-            		'attempts':self.attempts,
-            		'max_attempts':self.max_attempts,
-            		}
+                    'result': 'success',
+                    'correct': correct,
+                    'weight': self.weight,
+                    'attempts':self.attempts,
+                    'max_attempts':self.max_attempts,
+                    }
         else:
-        	return('Max attempts exception!')
+            return('Max attempts exception!')
 
     def past_due(self):
             """
@@ -420,13 +453,15 @@ def answer_opportunity(self):
     if( self.max_attempts <= self.attempts and self.max_attempts != 0):
         return False
     else:
-    	return True
-        
+        return True
+
+
 def _now():
     """
     Получение текущих даты и времени 
     """
     return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+
 
 def _resource(path):  # pragma: NO COVER
     """
@@ -434,6 +469,7 @@ def _resource(path):  # pragma: NO COVER
     """
     data = pkg_resources.resource_string(__name__, path)
     return data.decode("utf8")
+
 
 def render_template(template_path, context=None):  # pragma: NO COVER
     """
@@ -451,5 +487,8 @@ def load_resource(resource_path):
     """
     Gets the content of a resource
     """
-    resource_content = pkg_resources.resource_string(__name__, resource_path)
-    return smart_text(resource_content)
+    try:
+        resource_content = pkg_resources.resource_string(__name__, resource_path)
+        return smart_text(resource_content)
+    except:
+        return '<strong style="color:red">Can\'t load content!</strong>'
