@@ -20,7 +20,6 @@ from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
 
-
 class MultiEngineXBlock(XBlock):
 
 #content
@@ -79,27 +78,8 @@ class MultiEngineXBlock(XBlock):
     answer = JSONField(
         display_name="Ответ пользователя",
         help="Тут ответ пользователя",
-        default={},
+        default={"answer":{}},
         scope=Scope.user_state
-        )
-    attempts = Integer(
-        display_name = "Количество сделанных попыток",
-        help = "Тут будет текст",
-        default=0,
-        scope = Scope.user_state
-        )
-
-    student_view_json = String(
-        display_name = u"student_view_json",
-        help = ("Тут будет текст"),
-        scope = Scope.content
-        )
-
-    student_view_template = String(
-        display_name = u"student_view_template",
-        help = ("Тут будет текст"),
-        default='',
-        scope = Scope.content
         )
 
     attempts = Integer(
@@ -127,10 +107,6 @@ class MultiEngineXBlock(XBlock):
         scope = Scope.settings
         )
 
-    answer_opportunity = Boolean(
-        default=True
-        )
-
     has_score = True
     
     send_button = ''
@@ -140,15 +116,34 @@ class MultiEngineXBlock(XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
+    def load_resources(self, js_urls, css_urls, fragment):
+        '''
+        '''
+        for js_url in js_urls:
+
+            if js_url.startswith('public/'):
+                fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
+            elif js_url.startswith('static/'):
+                 fragment.add_javascript(_resource(js_url))
+            else:
+                pass
+
+
+        for css_url in css_urls:
+
+            if css_url.startswith('public/'):
+                fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
+            elif css_url.startswith('static/'):
+                 fragment.add_css(_resource(css_url))
+            else:
+                pass
+
     # TO-DO: change this view to display your data your own way.
     def student_view(self, context=None):
         """
         The primary view of the MultiEngineXBlock, shown to students
         when viewing courses.
         """
-
-        #self.student_view_template = r'<script>var element_json =' + str(self.student_view_json) + r'</script>'
-
         context = {
             "display_name": self.display_name,
             "weight": self.weight,
@@ -160,10 +155,9 @@ class MultiEngineXBlock(XBlock):
             "student_view_template": self.student_view_template,
         }
 
-
         if self.max_attempts != 0:
             context["max_attempts"] = self.max_attempts
-            
+
         if self.past_due():
             context["past_due"] = True
 
@@ -192,11 +186,7 @@ class MultiEngineXBlock(XBlock):
             'static/css/multiengine.css',
             )
 
-        for css_url in css_urls:
-            fragment.add_css(_resource(css_url))
-
-        for js_url in js_urls:
-            fragment.add_javascript(_resource(js_url))
+        self.load_resources(js_urls, css_urls, fragment)
 
         fragment.initialize_js('MultiEngineXBlock')
         
@@ -224,23 +214,17 @@ class MultiEngineXBlock(XBlock):
                 context
             )
         )
+
         js_urls = (
-            'static/js/src/multiengine_edit.js',
-            '/static/js/src/codemirror/lib/codemirror.js',
-            '/static/js/src/codemirror/mode/htmlmixed/htmlmixed.js',
+            "public/js/multiengine_edit.js",
             )
 
         css_urls = (
             'static/css/multiengine.css',
-            '/static/js/src/codemirror/lib/codemirror.css',
             )
 
-        for js_url in js_urls:
-            fragment.add_javascript(_resource(js_url))
 
-        for css_url in css_urls:
-            fragment.add_css(_resource(css_url))
-
+        self.load_resources(js_urls, css_urls, fragment)
         fragment.initialize_js('MultiEngineXBlockEdit')
 
         try:
@@ -409,7 +393,6 @@ class MultiEngineXBlock(XBlock):
 
             return _result_postproduction(result)
 
-
         if answer_opportunity(self):
             correct = multicheck(student_answer, correct_answer, settings) #={'sequence': True})
             self.attempts = self.attempts + 1
@@ -455,13 +438,11 @@ def answer_opportunity(self):
     else:
         return True
 
-
 def _now():
     """
     Получение текущих даты и времени 
     """
     return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-
 
 def _resource(path):  # pragma: NO COVER
     """
@@ -469,7 +450,6 @@ def _resource(path):  # pragma: NO COVER
     """
     data = pkg_resources.resource_string(__name__, path)
     return data.decode("utf8")
-
 
 def render_template(template_path, context=None):  # pragma: NO COVER
     """
@@ -482,7 +462,6 @@ def render_template(template_path, context=None):  # pragma: NO COVER
     template = Template(template_str)
     return template.render(Context(context))
 
-
 def load_resource(resource_path): 
     """
     Gets the content of a resource
@@ -490,5 +469,5 @@ def load_resource(resource_path):
     try:
         resource_content = pkg_resources.resource_string(__name__, resource_path)
         return smart_text(resource_content)
-    except:
-        return '<strong style="color:red">Can\'t load content!</strong>'
+    except EnvironmentError:
+        pass
