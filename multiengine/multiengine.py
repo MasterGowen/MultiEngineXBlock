@@ -1,114 +1,110 @@
 # -*- coding: utf-8 -*-
-"""TO-DO: Write a description of what this XBlock is."""
+"""XBlock для проверки json-объектов, сформированных по определенным правилам.
+Поддерживает различные типы заданий через систему сценариев."""
 
 import datetime
 import pkg_resources
 import pytz
 import json
 
-from django.core.exceptions import PermissionDenied
-from django.core.files import File
-from django.core.files.storage import default_storage
-from django.conf import settings
 from django.template import Context, Template
 from django.utils.encoding import smart_text
 
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String, Float, JSONField,Boolean
+from xblock.fields import Scope, Integer, String, JSONField, Boolean
 from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
 
+
 class MultiEngineXBlock(XBlock):
 
-#content
+    # settings
     display_name = String(
-        display_name="Имя XBlock",
-        help="Тут будет имя XBlock",
+        display_name="Название",
+        help="Название задания, которое увидят студенты.",
         default='MultiEngine',
         scope=Scope.settings
-        )
+    )
     question = String(
         display_name="Вопрос",
-        help="Тут вопрос",
-        default='Are you ready?',
+        help="Текст задания.",
+        default="Вы готовы?",
         scope=Scope.settings
-        )
+    )
 
     correct_answer = JSONField(
         display_name="Правильный ответ",
-        help="Тут правильный ответ",
+        help="Скрытое поле для правильного ответа в формате json.",
         default={},
         scope=Scope.settings
-        )
+    )
 
-#settings
     weight = Integer(
         display_name="Максимальное количество баллов",
-        help=("Тут будет максимальное количество баллов"),
+        help=("Максимальное количество баллов",
+              "которое может получить студент."),
         default=100,
         scope=Scope.settings
-        )
+    )
 
     grade_steps = Integer(
         display_name=u"Шаг оценивания",
-        help=("Тут будет текст"),
+        help=("Количество диапазонов оценивания"),
         default=0,
         scope=Scope.settings
-        )
+    )
     scenario = String(
-        scope=Scope.settings
-        )
+        display_name=u"Сценарий",
+        help=("Выберите один из сценариев отображения задания."),
+        scope=Scope.settings,
+    )
     max_attempts = Integer(
-        display_name = u"Максимальное количество попыток",
-        help = ("Тут будет текст"),
+        display_name=u"Максимальное количество попыток",
+        help=(""),
         default=0,
         scope = Scope.settings
-        )
+    )
 
-#user_state
+    # user_state
     points = Integer(
         display_name="Количество баллов студента",
-        help=("Тут будет количество баллов студента"),
         default=None,
         scope=Scope.user_state
-        )
+    )
 
     answer = JSONField(
         display_name="Ответ пользователя",
-        help="Тут ответ пользователя",
-        default={"answer":{}},
+        default={"answer": {}},
         scope=Scope.user_state
-        )
+    )
 
     attempts = Integer(
-        display_name = "Количество сделанных попыток",
-        help = "Тут будет текст",
+        display_name="Количество сделанных попыток",
         default=0,
-        scope = Scope.user_state
-        )
+        scope=Scope.user_state
+    )
 
     student_view_json = String(
-        display_name = u"student_view_json",
-        help = ("Тут будет текст"),
-        scope = Scope.settings
-        )
+        display_name=u"Состояние сценария, видимое студенту",
+        scope=Scope.settings
+    )
 
     student_view_template = String(
-        display_name = u"student_view_template",
-        help = ("Тут будет текст"),
+        display_name=u"Шаблон сценария",
         default='',
-        scope = Scope.settings
-        )
+        scope=Scope.settings
+    )
 
     sequence = Boolean(
+        display_name=u"Учитывать последовательность выбранных вариантов?",
+        help=(u"Работает не для всех сценариев."),
         default=False,
-        scope = Scope.settings
-        )
+        scope=Scope.settings
+    )
 
     has_score = True
-    
     send_button = ''
 
     def resource_string(self, path):
@@ -124,17 +120,16 @@ class MultiEngineXBlock(XBlock):
             if js_url.startswith('public/'):
                 fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
             elif js_url.startswith('static/'):
-                 fragment.add_javascript(_resource(js_url))
+                fragment.add_javascript(_resource(js_url))
             else:
                 pass
-
 
         for css_url in css_urls:
 
             if css_url.startswith('public/'):
                 fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
             elif css_url.startswith('static/'):
-                 fragment.add_css(_resource(css_url))
+                fragment.add_css(_resource(css_url))
             else:
                 pass
 
@@ -167,7 +162,7 @@ class MultiEngineXBlock(XBlock):
         if answer_opportunity(self):
             context["answer_opportunity"] = True
 
-        if self.is_course_staff() == True or self.is_instructor() == True:
+        if self.is_course_staff() is True or self.is_instructor() is True:
             context['is_course_staff'] = True
 
         fragment = Fragment()
@@ -180,16 +175,15 @@ class MultiEngineXBlock(XBlock):
 
         js_urls = (
             'static/js/src/multiengine.js',
-            )
+        )
 
         css_urls = (
             'static/css/multiengine.css',
-            )
+        )
 
         self.load_resources(js_urls, css_urls, fragment)
 
         fragment.initialize_js('MultiEngineXBlock')
-        
         return fragment
 
     def studio_view(self, context):
@@ -198,11 +192,11 @@ class MultiEngineXBlock(XBlock):
             "display_name": self.display_name,
             "weight": self.weight,
             "question": self.question,
-            "correct_answer":self.correct_answer,
-            "answer":self.answer,
+            "correct_answer": self.correct_answer,
+            "answer": self.answer,
             "sequence": self.sequence,
             "scenario": self.scenario,
-            "max_attempts":self.max_attempts,
+            "max_attempts": self.max_attempts,
             "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
         }
@@ -217,12 +211,11 @@ class MultiEngineXBlock(XBlock):
 
         js_urls = (
             "public/js/multiengine_edit.js",
-            )
+        )
 
         css_urls = (
             'static/css/multiengine.css',
-            )
-
+        )
 
         self.load_resources(js_urls, css_urls, fragment)
         fragment.initialize_js('MultiEngineXBlockEdit')
@@ -237,7 +230,6 @@ class MultiEngineXBlock(XBlock):
         context["correct_answer"] = correct_answer
 
         return fragment
-
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
@@ -270,7 +262,7 @@ class MultiEngineXBlock(XBlock):
     @XBlock.json_handler
     def student_submit(self, data, suffix=''):
 
-        student_json = json.loads(data) 
+        student_json = json.loads(data)
 
         student_answer = student_json["answer"]
         self.answer = data
@@ -285,7 +277,6 @@ class MultiEngineXBlock(XBlock):
 
         settings['sequence'] = self.sequence
 
-
         def multicheck(student_answer, correct_answer, settings):
             """
             Сравнивает 2 словаря вида:
@@ -295,7 +286,7 @@ class MultiEngineXBlock(XBlock):
             возвращает долю совпавших значений
             """
 
-            KEYWORDS = ('or', 'and', 'not')
+            keywords = ('or', 'and', 'not')
 
             def max_length(lst):
                 length = 0
@@ -311,7 +302,7 @@ class MultiEngineXBlock(XBlock):
                 """
                 for key in correct_answer:
                     for value in correct_answer[key]:
-                        if value in KEYWORDS:
+                        if value in keywords:
                             keyword = value
                             correct_values = correct_answer[key][keyword]
                             for correct_value in correct_values:
@@ -356,7 +347,7 @@ class MultiEngineXBlock(XBlock):
                         checked += len(correct_answer[key])
 
                     else:
-                        for keyword in KEYWORDS:
+                        for keyword in keywords:
                             if keyword in correct_answer[key].keys():
                                 correct_values = correct_answer[key][keyword]
 
@@ -394,14 +385,13 @@ class MultiEngineXBlock(XBlock):
             return _result_postproduction(result)
 
         if answer_opportunity(self):
-            correct = multicheck(student_answer, correct_answer, settings) #={'sequence': True})
+            correct = multicheck(student_answer, correct_answer, settings)  # ={'sequence': True})
             self.attempts = self.attempts + 1
-            return {
-                    'result': 'success',
+            return {'result': 'success',
                     'correct': correct,
                     'weight': self.weight,
-                    'attempts':self.attempts,
-                    'max_attempts':self.max_attempts,
+                    'attempts': self.attempts,
+                    'max_attempts': self.max_attempts,
                     }
         else:
             return('Max attempts exception!')
@@ -433,16 +423,18 @@ def answer_opportunity(self):
     """
     Возможность ответа (если количество сделанное попыток меньше заданного)
     """
-    if( self.max_attempts <= self.attempts and self.max_attempts != 0):
+    if(self.max_attempts <= self.attempts and self.max_attempts != 0):
         return False
     else:
         return True
 
+
 def _now():
     """
-    Получение текущих даты и времени 
+    Получение текущих даты и времени
     """
     return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+
 
 def _resource(path):  # pragma: NO COVER
     """
@@ -451,7 +443,8 @@ def _resource(path):  # pragma: NO COVER
     data = pkg_resources.resource_string(__name__, path)
     return data.decode("utf8")
 
-def render_template(template_path, context=None):  # pragma: NO COVER
+
+def render_template(template_path, context=None):
     """
     Evaluate a template by resource path, applying the provided context.
     """
@@ -462,7 +455,8 @@ def render_template(template_path, context=None):  # pragma: NO COVER
     template = Template(template_str)
     return template.render(Context(context))
 
-def load_resource(resource_path): 
+
+def load_resource(resource_path):
     """
     Gets the content of a resource
     """
