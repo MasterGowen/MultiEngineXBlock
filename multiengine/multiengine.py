@@ -6,9 +6,14 @@ import datetime
 import pkg_resources
 import pytz
 import json
+import os
+import re
+from path import path
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
+from django.conf import settings
+from django.core.files.storage import default_storage
 
 
 from xblock.core import XBlock
@@ -16,6 +21,9 @@ from xblock.fields import Scope, Integer, String, JSONField, Boolean
 from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
+
+from webob.response import Response
+from webob.exc import HTTPNotFound
 
 
 class MultiEngineXBlock(XBlock):
@@ -88,13 +96,13 @@ class MultiEngineXBlock(XBlock):
 
     student_view_json = String(
         display_name=u"Состояние сценария, видимое студенту",
-        scope=Scope.settings
+        scope = Scope.settings
     )
 
     student_view_template = String(
         display_name=u"Шаблон сценария",
         default='',
-        scope=Scope.settings
+        scope = Scope.settings
     )
 
     sequence = Boolean(
@@ -105,6 +113,30 @@ class MultiEngineXBlock(XBlock):
     )
 
     has_score = True
+
+    MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine/'
+    SCENARIOS_ROOT = MULTIENGINE_ROOT + '/public/scenarios/'
+    
+    def load_scenarios(self):
+        scenarios = {}
+        if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
+            for file in os.listdir(self.SCENARIOS_ROOT):
+                if file.endswith(".js"):
+                    def _get_name(file):
+                        read_file = open(self.SCENARIOS_ROOT + file)
+                        name = read_file.readline()
+                        name = re.sub('/*', '', name)
+                        return name
+                    scenarios[os.path.splitext(file)[0]] = _get_name(file)
+            
+        return scenarios
+
+    def get_scenario_content(self, scenario):
+        scenario_file = open(self.SCENARIOS_ROOT + scenario + '.js', 'r')
+        with scenario_file as jsfile:
+           scenario_content=jsfile.read()
+        return scenario_content
+
     send_button = ''
 
     def resource_string(self, path):
@@ -148,6 +180,7 @@ class MultiEngineXBlock(XBlock):
             "attempts": self.attempts,
             "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
+            "scenario": self.scenario,
         }
 
         if self.max_attempts != 0:
@@ -188,6 +221,8 @@ class MultiEngineXBlock(XBlock):
 
     def studio_view(self, context):
 
+        scenarios = self.load_scenarios()
+
         context = {
             "display_name": self.display_name,
             "weight": self.weight,
@@ -199,7 +234,13 @@ class MultiEngineXBlock(XBlock):
             "max_attempts": self.max_attempts,
             "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
+
+            "scenarios": scenarios,
         }
+
+        if self.scenario:
+            scenario_content = self.get_scenario_content(self.scenario)
+            context["scenario_content"] = scenario_content
 
         fragment = Fragment()
         fragment.add_content(
@@ -245,6 +286,25 @@ class MultiEngineXBlock(XBlock):
                 </vertical_demo>
              """),
         ]
+
+    def download(self, path, filename):
+        """
+        Return a file from storage and return in a Response.
+        """
+
+        res = Response(content_type='text/javascript', app_iter=None)
+        try:
+            res.body = open(path + filename, 'r').read()
+        except:
+            res.body = HTTPNotFound('Scenario not exists.')
+        return res
+
+    @XBlock.handler
+    def download_scenario(self, request, suffix=''):
+        """
+        Fetch student assignment from storage and return it.
+        """
+        return self.download(self.SCENARIOS_ROOT, self.scenario + '.js')
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):

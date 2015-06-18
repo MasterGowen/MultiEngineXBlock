@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-student_answer = {"name1": ["param2", "param1"], "name2": ["param5", "param6"]}
-correct_answer = {"name1": {"or": [["param1", "param2"], ["param3", "param4"]]}, "name2": ["param5", "param6"]}
-settings = {"sequence": True}
+student_answer = {"kran": ["param2", "param1"], "name2": ["param5", "param6"]}
+correct_answer = {"kran": {"OR": [["param1", "param2"]]}, "name2": ["param5", "param6"]}
+settings = {"sequence": False}
 
 
 def multicheck(student_answer, correct_answer, settings):
@@ -94,15 +94,6 @@ def multicheck(student_answer, correct_answer, settings):
 
                 return correct / float(checked)
 
-            def _result_postproduction(result):  # , settings['postproduction_rule']=None):
-                result = int(round(result * self.weight))
-                self.points = result
-                self.runtime.publish(self, 'grade', {
-                    'value': self.points,
-                    'max_value': self.weight,
-                })
-                return result
-
             if settings['sequence'] is True:
                 result = _compare_answers_sequenced(student_answer, correct_answer)
             elif settings['sequence'] is False:
@@ -110,6 +101,6 @@ def multicheck(student_answer, correct_answer, settings):
             else:
                 pass
 
-            return _result_postproduction(result)
+            return result
 
 print(multicheck(student_answer, correct_answer, settings))
