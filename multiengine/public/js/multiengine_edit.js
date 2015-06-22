@@ -1,9 +1,21 @@
+function MultiEngineXBlockEdit(runtime, element) {
+// Перенос DOM структуры блока в отдельную переменную
+// HELP
+// Запросы доступные для работы с переменноой elementDOM
+// qverySelector  --- elementNodeList
+// qverySelectorAll --- NodeList
+// getElementByTegName --- HTMLCollection
+// getElementByClassName --- HTMLCollection
+
+    var elementDOM = element[0];
+
 // Функция пробегания по элементам коллекции
 function forEachInCollection(collection, action) {
   collection = collection || {};
   for (var i = 0; i < collection.length; i++)
     action(collection[i]);
 };
+
 //Функция формирует список из детей переданнго в функцию элементов
 function childList(value){
   var childList = [];
@@ -19,10 +31,12 @@ function childList(value){
   };  
   return childList;
 };
+//Функция генерации ID
 function generationID(){
   return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
 };
-
+//Функция формирования правиольного отвнета
+//Пример {name1:id1,name2:id2, name:{id3,id4}} передается в функцию
 function generationAnswerJSON(answer){ 
         var answerJSON = {answer:{}};
         answerJSON.answer = answer;
@@ -44,32 +58,19 @@ function setBlockHtml(idBlock, contentHtml){
   elementDOM.querySelector('#'+idBlock).innerHTML = contentHtml;
 };
 
-
+//Функции которые надо описать
 function generationTamplate(){};
 function conversionToRaw(){};
 function conversionInRaw(){};
-
 function actionsView(windowView, scenario){};
 
 
 
-/*
-qverySelector  --- elementNodeList
-qverySelectorAll --- NodeList
-getElementByTegName --- HTMLCollection
-getElementByClassName --- HTMLCollection
-*/
-
-// Функции оформления 
-function toggleTabs(){};
 
 
 
 
 
-function MultiEngineXBlockEdit(runtime, element) {
-//Перенос DOM структуры блока в отдельную переменную
-    var elementDOM = element[0];
 
 //TODO: Поиск плашки с сообщнгтнни что ни один сценарий не поддерживается
     if ($(element).find('.scenario_alert').length === 0) {
@@ -110,6 +111,11 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 //jsDesign 
 //start
+    // Функция которая должна отвечать за работу Вкладок RAW / View и следить за событием конвертирования (false or true)
+    function toggleTabs(){};
+
+
+    // Окно редактирование RAW Code
     var editor = CodeMirror.fromTextArea(elementDOM.qverySelector('#student_view_template'),
         {
             mode: "text/html",
