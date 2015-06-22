@@ -1,83 +1,148 @@
+// Функция пробегания по элементам коллекции
+function forEachInCollection(collection, action) {
+  collection = collection || {};
+  for (var i = 0; i < collection.length; i++)
+    action(collection[i]);
+};
+//Функция формирует список из детей переданнго в функцию элементов
+function childList(value){
+  var childList = [];
+  var value = value.children || value.childNodes;
+  /*if(!val.length){
+    console.log('Attention!: '+ typeof(val) + ' has no children')
+    return;
+  };*/
+  for (var i = 0; i < value.length; i++){
+    if (value[i].nodeType == 1){
+      childList.push(val[i])
+    };
+  };  
+  return childList;
+};
+function generationID(){
+  return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
+};
+
+function generationAnswerJSON(answer){ 
+        var answerJSON = {answer:{}};
+        answerJSON.answer = answer;
+        return JSON.stringify(answerJSON);
+};
+
+//TODO: Какой вид должен быть у результата выполнения функций
+function getValueFild(idField){
+  var parser = new DOMParser();
+  var value = elementDOM.querySelector('#'+idField);
+  value = parser.parseFromString(value.value || value.innerHTML, 'text/html');
+  return value;
+};
+
+function setValueFild(idField, value){
+  elementDOM.querySelector('#'+idField).value = value;
+};
+function setBlockHtml(idBlock, contentHtml){
+  elementDOM.querySelector('#'+idBlock).innerHTML = contentHtml;
+};
+
+
+function generationTamplate(){};
+function conversionToRaw(){};
+function conversionInRaw(){};
+
+function actionsView(windowView, scenario){};
+
+
+
+/*
+qverySelector  --- elementNodeList
+qverySelectorAll --- NodeList
+getElementByTegName --- HTMLCollection
+getElementByClassName --- HTMLCollection
+*/
+
+// Функции оформления 
+function toggleTabs(){};
+
+
+
+
+
 function MultiEngineXBlockEdit(runtime, element) {
+//Перенос DOM структуры блока в отдельную переменную
+    var elementDOM = element[0];
 
-  var elementDOM = element[0];
+//TODO: Поиск плашки с сообщнгтнни что ни один сценарий не поддерживается
+    if ($(element).find('.scenario_alert').length === 0) {
+        var downloadUrl = runtime.handlerUrl(element, 'download_scenario');
+    };
 
-  if ($(element).find('.scenario_alert').length === 0) {
-    var downloadUrl = runtime.handlerUrl(element, 'download_scenario');
-  };
-
-  function getScenario(downloadUrl){
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", downloadUrl, false);
-  xhr.send(null);
-  
-  xhr.onload = function(e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        console.error(xhr.statusText);
-      } else {
-        console.error(xhr.statusText);
-      }
-    }
-  };
-  xhr.onerror = function(e) {
-    console.error(xhr.statusText);
-  };
-  
-  return xhr.responseText;
-  
-}
-
-
-
-  // var script = document.createElement('script');
-  // script.onload = function() {
-  //   alert("Script loaded and ready");
-  // };
-  // script.src = downloadUrl;
-  // document.getElementsByTagName('head')[0].appendChild(script);
-
-
-  function setValueFild(idField, value) {
-    elementDOM.querySelector('#' + idField).value = value;
-  };
-  setValueFild('student_view_template', getScenario(downloadUrl));
-
-  $(element).find('.update_scenarios_repo').bind('click', function() {
-    var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
-    $.post(updateScenariosRepo).done(function(response) {
-      window.location.reload(false);
+//TODO: Кнопка обновления сценария
+    $(element).find('.update_scenarios_repo').bind('click', function() {
+        var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
+        $.post(updateScenariosRepo).done(function(response) {
+            window.location.reload(false);
+        });
     });
-  });
+
+//TODO: Подгрузка сценапия
+    function getScenario(downloadUrl){
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", downloadUrl, false);
+        xhr.send(null);
+          
+        xhr.onload = function(e) {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.error(xhr.statusText);
+                } else {
+                    console.error(xhr.statusText);
+                }
+            }
+        };
+        xhr.onerror = function(e) {
+            console.error(xhr.statusText);
+        };
+        return xhr.responseText;
+    };
 
 
-  //HTMLElement(element).getElementById('#lea').onclick = function(){console.log('EHHF!!')}; 
-  // var editor = CodeMirror.fromTextArea(document.getElementById('student_view_template'), {
-  //   mode: "text/html",
-  //   tabMode: "indent",
-  //   lineNumbers: true
-  // });
 
-  $(element).find('.save-button').bind('click', function() {
-    var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
-      data = {
-        display_name: $(element).find('input[name=display_name]').val(),
-        question: $(element).find('textarea[id=question-area]').val(),
-        weight: $(element).find('input[name=weight]').val(),
-        correct_answer: $(element).find('input[id=correct_answer]').val(),
-        sequence: document.getElementById("sequence").checked,
-        scenario: $(element).find('select[name=scenario]').val(),
-        max_attempts: $(element).find('input[name=max_attempts]').val(),
-        student_view_json: $(element).find('input[name=student_view_json]').val(),
-        student_view_template: editor.getValue(),
-      };
 
-    $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
-      window.location.reload(false);
+//jsDesign 
+//start
+    var editor = CodeMirror.fromTextArea(elementDOM.qverySelector('#student_view_template'),
+        {
+            mode: "text/html",
+            tabMode: "indent",
+            lineNumbers: true
+        });
+//jsDesign
+//end
+
+
+
+
+
+    $(element).find('.save-button').bind('click', function() {
+        var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
+            data = {
+                display_name: $(element).find('input[name=display_name]').val(),
+                question: $(element).find('textarea[id=question-area]').val(),
+                weight: $(element).find('input[name=weight]').val(),
+                correct_answer: $(element).find('input[id=correct_answer]').val(),
+                sequence: document.getElementById("sequence").checked,
+                scenario: $(element).find('select[name=scenario]').val(),
+                max_attempts: $(element).find('input[name=max_attempts]').val(),
+                student_view_json: $(element).find('input[name=student_view_json]').val(),
+                student_view_template: editor.getValue(),
+            };
+
+        $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
+            window.location.reload(false);
+        });
     });
-  });
-  $(element).find('.cancel-button').bind('click', function() {
-    runtime.notify('cancel', {});
-  });
+    $(element).find('.cancel-button').bind('click', function() {
+        runtime.notify('cancel', {});
+    });
 
 }
