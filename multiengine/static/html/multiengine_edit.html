@@ -1,15 +1,18 @@
-<div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab">
+<div class="wrapper-comp-settings editor-with-buttons is-active" id="settings-tab">
   <ul class="list-input settings-list">
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="display_name">Название:</label>
         <input class="input setting-input" name="display_name" id="display_name" value="{{display_name}}" type="text" />
+        <a href="#" class="button action-primary update_scenarios_repo">Обновить сценарии</a>
       </div>
     </li>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="student_view_template">student_view_template:</label>
         <textarea name="student_view_template" id="student_view_template" class="input setting-input edit-box" rows=10 cols=50>{{student_view_template}}</textarea>
+        <div id="temp"></div>
+        <a id="convertSVG">Get</a>
       </div>
     </li>
     <li class="field comp-setting-entry is-set">
@@ -54,8 +57,37 @@
     </li>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
+      {% if not scenario %}
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
-        <input class="input setting-input" name="scenario" id="scenario" value="{{scenario}}" type="text" />
+
+        <select class="input setting-input" name="scenario" id="scenario">
+        
+
+
+          {% for filename, name in scenarios.items %}
+
+            <option value="{{filename|safe}}">
+              {{ name }}
+            </option>
+
+          {% endfor %}
+        {% else %}
+        {% if scenarios %}
+        <p> Вы выбрали сценарий:
+          {% for filename, name in scenarios.items %}
+            {% if filename == scenario %}
+              <span style="color:red"><strong>{{ name }}</strong></span>
+              
+            {% endif %}
+          {% endfor %}
+        </p>
+        {% else %}
+          <span class="scenario_alert" style="color:red;font-size:75%">Возможно, файл сценария не найден или создан неправильно.</span>
+          <a href="#" class="button action-primary update_scenarios_repo">Обновить сценарии</a>
+          {% endif %}
+        {% endif %}
+
+        </select>
       </div>
     </li>
 
@@ -71,3 +103,26 @@
     </ul>
   </div>
 </div>
+    <!--<div class="wrapper-comp-editor is-inactive" id="editor-tab" data-editor="raw">
+            <div class="row">
+                <textarea name="" class="edit-box">raw text</textarea>
+            </div>
+    </div>
+
+<script type="application/javascript">
+ $("ul.action-modes").html(' <li class="action-item" data-mode="settings"><a href="#" class="settings-button is-set">Настройки</a></li><li class="action-item" data-mode="editor"><a href="#" class="editor-button">Raw code</a></li>')
+</script>-->
+        <style>
+            .vectorArray g {
+                opacity: 0.1;
+            }
+            .vectorArray g:hover {
+                opacity: 0.6;
+            }
+            .vectorArray g[action=true] {
+                opacity: 1;
+            }
+            .vectorArray g[action=false] {display: none}
+            .vectorForces:hover .vectorArray g[action=false]{display: block;}
+            .invisible {opacity: 0}
+        </style>

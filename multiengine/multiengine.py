@@ -9,6 +9,8 @@ import json
 import os
 import re
 from path import path
+import git
+import shutil
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
@@ -24,6 +26,8 @@ from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
 from webob.exc import HTTPNotFound
+
+from settings import GIT_REPO_URL
 
 
 class MultiEngineXBlock(XBlock):
@@ -67,6 +71,7 @@ class MultiEngineXBlock(XBlock):
         display_name=u"Сценарий",
         help=("Выберите один из сценариев отображения задания."),
         scope=Scope.settings,
+        default=None,
     )
     max_attempts = Integer(
         display_name=u"Максимальное количество попыток",
@@ -114,8 +119,49 @@ class MultiEngineXBlock(XBlock):
 
     has_score = True
 
-    MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine/'
+    MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
     SCENARIOS_ROOT = MULTIENGINE_ROOT + '/public/scenarios/'
+
+    def is_repo(self):
+            repo_exists = False
+            if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
+                for file_item in os.listdir(self.SCENARIOS_ROOT):
+                    if file_item and file_item == '.git':
+                        repo_exists = True
+                    elif not file_item:
+                        pass
+                    else:
+                        pass
+            return repo_exists
+        
+        
+    def clean_repo_path(self, path=SCENARIOS_ROOT):
+        shutil.rmtree(path, ignore_errors=True)
+    
+    def update_local_repo(self):
+        LATEST = False
+        scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
+        scenarios_repo_remote = git.Remote(
+            scenarios_repo,
+            'master')
+        info = scenarios_repo_remote.fetch()[0]
+        remote_commit = info.commit
+        if scenarios_repo.commit().hexsha == remote_commit.hexsha:
+            LATEST = True
+    
+        while remote_commit.hexsha != scenarios_repo.commit().hexsha:
+            remote_commit = remote_commit.parents[0]
+        return LATEST
+    
+    
+    def clone_repo(self):
+        scenarios_repo = git.Repo.clone_from(
+            GIT_REPO_URL,
+            self.SCENARIOS_ROOT
+        )
+        scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
+        LATEST = True
+        return LATEST
     
     def load_scenarios(self):
         scenarios = {}
@@ -132,9 +178,13 @@ class MultiEngineXBlock(XBlock):
         return scenarios
 
     def get_scenario_content(self, scenario):
-        scenario_file = open(self.SCENARIOS_ROOT + scenario + '.js', 'r')
-        with scenario_file as jsfile:
-           scenario_content=jsfile.read()
+        try:
+            scenario_file = open(self.SCENARIOS_ROOT + scenario + '.js', 'r')
+
+            with scenario_file as jsfile:
+               scenario_content=jsfile.read()
+        except:
+            scenario_content = 'alert("Scenario file not found!");'
         return scenario_content
 
     send_button = ''
@@ -219,6 +269,7 @@ class MultiEngineXBlock(XBlock):
         fragment.initialize_js('MultiEngineXBlock')
         return fragment
 
+
     def studio_view(self, context):
 
         scenarios = self.load_scenarios()
@@ -296,15 +347,34 @@ class MultiEngineXBlock(XBlock):
         try:
             res.body = open(path + filename, 'r').read()
         except:
-            res.body = HTTPNotFound('Scenario not exists.')
+            res.body = 'alert("Scenario file not found!");'
         return res
+
+    @XBlock.handler
+    def update_scenarios_repo(self, request, suffix=''):
+        """
+        Обновление репозитория сценариев из внешнего git-репозитория
+        """
+
+        if self.is_repo():
+            try:
+                self.update_local_repo()
+            except:
+                self.clean_repo_path()
+                self.clone_repo()
+        elif not self.is_repo():
+            self.clone_repo()
+
+        response = Response(body='{"result": "success"}', content_type='application/json' )
+        return response
 
     @XBlock.handler
     def download_scenario(self, request, suffix=''):
         """
         Fetch student assignment from storage and return it.
         """
-        return self.download(self.SCENARIOS_ROOT, self.scenario + '.js')
+        if self.scenario:
+            return self.download(self.SCENARIOS_ROOT, self.scenario + '.js')
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
