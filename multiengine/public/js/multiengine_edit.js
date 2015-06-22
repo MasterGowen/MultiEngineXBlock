@@ -116,7 +116,7 @@ function actionsView(windowView, scenario){};
 
 
     // Окно редактирование RAW Code
-    var editor = CodeMirror.fromTextArea(elementDOM.qverySelector('#student_view_template'),
+    var editor = CodeMirror.fromTextArea(elementDOM.querySelector('#student_view_template'),
         {
             mode: "text/html",
             tabMode: "indent",
