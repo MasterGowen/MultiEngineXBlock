@@ -257,11 +257,11 @@ class MultiEngineXBlock(XBlock):
         )
 
         js_urls = (
-            'static/js/src/multiengine.js',
+            'public/js/multiengine.js',
         )
 
         css_urls = (
-            'static/css/multiengine.css',
+            'public/css/multiengine.css',
         )
 
         self.load_resources(js_urls, css_urls, fragment)
@@ -306,7 +306,7 @@ class MultiEngineXBlock(XBlock):
         )
 
         css_urls = (
-            'static/css/multiengine.css',
+            'public/css/multiengine.css',
         )
 
         self.load_resources(js_urls, css_urls, fragment)
