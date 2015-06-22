@@ -2,8 +2,8 @@ function MultiEngineXBlockEdit(runtime, element) {
 // Перенос DOM структуры блока в отдельную переменную
 // HELP
 // Запросы доступные для работы с переменноой elementDOM
-// qverySelector  --- elementNodeList
-// qverySelectorAll --- NodeList
+// querySelector  --- elementNodeList
+// querySelectorAll --- NodeList
 // getElementByTegName --- HTMLCollection
 // getElementByClassName --- HTMLCollection
 
