@@ -6,41 +6,46 @@
             (Max кoличество баллов: {{weight}})</span></h2>
         {% endif %}
 
-	{% if question != '' %}
-        <p id="question">{{question}}</p>
-    {% endif %}
-
-    {% if is_course_staff %}
-	   <div id="correct_answer">Правильный ответ: {{correct_answer}}</div>
-	   <div>Ответ студента: </div>
-    
-	   <textarea name="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
-
+    {% if not scenarios %}
+        <div class="scenarios_alert">Сценарии не найдены.</div>
     {% else %}
 
-        <textarea name="answer" hidden="hidden" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
+    	{% if question != '' %}
+            <p id="question">{{question}}</p>
+        {% endif %}
 
-    {% endif %}
-	
-	
-        {{student_view_template|safe}}
-        <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
+        {% if is_course_staff %}
+    	   <div id="correct_answer">Правильный ответ: {{correct_answer}}</div>
+    	   <div>Ответ студента: </div>
+        
+    	   <textarea name="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
 
-    <div class="xblock-actions" style="padding-top:2em;">
-        <ul>
-            <li class="action-item send_button" >
-            {% if past_due and answer_opportunity %}
-                <input class="check Check" type="button" value="Проверить">
-                {% if max_attempts %}
-                    <p>Попыток: <span class="attempts">{{attempts}}</span> из {{max_attempts}}</p>
+        {% else %}
+
+            <textarea name="answer" hidden="hidden" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
+
+        {% endif %}
+    	
+    	
+            {{student_view_template|safe}}
+            <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
+
+        <div class="xblock-actions" style="padding-top:2em;">
+            <ul>
+                <li class="action-item send_button" >
+                {% if past_due and answer_opportunity %}
+                    <input class="check Check" type="button" value="Проверить">
+                    {% if max_attempts %}
+                        <p>Попыток: <span class="attempts">{{attempts}}</span> из {{max_attempts}}</p>
+                    {% endif %}
+                {% elif past_due %}
+                    <p><strong>Попытки исчерпаны</strong></p>
+                {% elif answer_opportunity %}
+                    <p><strong>Время для ответа истекло</strong></p>
                 {% endif %}
-            {% elif past_due %}
-                <p><strong>Попытки исчерпаны</strong></p>
-            {% elif answer_opportunity %}
-                <p><strong>Время для ответа истекло</strong></p>
-            {% endif %}
-            </li>
-        </ul>
-	</div>
+                </li>
+            </ul>
+    	</div>
+    {% endif %}
 </div>
 

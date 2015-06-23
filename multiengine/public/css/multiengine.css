@@ -5,3 +5,11 @@
 div.xblock-actions ul {
     list-style-type: none;
 }
+
+.scenarios_alert {
+	padding: 5px;
+	background-color: #F26464;
+	color: white;
+	border-radius: 2px;
+}
+

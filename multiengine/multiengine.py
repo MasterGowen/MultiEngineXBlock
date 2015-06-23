@@ -221,6 +221,8 @@ class MultiEngineXBlock(XBlock):
         The primary view of the MultiEngineXBlock, shown to students
         when viewing courses.
         """
+        scenarios = self.load_scenarios()
+
         context = {
             "display_name": self.display_name,
             "weight": self.weight,
@@ -231,6 +233,7 @@ class MultiEngineXBlock(XBlock):
             "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
             "scenario": self.scenario,
+            "scenarios": scenarios,
         }
 
         if self.max_attempts != 0:
