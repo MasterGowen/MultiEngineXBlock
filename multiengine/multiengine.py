@@ -264,7 +264,7 @@ class MultiEngineXBlock(XBlock):
         )
 
         css_urls = (
-            'public/css/multiengine.css',
+            'static/css/multiengine.css',
         )
 
         self.load_resources(js_urls, css_urls, fragment)
