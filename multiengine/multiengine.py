@@ -260,7 +260,7 @@ class MultiEngineXBlock(XBlock):
         )
 
         js_urls = (
-            'public/js/multiengine.js',
+            'static/js/multiengine.js',
         )
 
         css_urls = (
@@ -305,11 +305,11 @@ class MultiEngineXBlock(XBlock):
         )
 
         js_urls = (
-            "public/js/multiengine_edit.js",
+            "static/js/multiengine_edit.js",
         )
 
         css_urls = (
-            'public/css/multiengine.css',
+            'static/css/multiengine.css',
         )
 
         self.load_resources(js_urls, css_urls, fragment)
@@ -358,7 +358,7 @@ class MultiEngineXBlock(XBlock):
         """
         Обновление репозитория сценариев из внешнего git-репозитория
         """
-
+        require(self.is_course_staff())
         if self.is_repo():
             try:
                 self.update_local_repo()
@@ -598,3 +598,10 @@ def load_resource(resource_path):
         return smart_text(resource_content)
     except EnvironmentError:
         pass
+
+def require(assertion):
+    """
+    Raises PermissionDenied if assertion is not true.
+    """
+    if not assertion:
+        raise PermissionDenied

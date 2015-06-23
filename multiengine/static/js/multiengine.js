@@ -11,7 +11,22 @@ function MultiEngineXBlock(runtime, element) {
             };
     }
 
-var handlerUrl = runtime.handlerUrl(element, 'student_submit');
+    var handlerUrl = runtime.handlerUrl(element, 'student_submit');
+
+
+    //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
+    if ($(element).find('.update_scenarios_repo').length === 0) {
+        var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
+    };
+
+    //TODO: Кнопка обновления сценариев
+    $(element).find('.update_scenarios_repo').bind('click', function() {
+        $(element).find("#overlay").css("display", "block");
+        var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
+        $.post(updateScenariosRepo).done(function(response) {
+            window.location.reload(false);
+        });
+    });
 
 
     $(element).find('.Check').bind('click', function() {
