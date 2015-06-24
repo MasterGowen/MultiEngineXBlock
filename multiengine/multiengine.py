@@ -162,19 +162,30 @@ class MultiEngineXBlock(XBlock):
         scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
         LATEST = True
         return LATEST
-    
+
     def load_scenarios(self):
         scenarios = {}
+        _sc_keys = ['name::', 'description::', 'html::', 'javascript::', 'css::']
+
         if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
-            for file in os.listdir(self.SCENARIOS_ROOT):
-                if file.endswith(".js"):
-                    def _get_name(file):
-                        read_file = open(self.SCENARIOS_ROOT + file)
-                        name = read_file.readline()
-                        name = re.sub('/*', '', name)
-                        return name
-                    scenarios[os.path.splitext(file)[0]] = _get_name(file)
-            
+
+            def _scenario_parser(scenario_file):
+                _scenario_content = {}
+                with open(self.SCENARIOS_ROOT + scenario_file) as scf:
+                    for line in scf:
+                        if any(ext in line for ext in _sc_keys):
+                            _current_key = line.strip().strip(':')
+                        else:
+                            if _current_key in _scenario_content:
+                                _scenario_content[_current_key] += line.decode('utf-8')
+                            else:
+                                _scenario_content[_current_key] = line.strip().decode('utf-8')
+                return _scenario_content
+
+            for scenario_file in os.listdir(self.SCENARIOS_ROOT):
+                if scenario_file.endswith(".sc"):
+                    scenarios[os.path.splitext(scenario_file)[0]] = _scenario_parser(scenario_file)
+
         return scenarios
 
     def get_scenario_content(self, scenario):
@@ -271,7 +282,6 @@ class MultiEngineXBlock(XBlock):
 
         fragment.initialize_js('MultiEngineXBlock')
         return fragment
-
 
     def studio_view(self, context):
 
