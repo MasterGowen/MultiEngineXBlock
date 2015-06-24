@@ -16,6 +16,7 @@ from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.core.exceptions import PermissionDenied
 
 
 from xblock.core import XBlock
@@ -77,7 +78,7 @@ class MultiEngineXBlock(XBlock):
         display_name=u"Максимальное количество попыток",
         help=(""),
         default=0,
-        scope = Scope.settings
+        scope=Scope.settings
     )
 
     # user_state
@@ -101,7 +102,7 @@ class MultiEngineXBlock(XBlock):
 
     student_view_json = String(
         display_name=u"Состояние сценария, видимое студенту",
-        scope = Scope.settings
+        scope=Scope.settings
     )
 
     student_view_template = String(
@@ -190,7 +191,7 @@ class MultiEngineXBlock(XBlock):
 
     def get_scenario_content(self, scenario):
         try:
-            scenario_file = open(self.SCENARIOS_ROOT + scenario + '.js', 'r')
+            scenario_file = open(self.SCENARIOS_ROOT + scenario + '.cs', 'r')
 
             with scenario_file as jsfile:
                scenario_content=jsfile.read()
@@ -387,7 +388,7 @@ class MultiEngineXBlock(XBlock):
         Fetch student assignment from storage and return it.
         """
         if self.scenario:
-            return self.download(self.SCENARIOS_ROOT, self.scenario + '.js')
+            return self.download(self.SCENARIOS_ROOT, self.scenario + '.sc')
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):

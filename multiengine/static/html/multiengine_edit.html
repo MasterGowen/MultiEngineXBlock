@@ -68,19 +68,19 @@
 
         {% endif %}
 
-          {% for filename, name in scenarios.items %}
+          {% for filename, sc in scenarios.items %}
 
             <option value="{{filename|safe}}">
-              {{ name }}
+              {{ sc.name }} - {{sc.description}}
             </option>
 
           {% endfor %}
         {% else %}
         {% if scenarios %}
         <p> Вы выбрали сценарий:
-          {% for filename, name in scenarios.items %}
+          {% for filename, sc in scenarios.items %}
             {% if filename == scenario %}
-              <span style="color:red"><strong>{{ name }}</strong></span>
+              <span style="color:red"><strong>{{ sc.name }}</strong></span>
               
             {% endif %}
           {% endfor %}
