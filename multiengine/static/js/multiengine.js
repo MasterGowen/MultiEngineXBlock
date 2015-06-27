@@ -28,6 +28,31 @@ function MultiEngineXBlock(runtime, element) {
         });
     });
 
+    //Возврат сценариев
+    var scenarioURL = runtime.handlerUrl(element, 'send_scenario')
+    function getScenario(scenarioURL) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", scenarioURL, false);
+        xhr.send(null);
+
+        xhr.onload = function(e) {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.error(xhr.statusText);
+                } else {
+                    console.error(xhr.statusText);
+                }
+            }
+        };
+        xhr.onerror = function(e) {
+            console.error(xhr.statusText);
+        };
+        return xhr.responseText;
+    };
+    
+    $(element).find('textarea[name=answer]').val(atob(getScenario(scenarioURL)));
+    eval(JSON.parse($(document).find('textarea[name=answer]').val()).javascript);
+
 
     $(element).find('.Check').bind('click', function() {
     var data = $(element).find('textarea[name=answer]').val();

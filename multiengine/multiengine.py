@@ -11,16 +11,21 @@ import re
 from path import path
 import git
 import shutil
+import ast
+import logging
+
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.cache import cache_page
 
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
+from xblock.fields import BlockScope, UserScope
 from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
@@ -29,6 +34,8 @@ from webob.response import Response
 from webob.exc import HTTPNotFound
 
 from settings import GIT_REPO_URL
+
+logger = logging.getLogger('MultiEngineXBlock')
 
 
 class MultiEngineXBlock(XBlock):
@@ -40,6 +47,7 @@ class MultiEngineXBlock(XBlock):
         default='MultiEngine',
         scope=Scope.settings
     )
+
     question = String(
         display_name="Вопрос",
         help="Текст задания.",
@@ -74,6 +82,7 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.settings,
         default=None,
     )
+
     max_attempts = Integer(
         display_name=u"Максимальное количество попыток",
         help=(""),
@@ -117,6 +126,7 @@ class MultiEngineXBlock(XBlock):
         default=False,
         scope=Scope.settings
     )
+
 
     has_score = True
 
@@ -233,8 +243,8 @@ class MultiEngineXBlock(XBlock):
         The primary view of the MultiEngineXBlock, shown to students
         when viewing courses.
         """
-        scenarios = self.load_scenarios()
-
+        
+        scenarios = self.load_scenarios
         context = {
             "display_name": self.display_name,
             "weight": self.weight,
@@ -365,11 +375,47 @@ class MultiEngineXBlock(XBlock):
         return res
 
     @XBlock.handler
+    def send_scenario(self, request, suffix=''):
+        """
+        Отправляет сценарий пользователю
+        """
+
+        #TODO #1 Забрать выбранный сценарий из базы
+        #TODO #2 Собрать тело ответа
+        #TODO #3 Вернуть Response
+
+        import base64
+
+        scenarios = self.load_scenarios()
+        #memc = memcache.Client(["127.0.0.1:11211",])  #settings.CACHES['LOCATION']
+        #memc.set('multiengine_scenarios', scenarios)
+
+        #scenarios = ast.literal_eval(scenarios)
+
+        if smart_text(self.scenario) in scenarios:
+
+            context = {
+                "name": scenarios[smart_text(self.scenario)]["name"].strip(),
+                "html": scenarios[smart_text(self.scenario)]["html"].strip(),
+                "css": scenarios[smart_text(self.scenario)]["css"].strip(),
+                "javascript": scenarios[smart_text(self.scenario)]["javascript"].strip(),
+                "description": scenarios[smart_text(self.scenario)]["description"].strip(),
+            }
+            context = base64.b64encode(str(json.dumps(context)))
+            response = Response(body=context, content_type='text/plain')
+        else:
+            response = Response(body="Scenario not found", content_type='text/plain')
+
+
+        
+        return response
+
+    @XBlock.handler
     def update_scenarios_repo(self, request, suffix=''):
         """
         Обновление репозитория сценариев из внешнего git-репозитория
         """
-        require(self.is_course_staff())
+        #require(self.is_course_staff())  # TODO Узнать почему 403 в Студии
         if self.is_repo():
             try:
                 self.update_local_repo()
