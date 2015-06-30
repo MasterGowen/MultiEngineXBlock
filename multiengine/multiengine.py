@@ -391,9 +391,18 @@ class MultiEngineXBlock(XBlock):
                 "javascriptStudio": scenarios[smart_text(self.scenario)]["javascriptStudio"].strip(),
                 "description": scenarios[smart_text(self.scenario)]["description"].strip(),
             }
-            response = Response(body=json.dumps(context), content_type='text/plain')
+            
         else:
-            response = Response(body="Scenario not found", content_type='text/plain')
+            context = {
+                "name": '',
+                "html": 'Scenario not found',
+                "css": '',
+                "javascriptStudent": '',
+                "javascriptStudio": '',
+                "description": '',
+            }
+            
+        response = Response(body=json.dumps(context), content_type='text/plain')
 
         return response
 
