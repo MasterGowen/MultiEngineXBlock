@@ -1,18 +1,20 @@
 /* Javascript for MultiEngineXBlock. */
 function MultiEngineXBlock(runtime, element) {
-    
-    function success_func(result) {
-    		//console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
-            $('.attempts', element).text(result.attempts);
-            $('.points', element).text(result.correct/result.weight*100);
+    /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
-            if (result.max_attempts <= result.attempts) {
-                $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
-            };
+        The description for ``someMethod``.
+    */
+    function success_func(result) {
+        //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
+        $('.attempts', element).text(result.attempts);
+        $('.points', element).text(result.correct / result.weight * 100);
+
+        if (result.max_attempts <= result.attempts) {
+            $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
+        };
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
-
 
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
     if ($(element).find('.update_scenarios_repo').length === 0) {
@@ -29,7 +31,9 @@ function MultiEngineXBlock(runtime, element) {
     });
 
     //Возврат сценариев
-    var scenarioURL = runtime.handlerUrl(element, 'send_scenario')
+    scenarioURL = runtime.handlerUrl(element, 'send_scenario');
+
+
     function getScenario(scenarioURL) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", scenarioURL, false);
@@ -49,20 +53,21 @@ function MultiEngineXBlock(runtime, element) {
         };
         return xhr.responseText;
     };
-    
-    $(element).find('textarea[name=answer]').val(atob(getScenario(scenarioURL)));
-    eval(JSON.parse($(document).find('textarea[name=answer]').val()).javascript);
 
+    var scenario = getScenario(scenarioURL);
+    var scenarioJSON = JSON.parse(scenario);
+
+    eval(scenarioJSON.javascriptStudent)
 
     $(element).find('.Check').bind('click', function() {
-    var data = $(element).find('textarea[name=answer]').val();
-    
-            $.ajax({
+        var data = $(element).find('textarea[name=answer]').val();
+
+        $.ajax({
             type: "POST",
             url: handlerUrl,
             data: JSON.stringify(data),
-            success: success_func 
+            success: success_func
         });
-  });
+    });
 
 }

@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    multiengine.rst
+   lms_js.rst
 
 Indices and tables
 ==================

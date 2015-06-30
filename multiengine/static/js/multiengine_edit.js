@@ -73,25 +73,25 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 	//TODO: Кнопка обновления сценариев
-    if ($(element).find('.update_scenarios_repo').length === 0) {
-        var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
-    };
+	if ($(element).find('.update_scenarios_repo').length === 0) {
+		var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
+	};
 
-    //TODO: Кнопка обновления сценариев
-    $(element).find('.update_scenarios_repo').bind('click', function() {
-        $(element).find("#overlay").css("display", "block");
-        var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
-        $.post(updateScenariosRepo).done(function(response) {
-            window.location.reload(false);
-        });
-    });
+	//TODO: Кнопка обновления сценариев
+	$(element).find('.update_scenarios_repo').bind('click', function() {
+		$(element).find("#overlay").css("display", "block");
+		var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
+		$.post(updateScenariosRepo).done(function(response) {
+			window.location.reload(false);
+		});
+	});
 
 	var downloadUrl = runtime.handlerUrl(element, 'download_scenario');
 
 	//TODO: Подгрузка сценапия
-	function getScenario(downloadUrl) {
+	function getScenario(scenarioURL) {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", downloadUrl, false);
+		xhr.open("GET", scenarioURL, false);
 		xhr.send(null);
 
 		xhr.onload = function(e) {
@@ -108,7 +108,11 @@ function MultiEngineXBlockEdit(runtime, element) {
 		};
 		return xhr.responseText;
 	};
-    getScenario(downloadUrl);
+
+	var scenario = getScenario(scenarioURL);
+	var scenarioJSON = JSON.parse(scenario);
+
+	eval(scenarioJSON.javascriptStudent)
 
 
 	//jsDesign 

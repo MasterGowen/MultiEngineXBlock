@@ -37,20 +37,18 @@
             <p id="question">{{question}}</p>
         {% endif %}
 
-        {% if is_course_staff %}
-    	   <div id="correct_answer">Правильный ответ: {{correct_answer}}</div>
-    	   <div>Ответ студента: </div>
-        
-    	   <textarea name="answer" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
-
+        {% if is_course_staff %}  
+    	     <textarea name="answer" hidden="hidden" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
         {% else %}
-
             <textarea name="answer" hidden="hidden" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
-
         {% endif %}
     	
-    	
+    	{% if student_view_template %}
             {{student_view_template|safe}}
+        {% else %}
+          <div id="student_view_template"></div>
+        {% endif %}
+
             <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
 
         <div class="xblock-actions" style="padding-top:2em;">

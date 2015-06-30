@@ -7,31 +7,25 @@ import pkg_resources
 import pytz
 import json
 import os
-import re
 from path import path
 import git
 import shutil
-import ast
 import logging
+import base64
 
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
-from django.conf import settings
-from django.core.files.storage import default_storage
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.cache import cache_page
 
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
-from xblock.fields import BlockScope, UserScope
 from xblock.fragment import Fragment
 
 from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
-from webob.exc import HTTPNotFound
 
 from settings import GIT_REPO_URL
 
@@ -176,7 +170,14 @@ class MultiEngineXBlock(XBlock):
 
     def load_scenarios(self):
         scenarios = {}
-        _sc_keys = ['name::', 'description::', 'html::', 'javascript::', 'css::']
+        _sc_keys = [
+                    'name::',
+                    'description::',
+                    'html::',
+                    'javascriptStudent::',
+                    'javascriptStudio::',
+                    'css::'
+                    ]
 
         if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
 
@@ -379,35 +380,21 @@ class MultiEngineXBlock(XBlock):
         """
         Отправляет сценарий пользователю
         """
-
-        #TODO #1 Забрать выбранный сценарий из базы
-        #TODO #2 Собрать тело ответа
-        #TODO #3 Вернуть Response
-
-        import base64
-
         scenarios = self.load_scenarios()
-        #memc = memcache.Client(["127.0.0.1:11211",])  #settings.CACHES['LOCATION']
-        #memc.set('multiengine_scenarios', scenarios)
-
-        #scenarios = ast.literal_eval(scenarios)
-
         if smart_text(self.scenario) in scenarios:
 
             context = {
                 "name": scenarios[smart_text(self.scenario)]["name"].strip(),
                 "html": scenarios[smart_text(self.scenario)]["html"].strip(),
                 "css": scenarios[smart_text(self.scenario)]["css"].strip(),
-                "javascript": scenarios[smart_text(self.scenario)]["javascript"].strip(),
+                "javascriptStudent": scenarios[smart_text(self.scenario)]["javascriptStudent"].strip(),
+                "javascriptStudio": scenarios[smart_text(self.scenario)]["javascriptStudio"].strip(),
                 "description": scenarios[smart_text(self.scenario)]["description"].strip(),
             }
-            context = base64.b64encode(str(json.dumps(context)))
-            response = Response(body=context, content_type='text/plain')
+            response = Response(body=json.dumps(context), content_type='text/plain')
         else:
             response = Response(body="Scenario not found", content_type='text/plain')
 
-
-        
         return response
 
     @XBlock.handler
