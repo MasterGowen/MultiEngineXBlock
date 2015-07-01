@@ -70,7 +70,20 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	function actionsView(windowView, scenario) {};
 
+	//jsDesign 
+	//start
+	// Функция которая должна отвечать за работу Вкладок RAW / View и следить за событием конвертирования (false or true)
+	function toggleTabs() {};
 
+
+	// Окно редактирование RAW Code
+	var editor = CodeMirror.fromTextArea(elementDOM.querySelector('#student_view_template'), {
+		mode: "text/html",
+		tabMode: "indent",
+		lineNumbers: true
+	});
+	//jsDesign
+	//end
 
 	//TODO: Кнопка обновления сценариев
 	if ($(element).find('.update_scenarios_repo').length === 0) {
@@ -112,23 +125,11 @@ function MultiEngineXBlockEdit(runtime, element) {
 	var scenario = getScenario(scenarioURL);
 	var scenarioJSON = JSON.parse(scenario);
 
-	eval(scenarioJSON.javascriptStudent)
+	if (editor.getValue().length === 0) {
+		$(element).find('.windowRaw').html(scenarioJSON.html);
+	}
 
-
-	//jsDesign 
-	//start
-	// Функция которая должна отвечать за работу Вкладок RAW / View и следить за событием конвертирования (false or true)
-	function toggleTabs() {};
-
-
-	// Окно редактирование RAW Code
-	var editor = CodeMirror.fromTextArea(elementDOM.querySelector('#student_view_template'), {
-		mode: "text/html",
-		tabMode: "indent",
-		lineNumbers: true
-	});
-	//jsDesign
-	//end
+	eval(scenarioJSON.javascriptStudio)
 
 
 
