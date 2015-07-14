@@ -125,7 +125,10 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	
 	setBlockHtml('scenarioTemplate', scenarioJSON.html);
+	setBlockHtml('scenarioStyle', scenarioJSON.css);
+	
 	eval(scenarioJSON.javascriptStudio);
+	
 
 
 
