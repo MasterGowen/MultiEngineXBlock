@@ -99,9 +99,11 @@ function MultiEngineXBlockEdit(runtime, element) {
 		});
 	});
 
-	var downloadUrl = runtime.handlerUrl(element, 'download_scenario');
 
 	//TODO: Подгрузка сценапия
+
+    scenarioURL = runtime.handlerUrl(element, 'send_scenario');
+
 	function getScenario(scenarioURL) {
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", scenarioURL, false);

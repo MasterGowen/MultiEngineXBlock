@@ -42,7 +42,7 @@ function MultiEngineXBlock(runtime, element) {
         xhr.onload = function(e) {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    console.error(xhr.statusText);
+                    console.log('Scenario loading ... OK!');
                 } else {
                     console.error(xhr.statusText);
                 }

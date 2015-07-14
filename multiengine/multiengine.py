@@ -424,9 +424,11 @@ class MultiEngineXBlock(XBlock):
         response = Response(body='{"result": "success"}', content_type='application/json' )
         return response
 
+    # Deprecated
     @XBlock.handler
     def download_scenario(self, request, suffix=''):
         """
+        ! Deprecated !
         Fetch student assignment from storage and return it.
         """
         if self.scenario:
