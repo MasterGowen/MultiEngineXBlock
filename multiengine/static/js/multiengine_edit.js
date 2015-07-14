@@ -63,11 +63,8 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	//Функции которые надо описать
 	function generationTamplate() {};
-
 	function conversionToRaw() {};
-
 	function conversionInRaw() {};
-
 	function actionsView(windowView, scenario) {};
 
 	//jsDesign 
@@ -101,7 +98,6 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 	//TODO: Подгрузка сценапия
-
     scenarioURL = runtime.handlerUrl(element, 'send_scenario');
 
 	function getScenario(scenarioURL) {
@@ -127,10 +123,8 @@ function MultiEngineXBlockEdit(runtime, element) {
 	var scenario = getScenario(scenarioURL);
 	var scenarioJSON = JSON.parse(scenario);
 
-	if (editor.getValue().length === 0) {
-		$(element).find('.windowRaw').html(scenarioJSON.html);
-	}
-
+	
+	setBlockHtml('scenarioTemplate', scenarioJSON.html);
 	eval(scenarioJSON.javascriptStudio)
 
 
