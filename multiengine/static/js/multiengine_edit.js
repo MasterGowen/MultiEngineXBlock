@@ -125,7 +125,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	
 	setBlockHtml('scenarioTemplate', scenarioJSON.html);
-	eval(scenarioJSON.javascriptStudio)
+	eval(scenarioJSON.javascriptStudio);
 
 
 
