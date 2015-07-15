@@ -59,7 +59,7 @@
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
           <select class="input setting-input" name="scenario" id="scenario">
-            <option>--------------</option>
+            <option selected="selected">--------------</option>
       {% if not scenario %}
             {% if scenarios %}
               {% for filename, sc in scenarios.items %}
@@ -76,7 +76,7 @@
             <p> Вы выбрали сценарий:
                 {% for filename, sc in scenarios.items %}
                   {% if filename == scenario %}
-                    <option value="{{filename|safe}}" disabled="disabled">
+                    <option value="{{filename|safe}}" selected="selected" disabled="disabled">
                       {{ sc.name }} - {{sc.description}}
                     </option>
                   {% endif %}
