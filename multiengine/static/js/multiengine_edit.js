@@ -26,7 +26,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 		};*/
 		for (var i = 0; i < value.length; i++) {
 			if (value[i].nodeType == 1) {
-				childList.push(val[i])
+				childList.push(value[i])
 			};
 		};
 		return childList;
