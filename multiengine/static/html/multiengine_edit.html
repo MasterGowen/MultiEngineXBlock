@@ -57,39 +57,36 @@
     </li>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-      {% if not scenario %}
-        {% if scenarios %}
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
-
-        <select class="input setting-input" name="scenario" id="scenario">
-        {% else %}
-        <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
-          <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
-
-        {% endif %}
-
-          {% for filename, sc in scenarios.items %}
-
-            <option value="{{filename|safe}}">
-              {{ sc.name }} - {{sc.description}}
-            </option>
-
-          {% endfor %}
-        {% else %}
-        {% if scenarios %}
-        <p> Вы выбрали сценарий:
-          {% for filename, sc in scenarios.items %}
-            {% if filename == scenario %}
-              <span style="color:red"><strong>{{ sc.name }}</strong></span>
-              
+          <select class="input setting-input" name="scenario" id="scenario">
+            <option>--------------</option>
+      {% if not scenario %}
+            {% if scenarios %}
+              {% for filename, sc in scenarios.items %}
+                <option value="{{filename|safe}}">
+                  {{ sc.name }} - {{sc.description}}
+                </option>
+              {% endfor %}
+            {% else %}
+              <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
+              <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
             {% endif %}
-          {% endfor %}
-        </p>
-        {% else %}
-          <span class="scenario_alert" style="color:red;font-size:75%">Возможно, файл сценария не найден или создан неправильно.</span>
-          <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
-          {% endif %}
-        {% endif %}
+      {% else %}
+            {% if scenarios %}
+            <p> Вы выбрали сценарий:
+                {% for filename, sc in scenarios.items %}
+                  {% if filename == scenario %}
+                    <option value="{{filename|safe}}" disabled="disabled">
+                      {{ sc.name }} - {{sc.description}}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+            </p>
+            {% else %}
+              <span class="scenario_alert" style="color:red;font-size:75%">Возможно, файл сценария не найден или создан неправильно.</span>
+              <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
+              {% endif %}
+      {% endif %}
 
         </select>
       </div>
