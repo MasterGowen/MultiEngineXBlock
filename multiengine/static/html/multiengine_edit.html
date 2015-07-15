@@ -59,7 +59,7 @@
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
           <select class="input setting-input" name="scenario" id="scenario">
-            <option selected="selected">--------------</option>
+            
       {% if not scenario %}
             {% if scenarios %}
               {% for filename, sc in scenarios.items %}
@@ -67,7 +67,10 @@
                   {{ sc.name }} - {{sc.description}}
                 </option>
               {% endfor %}
+            </select>
             {% else %}
+              <option selected="selected">--------------</option>
+            </select>
               <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
               <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
             {% endif %}
@@ -80,15 +83,18 @@
                       {{ sc.name }} - {{sc.description}}
                     </option>
                   {% endif %}
+                  </select>
                 {% endfor %}
             </p>
             {% else %}
+              <option selected="selected">--------------</option>
+              </select>
               <span class="scenario_alert" style="color:red;font-size:75%">Возможно, файл сценария не найден или создан неправильно.</span>
               <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
               {% endif %}
       {% endif %}
 
-        </select>
+        
       </div>
     </li>
     <style id="scenarioStyle" type="text/css"></style>
