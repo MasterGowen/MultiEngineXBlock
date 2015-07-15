@@ -58,10 +58,11 @@
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
-          <select class="input setting-input" name="scenario" id="scenario">
+          
             
       {% if not scenario %}
             {% if scenarios %}
+            <select class="input setting-input" name="scenario" id="scenario">
               {% for filename, sc in scenarios.items %}
                 <option value="{{filename|safe}}">
                   {{ sc.name }} - {{sc.description}}
@@ -69,25 +70,27 @@
               {% endfor %}
             </select>
             {% else %}
+            <select class="input setting-input" name="scenario" id="scenario">
               <option selected="selected">--------------</option>
             </select>
-              <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
-              <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
+            <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
+            <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
             {% endif %}
       {% else %}
             {% if scenarios %}
-            
+            <select class="input setting-input" name="scenario" id="scenario" disabled="disabled">
                 {% for filename, sc in scenarios.items %}
                   {% if filename == scenario %}
-                    <option value="{{filename|safe}}" selected="selected" disabled="disabled">
+                    <option value="{{filename|safe}}" selected="selected">
                       {{ sc.name }} - {{sc.description}}
                     </option>
                   {% endif %}
                 {% endfor %}
-                </select>
+            </select>
             
             {% else %}
-              <option selected="selected">--------------</option>
+              <select class="input setting-input" name="scenario" id="scenario">
+                <option selected="selected">--------------</option>
               </select>
               <span class="scenario_alert" style="color:red;font-size:75%">Возможно, файл сценария не найден или создан неправильно.</span>
               <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
