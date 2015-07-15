@@ -1,5 +1,6 @@
 <div class="wrapper-comp-settings editor-with-buttons is-active" id="settings-tab">
-  <ul class="list-input settings-list step-one">
+  <ul class="list-input settings-list">
+  
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="display_name">Название:</label>
@@ -7,6 +8,7 @@
         <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
       </div>
     </li>
+    <div class='step-one'>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="student_view_template">student_view_template:</label>
@@ -53,8 +55,8 @@
         {% endif %}
       </div>
     </li>
-  </ul>
-  <ul class="list-input settings-list step-two">
+  </div>
+  <div class="step-two">
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
@@ -103,6 +105,7 @@
     <style id="scenarioStyle" type="text/css"></style>
     <li id="scenarioTemplate" class="field comp-setting-entry is-set">
     </li>
+    </div>
   </ul>
   
 
