@@ -76,16 +76,16 @@
             {% endif %}
       {% else %}
             {% if scenarios %}
-            <p> Вы выбрали сценарий:
+            
                 {% for filename, sc in scenarios.items %}
                   {% if filename == scenario %}
                     <option value="{{filename|safe}}" selected="selected" disabled="disabled">
                       {{ sc.name }} - {{sc.description}}
                     </option>
                   {% endif %}
-                  </select>
                 {% endfor %}
-            </p>
+                </select>
+            
             {% else %}
               <option selected="selected">--------------</option>
               </select>
