@@ -176,7 +176,8 @@ class MultiEngineXBlock(XBlock):
                     'html::',
                     'javascriptStudent::',
                     'javascriptStudio::',
-                    'css::'
+                    'css::',
+                    'cssStudent::',
                     ]
 
         if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
@@ -390,6 +391,7 @@ class MultiEngineXBlock(XBlock):
                 "javascriptStudent": scenarios[smart_text(self.scenario)]["javascriptStudent"].strip(),
                 "javascriptStudio": scenarios[smart_text(self.scenario)]["javascriptStudio"].strip(),
                 "description": scenarios[smart_text(self.scenario)]["description"].strip(),
+                "cssStudent": scenarios[smart_text(self.scenario)]["cssStudent"].strip(),
             }
             
         else:
@@ -400,6 +402,7 @@ class MultiEngineXBlock(XBlock):
                 "javascriptStudent": '',
                 "javascriptStudio": '',
                 "description": '',
+                "cssStudent": '',
             }
             
         response = Response(body=json.dumps(context), content_type='text/plain')
