@@ -168,7 +168,7 @@ class MultiEngineXBlock(XBlock):
         LATEST = True
         return LATEST
 
-    def load_scenarios(self):
+    def load_scenarios(self, keys=None):
         scenarios = {}
         _sc_keys = [
                     'name::',
@@ -179,6 +179,8 @@ class MultiEngineXBlock(XBlock):
                     'css::',
                     'cssStudent::',
                     ]
+        if keys == "get":
+            return _sc_keys
 
         if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
 
@@ -383,17 +385,13 @@ class MultiEngineXBlock(XBlock):
         """
         scenarios = self.load_scenarios()
         if smart_text(self.scenario) in scenarios:
-
-            context = {
-                "name": scenarios[smart_text(self.scenario)]["name"].strip(),
-                "html": scenarios[smart_text(self.scenario)]["html"].strip(),
-                "css": scenarios[smart_text(self.scenario)]["css"].strip(),
-                "javascriptStudent": scenarios[smart_text(self.scenario)]["javascriptStudent"].strip(),
-                "javascriptStudio": scenarios[smart_text(self.scenario)]["javascriptStudio"].strip(),
-                "description": scenarios[smart_text(self.scenario)]["description"].strip(),
-                "cssStudent": scenarios[smart_text(self.scenario)]["cssStudent"].strip(),
-            }
-            
+            context = {}
+            _sc_keys = self.load_scenarios("get")
+            for key in _sc_keys:
+                key = key.strip(':')
+                if key in scenarios[smart_text(self.scenario)]:
+                    context[key] = scenarios[smart_text(self.scenario)][key].strip()
+           
         else:
             context = {
                 "name": '',
