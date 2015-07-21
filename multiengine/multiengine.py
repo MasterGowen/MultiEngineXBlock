@@ -141,9 +141,15 @@ class MultiEngineXBlock(XBlock):
         
         
     def clean_repo_path(self, path=SCENARIOS_ROOT):
+        """
+        Удаление локального репозитория сценариев
+        """
         shutil.rmtree(path, ignore_errors=True)
     
     def update_local_repo(self):
+        """
+        Обновление локального репозитория сценариев
+        """
         LATEST = False
         scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
         scenarios_repo_remote = git.Remote(
@@ -160,6 +166,10 @@ class MultiEngineXBlock(XBlock):
     
     
     def clone_repo(self):
+        """
+        Клонирование репозитория со сценариями.
+        Адрес репозитория хранится в переменной GIT_REPO_URL в settings.py.
+        """
         scenarios_repo = git.Repo.clone_from(
             GIT_REPO_URL,
             self.SCENARIOS_ROOT
@@ -169,6 +179,9 @@ class MultiEngineXBlock(XBlock):
         return LATEST
 
     def load_scenarios(self, keys=None):
+        """
+        Загрузка сценариев из локального репозитория в список.
+        """
         scenarios = {}
         _sc_keys = [
                     'name::',
@@ -204,6 +217,9 @@ class MultiEngineXBlock(XBlock):
         return scenarios
 
     def get_scenario_content(self, scenario):
+        """
+        Получение текста сценария.
+        """
         try:
             scenario_file = open(self.SCENARIOS_ROOT + scenario + '.cs', 'r')
 
@@ -216,13 +232,16 @@ class MultiEngineXBlock(XBlock):
     send_button = ''
 
     def resource_string(self, path):
-        """Handy helper for getting resources from our kit."""
+        """
+        Handy helper for getting resources from our kit.
+        """
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
     def load_resources(self, js_urls, css_urls, fragment):
-        '''
-        '''
+        """
+        Загрузка локальных статических ресурсов.
+        """
         for js_url in js_urls:
 
             if js_url.startswith('public/'):
@@ -244,8 +263,7 @@ class MultiEngineXBlock(XBlock):
     # TO-DO: change this view to display your data your own way.
     def student_view(self, context=None):
         """
-        The primary view of the MultiEngineXBlock, shown to students
-        when viewing courses.
+        Отображение MultiEngineXBlock студенту (LMS).
         """
         
         scenarios = self.load_scenarios
@@ -299,6 +317,9 @@ class MultiEngineXBlock(XBlock):
         return fragment
 
     def studio_view(self, context):
+        """
+        Отображение MultiEngineXBlock разработчику (CMS).
+        """
 
         scenarios = self.load_scenarios()
 
@@ -355,7 +376,9 @@ class MultiEngineXBlock(XBlock):
     # workbench while developing your XBlock.
     @staticmethod
     def workbench_scenarios():
-        """A canned scenario for display in the workbench."""
+        """
+        A canned scenario for display in the workbench.
+        """
         return [
             ("MultiEngineXBlock",
              """<vertical_demo>
@@ -366,9 +389,11 @@ class MultiEngineXBlock(XBlock):
              """),
         ]
 
+    # Deprecated
     def download(self, path, filename):
         """
-        Return a file from storage and return in a Response.
+        Возвращает клиенту файл.
+        Deprecated.
         """
 
         res = Response(content_type='text/javascript', app_iter=None)
@@ -381,7 +406,7 @@ class MultiEngineXBlock(XBlock):
     @XBlock.handler
     def send_scenario(self, request, suffix=''):
         """
-        Отправляет сценарий пользователю
+        Отправляет сценарий пользователю.
         """
         scenarios = self.load_scenarios()
         if smart_text(self.scenario) in scenarios:
@@ -410,7 +435,7 @@ class MultiEngineXBlock(XBlock):
     @XBlock.handler
     def update_scenarios_repo(self, request, suffix=''):
         """
-        Обновление репозитория сценариев из внешнего git-репозитория
+        Обновление репозитория сценариев из внешнего git-репозитория.
         """
         #require(self.is_course_staff())  # TODO Узнать почему 403 в Студии
         if self.is_repo():
@@ -430,7 +455,7 @@ class MultiEngineXBlock(XBlock):
     def download_scenario(self, request, suffix=''):
         """
         ! Deprecated !
-        Fetch student assignment from storage and return it.
+        Хендлер выгрузки файла сценария.
         """
         if self.scenario:
             return self.download(self.SCENARIOS_ROOT, self.scenario + '.sc')
@@ -472,7 +497,7 @@ class MultiEngineXBlock(XBlock):
                 {"name1": ["param1", "param2"], "name2": ["param3", "param4"]}
             с произвольным количеством ключей,
 
-            возвращает долю совпавших значений
+            возвращает долю совпавших значений.
             """
 
             keywords = ('or', 'and', 'not')
@@ -487,7 +512,7 @@ class MultiEngineXBlock(XBlock):
             def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
                 """
                 Вычисляет долю выполненных заданий без учета
-                последовательности элементов в области
+                последовательности элементов в области.
                 """
                 for key in correct_answer:
                     for value in correct_answer[key]:
@@ -514,7 +539,7 @@ class MultiEngineXBlock(XBlock):
             def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
                 """
                 Вычисляет долю выполненных заданий с учетом
-                последовательности элементов в области
+                последовательности элементов в области.
                 """
                 answer_condition = False
 
@@ -587,7 +612,7 @@ class MultiEngineXBlock(XBlock):
 
     def past_due(self):
             """
-            Return whether due date has passed.
+            Проверка, истекла ли дата для выполнения задания.
             """
             due = get_extended_due_date(self)
             if due is not None:
@@ -597,20 +622,20 @@ class MultiEngineXBlock(XBlock):
 
     def is_course_staff(self):
         """
-         Check if user is course staff.
+        Проверка, является ли пользователь автором курса.
         """
         return getattr(self.xmodule_runtime, 'user_is_staff', False)
 
     def is_instructor(self):
         """
-        Check if user role is instructor.
+        Проверка, является ли пользователь инструктором.
         """
         return self.xmodule_runtime.get_user_role() == 'instructor'
 
 
 def answer_opportunity(self):
     """
-    Возможность ответа (если количество сделанное попыток меньше заданного)
+    Возможность ответа (если количество сделанное попыток меньше заданного).
     """
     if(self.max_attempts <= self.attempts and self.max_attempts != 0):
         return False
@@ -620,7 +645,7 @@ def answer_opportunity(self):
 
 def _now():
     """
-    Получение текущих даты и времени
+    Получение текущих даты и времени.
     """
     return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
