@@ -11,13 +11,10 @@ from path import path
 import git
 import shutil
 import logging
-import base64
-
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
-
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
@@ -36,69 +33,69 @@ class MultiEngineXBlock(XBlock):
 
     # settings
     display_name = String(
-        display_name="Название",
-        help="Название задания, которое увидят студенты.",
-        default='MultiEngine',
+        display_name=u"Название",
+        help=u"Название задания, которое увидят студенты.",
+        default=u'MultiEngine',
         scope=Scope.settings
     )
 
     question = String(
-        display_name="Вопрос",
-        help="Текст задания.",
-        default="Вы готовы?",
+        display_name=u"Вопрос",
+        help=u"Текст задания.",
+        default=u"Вы готовы?",
         scope=Scope.settings
     )
 
     correct_answer = JSONField(
-        display_name="Правильный ответ",
-        help="Скрытое поле для правильного ответа в формате json.",
+        display_name=u"Правильный ответ",
+        help=u"Скрытое поле для правильного ответа в формате json.",
         default={},
         scope=Scope.settings
     )
 
     weight = Integer(
-        display_name="Максимальное количество баллов",
-        help=("Максимальное количество баллов",
-              "которое может получить студент."),
+        display_name=u"Максимальное количество баллов",
+        help=(u"Максимальное количество баллов",
+              u"которое может получить студент."),
         default=100,
         scope=Scope.settings
     )
 
     grade_steps = Integer(
         display_name=u"Шаг оценивания",
-        help=("Количество диапазонов оценивания"),
+        help=u"Количество диапазонов оценивания",
         default=0,
         scope=Scope.settings
     )
     scenario = String(
         display_name=u"Сценарий",
-        help=("Выберите один из сценариев отображения задания."),
+        help=u"Выберите один из сценариев отображения задания.",
         scope=Scope.settings,
         default=None,
     )
 
     max_attempts = Integer(
         display_name=u"Максимальное количество попыток",
-        help=(""),
+        help=u"",
         default=0,
         scope=Scope.settings
     )
 
     # user_state
     points = Integer(
-        display_name="Количество баллов студента",
+        display_name=u"Количество баллов студента",
         default=None,
         scope=Scope.user_state
     )
 
     answer = JSONField(
-        display_name="Ответ пользователя",
+        display_name=u"Ответ пользователя",
         default={"answer": {}},
         scope=Scope.user_state
     )
 
     attempts = Integer(
-        display_name="Количество сделанных попыток",
+        display_name=u"Количество сделанных попыток",
         default=0,
         scope=Scope.user_state
     )
@@ -111,16 +108,15 @@ class MultiEngineXBlock(XBlock):
     student_view_template = String(
         display_name=u"Шаблон сценария",
         default='',
-        scope = Scope.settings
+        scope=Scope.settings
     )
 
     sequence = Boolean(
         display_name=u"Учитывать последовательность выбранных вариантов?",
-        help=(u"Работает не для всех сценариев."),
+        help=u"Работает не для всех сценариев.",
         default=False,
         scope=Scope.settings
     )
-
 
     has_score = True
 
@@ -138,19 +134,19 @@ class MultiEngineXBlock(XBlock):
                     else:
                         pass
             return repo_exists
-        
-        
-    def clean_repo_path(self, path=SCENARIOS_ROOT):
+
+    @staticmethod
+    def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
         """
         Удаление локального репозитория сценариев
         """
-        shutil.rmtree(path, ignore_errors=True)
+        shutil.rmtree(scenarios_root, ignore_errors=True)
     
     def update_local_repo(self):
         """
         Обновление локального репозитория сценариев
         """
-        LATEST = False
+        latest = False
         scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
         scenarios_repo_remote = git.Remote(
             scenarios_repo,
@@ -158,13 +154,12 @@ class MultiEngineXBlock(XBlock):
         info = scenarios_repo_remote.fetch()[0]
         remote_commit = info.commit
         if scenarios_repo.commit().hexsha == remote_commit.hexsha:
-            LATEST = True
+            latest = True
     
         while remote_commit.hexsha != scenarios_repo.commit().hexsha:
             remote_commit = remote_commit.parents[0]
-        return LATEST
-    
-    
+        return latest
+
     def clone_repo(self):
         """
         Клонирование репозитория со сценариями.
@@ -175,8 +170,8 @@ class MultiEngineXBlock(XBlock):
             self.SCENARIOS_ROOT
         )
         scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
-        LATEST = True
-        return LATEST
+        latest = True
+        return scenarios_repo, latest
 
     def load_scenarios(self, keys=None):
         """
@@ -184,14 +179,14 @@ class MultiEngineXBlock(XBlock):
         """
         scenarios = {}
         _sc_keys = [
-                    'name::',
-                    'description::',
-                    'html::',
-                    'javascriptStudent::',
-                    'javascriptStudio::',
-                    'css::',
-                    'cssStudent::',
-                    ]
+            'name::',
+            'description::',
+            'html::',
+            'javascriptStudent::',
+            'javascriptStudio::',
+            'css::',
+            'cssStudent::',
+            ]
         if keys == "get":
             return _sc_keys
 
@@ -224,7 +219,7 @@ class MultiEngineXBlock(XBlock):
             scenario_file = open(self.SCENARIOS_ROOT + scenario + '.cs', 'r')
 
             with scenario_file as jsfile:
-               scenario_content=jsfile.read()
+                scenario_content = jsfile.read()
         except:
             scenario_content = 'alert("Scenario file not found!");'
             logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
@@ -232,7 +227,8 @@ class MultiEngineXBlock(XBlock):
 
     send_button = ''
 
-    def resource_string(self, path):
+    @staticmethod
+    def resource_string(path):
         """
         Handy helper for getting resources from our kit.
         """
@@ -261,8 +257,7 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-    # TO-DO: change this view to display your data your own way.
-    def student_view(self, context=None):
+    def student_view(self):
         """
         Отображение MultiEngineXBlock студенту (LMS).
         """
@@ -317,7 +312,7 @@ class MultiEngineXBlock(XBlock):
         fragment.initialize_js('MultiEngineXBlock')
         return fragment
 
-    def studio_view(self, context):
+    def studio_view(self):
         """
         Отображение MultiEngineXBlock разработчику (CMS).
         """
@@ -392,7 +387,8 @@ class MultiEngineXBlock(XBlock):
         ]
 
     # Deprecated
-    def download(self, path, filename):
+    @staticmethod
+    def download(path, filename):
         """
         Возвращает клиенту файл.
         Deprecated.
@@ -606,7 +602,7 @@ class MultiEngineXBlock(XBlock):
 
         if answer_opportunity(self):
             correct = multicheck(student_answer, correct_answer, settings)  # ={'sequence': True})
-            self.attempts = self.attempts + 1
+            self.attempts += self.attempts
             return {'result': 'success',
                     'correct': correct,
                     'weight': self.weight,
@@ -614,7 +610,7 @@ class MultiEngineXBlock(XBlock):
                     'max_attempts': self.max_attempts,
                     }
         else:
-            return('Max attempts exception!')
+            return 'Max attempts exception!'
 
     def past_due(self):
             """
@@ -622,7 +618,7 @@ class MultiEngineXBlock(XBlock):
             """
             due = get_extended_due_date(self)
             if due is not None:
-                if(_now() > due):
+                if _now() > due:
                     return False
             return True
 
@@ -643,7 +639,7 @@ def answer_opportunity(self):
     """
     Возможность ответа (если количество сделанное попыток меньше заданного).
     """
-    if(self.max_attempts <= self.attempts and self.max_attempts != 0):
+    if self.max_attempts <= self.attempts and self.max_attempts != 0:
         return False
     else:
         return True
@@ -685,6 +681,7 @@ def load_resource(resource_path):
         return smart_text(resource_content)
     except EnvironmentError:
         logger.debug("[MultiEngineXBlock]: " + "Probably not found static resource!")
+
 
 def require(assertion):
     """
