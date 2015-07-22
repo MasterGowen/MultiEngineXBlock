@@ -29,7 +29,7 @@ from webob.response import Response
 
 from settings import GIT_REPO_URL
 
-logger = logging.getLogger('MultiEngineXBlock')
+logger = logging.getLogger(__name__)
 
 
 class MultiEngineXBlock(XBlock):
@@ -227,6 +227,7 @@ class MultiEngineXBlock(XBlock):
                scenario_content=jsfile.read()
         except:
             scenario_content = 'alert("Scenario file not found!");'
+            logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
         return scenario_content
 
     send_button = ''
@@ -365,6 +366,7 @@ class MultiEngineXBlock(XBlock):
             correct_answer = json.loads(self.correct_answer)
         except:
             correct_answer = json.loads('{}')
+            logger.debug("[MultiEngineXBlock]: " + "Empty correct answer!")
 
         correct_answer = json.dumps(correct_answer)
 
@@ -401,6 +403,7 @@ class MultiEngineXBlock(XBlock):
             res.body = open(path + filename, 'r').read()
         except:
             res.body = 'alert("Scenario file not found!");'
+            logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
         return res
 
     @XBlock.handler
@@ -443,9 +446,12 @@ class MultiEngineXBlock(XBlock):
                 self.update_local_repo()
             except:
                 self.clean_repo_path()
+                logger.debug("[MultiEngineXBlock]: " + "Clean repo path")
                 self.clone_repo()
+                logger.debug("[MultiEngineXBlock]: " + "Cloning repo...")
         elif not self.is_repo():
             self.clone_repo()
+            logger.debug("[MultiEngineXBlock]: " + "Cloning repo...")
 
         response = Response(body='{"result": "success"}', content_type='application/json' )
         return response
@@ -678,7 +684,7 @@ def load_resource(resource_path):
         resource_content = pkg_resources.resource_string(__name__, resource_path)
         return smart_text(resource_content)
     except EnvironmentError:
-        pass
+        logger.debug("[MultiEngineXBlock]: " + "Probably not found static resource!")
 
 def require(assertion):
     """
