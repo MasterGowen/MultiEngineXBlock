@@ -602,7 +602,7 @@ class MultiEngineXBlock(XBlock):
 
         if answer_opportunity(self):
             correct = multicheck(student_answer, correct_answer, settings)  # ={'sequence': True})
-            self.attempts += self.attempts
+            self.attempts += 1
             return {'result': 'success',
                     'correct': correct,
                     'weight': self.weight,
