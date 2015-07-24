@@ -257,7 +257,7 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-    def student_view(self):
+    def student_view(self, *args, **kwargs):
         """
         Отображение MultiEngineXBlock студенту (LMS).
         """
@@ -312,7 +312,7 @@ class MultiEngineXBlock(XBlock):
         fragment.initialize_js('MultiEngineXBlock')
         return fragment
 
-    def studio_view(self):
+    def studio_view(self, *args, **kwargs):
         """
         Отображение MultiEngineXBlock разработчику (CMS).
         """
@@ -584,7 +584,6 @@ class MultiEngineXBlock(XBlock):
 
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
                 result = int(round(result * self.weight))
-                self.points = result
                 self.runtime.publish(self, 'grade', {
                     'value': self.points,
                     'max_value': self.weight,
@@ -601,7 +600,8 @@ class MultiEngineXBlock(XBlock):
             return _result_postproduction(result)
 
         if answer_opportunity(self):
-            correct = multicheck(student_answer, correct_answer, settings)  # ={'sequence': True})
+            correct = multicheck(student_answer, correct_answer, settings)
+            self.points = correct
             self.attempts += 1
             return {'result': 'success',
                     'correct': correct,
@@ -610,7 +610,7 @@ class MultiEngineXBlock(XBlock):
                     'max_attempts': self.max_attempts,
                     }
         else:
-            return 'Max attempts exception!'
+            return('Max attempts exception!')
 
     def past_due(self):
             """
