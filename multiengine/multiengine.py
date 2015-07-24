@@ -516,6 +516,10 @@ class MultiEngineXBlock(XBlock):
                 Вычисляет долю выполненных заданий без учета
                 последовательности элементов в области.
                 """
+
+                right_answers = []
+                wrong_answers = []
+
                 for key in correct_answer:
                     for value in correct_answer[key]:
                         if value in keywords:
@@ -532,17 +536,27 @@ class MultiEngineXBlock(XBlock):
                                 checked += len(student_answer[key])
 
                         elif value in student_answer[key]:
+                            right_answers.append(value)
                             checked += 1
                             correct += 1
                         else:
+                            wrong_answers.append(value)
                             checked += 1
-                return correct / float(checked)
+
+                checks = {"result": correct / float(checked),
+                        "right_answers": right_answers,
+                        "wrong_answers": wrong_answers,
+                        }
+                return checks
 
             def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
                 """
                 Вычисляет долю выполненных заданий с учетом
                 последовательности элементов в области.
                 """
+                right_answers = []
+                wrong_answers = []
+
                 answer_condition = False
 
                 for key in correct_answer:
@@ -559,7 +573,10 @@ class MultiEngineXBlock(XBlock):
                             answer_condition = str(student_answer_true) == str(correct_answer[key])
 
                         if answer_condition:
+                            right_answers += student_answer_true
                             correct += len(correct_answer[key])
+                        else:
+                            wrong_answers += student_answer_true
                         checked += len(correct_answer[key])
 
                     else:
@@ -578,9 +595,16 @@ class MultiEngineXBlock(XBlock):
                                 checked += max_length(correct_values)
 
                                 if answer_condition:
+                                    right_answers += student_answer[key]
                                     correct += len(student_answer[key])
+                                else:
+                                    wrong_answers += student_answer[key]
 
-                return correct / float(checked)
+                checks = {"result": correct / float(checked),
+                        "right_answers": right_answers,
+                        "wrong_answers": wrong_answers,
+                        }
+                return checks
 
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
                 result = int(round(result * self.weight))
@@ -591,16 +615,19 @@ class MultiEngineXBlock(XBlock):
                 return result
 
             if settings['sequence'] is True:
-                result = _compare_answers_sequenced(student_answer, correct_answer)
+                checks = _compare_answers_sequenced(student_answer, correct_answer)
             elif settings['sequence'] is False:
-                result = _compare_answers_not_sequenced(student_answer, correct_answer)
+                checks = _compare_answers_not_sequenced(student_answer, correct_answer)
             else:
                 pass
 
-            return _result_postproduction(result)
+            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"]
 
         if answer_opportunity(self):
-            correct = multicheck(student_answer, correct_answer, settings)
+            checks = multicheck(student_answer, correct_answer, settings)
+            correct = checks[0]
+            right_answers = checks[1]
+            wrong_answers = checks[2]
             self.points = correct
             self.attempts += 1
             return {'result': 'success',
@@ -608,6 +635,8 @@ class MultiEngineXBlock(XBlock):
                     'weight': self.weight,
                     'attempts': self.attempts,
                     'max_attempts': self.max_attempts,
+                    'right_answers': right_answers,
+                    "wrong_answers": wrong_answers,
                     }
         else:
             return('Max attempts exception!')
