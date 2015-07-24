@@ -5,10 +5,10 @@
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="display_name">Название:</label>
         <input class="input setting-input" name="display_name" id="display_name" value="{{display_name}}" type="text" />
-        <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
+        <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh">Обновить</i> <i class="fa fa-github"></i></a>
       </div>
     </li>
-    <div class='step-one'>
+    <div id='main-settings'>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="student_view_template">student_view_template:</label>
@@ -56,7 +56,7 @@
       </div>
     </li>
   </div>
-  <div class="step-two">
+  <div id='scenario-settings' hidden="true">
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="scenario">Используемый сценарий:</label>
@@ -105,6 +105,9 @@
     <style id="scenarioStyle" type="text/css"></style>
     <li id="scenarioTemplate" class="field comp-setting-entry is-set">
     </li>
+    </div>
+    <div id='advanced-settings' hidden="true">
+      asd
     </div>
   </ul>
   

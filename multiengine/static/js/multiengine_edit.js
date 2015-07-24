@@ -67,9 +67,31 @@ function MultiEngineXBlockEdit(runtime, element) {
 	function conversionInRaw() {};
 	function actionsView(windowView, scenario) {};
 
-	//jsDesign 
+	//jsDesign
 	//start
 	// Функция которая должна отвечать за работу Вкладок RAW / View и следить за событием конвертирования (false or true)
+	
+	var tabList = '<li class="action-item" id="main-settings-tab">Основные</li><li class="action-item" id="scenario-settings-tab">Сценарий</li><li class="action-item" id="advanced-settings-tab">Расширенные</li>';
+	document.getElementsByClassName("editor-modes action-list action-modes")[0].innerHTML = tabList;
+	
+	document.querySelector('#main-settings-tab').onclick = function(){
+	  document.querySelector('#main-settings').removeAttribute('hidden'); 
+      document.querySelector('#scenario-settings').setAttribute('hidden', 'true'); 
+      document.querySelector('#advanced-settings').setAttribute('hidden', 'true');
+	};
+
+	document.querySelector('#scenario-settings-tab').onclick = function(){
+	  document.querySelector('#main-settings').setAttribute('hidden', 'true'); 
+      document.querySelector('#scenario-settings').removeAttribute('hidden'); 
+      document.querySelector('#advanced-settings').setAttribute('hidden', 'true');
+	};
+
+	document.querySelector('#advanced-settings-tab').onclick = function(){
+	  document.querySelector('#main-settings').setAttribute('hidden', 'true'); 
+      document.querySelector('#scenario-settings').setAttribute('hidden', 'true'); 
+      document.querySelector('#advanced-settings').removeAttribute('hidden');
+	};
+
 	function toggleTabs() {};
 
 
@@ -133,6 +155,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 	$(element).find('.save-button').bind('click', function() {
+		scenarioSave();
 		var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
 			data = {
 				display_name: $(element).find('input[name=display_name]').val(),
