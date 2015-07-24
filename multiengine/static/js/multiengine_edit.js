@@ -155,7 +155,9 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 	$(element).find('.save-button').bind('click', function() {
-		scenarioSave();
+		if(typeof scenarioSave == 'function'){
+		    scenarioSave();
+	    };
 		var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
 			data = {
 				display_name: $(element).find('input[name=display_name]').val(),
