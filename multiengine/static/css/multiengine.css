@@ -38,4 +38,22 @@ div.xblock-actions ul {
 	margin-top: 10em;
 }
 
+.action-tabs{
+    margin-left: 10px;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 14px;
+}
 
+.action-tabs:hover{
+    background: #e6e6e6 none repeat scroll 0% 0%;
+}
+
+.is-active-tabs{
+    background: #888 none repeat scroll 0% 0%;
+    color: white;
+
+}
