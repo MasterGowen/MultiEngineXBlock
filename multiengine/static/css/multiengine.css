@@ -46,10 +46,12 @@ div.xblock-actions ul {
     text-transform: uppercase;
     font-weight: 400;
     font-size: 14px;
+    cursor: pointer;
 }
 
 .action-tabs:hover{
-    background: #e6e6e6 none repeat scroll 0% 0%;
+    background: #d6d6d6 none repeat scroll 0% 0%;
+    color: #4C4C4C;
 }
 
 .is-active-tabs{
