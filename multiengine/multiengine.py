@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 @XBlock.needs("i18n")
 class MultiEngineXBlock(XBlock):
 
-    def _(self, text):
+    def _(text):
         """ translate text """
         return self.runtime.service(self, "i18n").ugettext(text)
 
