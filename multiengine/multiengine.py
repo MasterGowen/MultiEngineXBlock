@@ -76,7 +76,7 @@ class MultiEngineXBlock(XBlock):
     )
 
     max_attempts = Integer(
-        display_name=(_"Max attempts"),
+        display_name=_("Max attempts"),
         help="",
         default=0,
         scope=Scope.settings
