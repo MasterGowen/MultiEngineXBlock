@@ -1,0 +1,128 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-28 05:17-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:38
+#: multiengine/multiengine.py:38
+msgid "Name"
+msgstr "Название"
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:39
+#: multiengine/multiengine.py:39
+msgid "This name appears in the horizontal navigation at the top of the page."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:46
+#: multiengine/multiengine.py:46
+msgid "Question"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:47
+#: multiengine/multiengine.py:47
+msgid "Question text here."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:48
+#: multiengine/multiengine.py:48
+msgid "Are you ready?"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:53
+#: multiengine/multiengine.py:53
+msgid "Right answer"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:54
+#: multiengine/multiengine.py:54
+msgid "Hidden field for right answer in json."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:60
+#: multiengine/multiengine.py:60
+msgid "Weight"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:61
+#: multiengine/multiengine.py:61
+msgid "Max points value."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:67
+#: multiengine/multiengine.py:67
+msgid "Grade steps"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:68
+#: multiengine/multiengine.py:68
+msgid "Number of grade steps."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:73
+#: multiengine/multiengine.py:73
+msgid "Scenario"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:74
+#: multiengine/multiengine.py:74
+msgid "Choice one of avaliable scenarios."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:80
+#: multiengine/multiengine.py:80
+msgid "Max attempts"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:88
+#: multiengine/multiengine.py:88
+msgid "Student points"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:94
+#: multiengine/multiengine.py:94
+msgid "Student answer"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:100
+#: multiengine/multiengine.py:100
+msgid "Attempts number"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:106
+#: multiengine/multiengine.py:106
+msgid "Scenario state for student view"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:111
+#: multiengine/multiengine.py:111
+msgid "Student view template"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:117
+#: multiengine/multiengine.py:117
+msgid "Check sequence option"
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/multiengine.py:118
+#: multiengine/multiengine.py:118
+msgid "Work not for all scenarios."
+msgstr ""
+
+#: build/lib.linux-x86_64-2.7/multiengine/static/html/multiengine_edit.html:8
+#: multiengine/static/html/multiengine_edit.html:8
+msgid "Name:"
+msgstr "Название:"
