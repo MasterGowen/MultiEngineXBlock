@@ -402,6 +402,22 @@ class MultiEngineXBlock(XBlock):
             logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
         return res
 
+    @XBlock.json_handler
+    def save_student_state(self, data, suffix=''):
+        """
+
+        Sample for testing!
+
+        :param request:
+        :param suffix:
+        :return:
+        """
+        self.student_view_json = data.get('student_view_json')
+
+        return {'result': 'success'}
+
+
+
     @XBlock.handler
     def send_scenario(self, request, suffix=''):
         """
