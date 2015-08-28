@@ -54,7 +54,6 @@ function MultiEngineXBlock(runtime, element) {
 	};
 
 	function setBlockHtml(idBlock, contentHtml) {
-        console.log(elementDOM);
 		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
     function success_func(result) {
