@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-28 05:17-0500\n"
+"POT-Creation-Date: 2015-08-28 15:51+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,7 +122,17 @@ msgstr ""
 msgid "Work not for all scenarios."
 msgstr ""
 
-#: build/lib.linux-x86_64-2.7/multiengine/static/html/multiengine_edit.html:8
-#: multiengine/static/html/multiengine_edit.html:8
+#: build/lib.linux-x86_64-2.7/multiengine/static/html/multiengine_edit.html:7
+#: multiengine/static/html/multiengine_edit.html:7
 msgid "Name:"
 msgstr "Название:"
+
+#: build/lib.linux-x86_64-2.7/multiengine/static/html/multiengine_edit.html:9
+#: multiengine/static/html/multiengine_edit.html:9
+msgid "Renew"
+msgstr "Обновить"
+
+#: build/lib.linux-x86_64-2.7/multiengine/static/html/multiengine_edit.html:15
+#: multiengine/static/html/multiengine_edit.html:15
+msgid "Question:"
+msgstr "Вопрос:"
