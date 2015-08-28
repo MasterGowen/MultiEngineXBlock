@@ -54,11 +54,13 @@ function MultiEngineXBlock(runtime, element) {
 	};
 
 	function setBlockHtml(idBlock, contentHtml) {
+        console.log(elementDOM);
 		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
     function success_func(result) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
+        $(element).find('.weight').html('Набрано баллов: <span class="points"></span>');
         $('.points', element).text(result.correct / result.weight * 100);
 
         if (result.max_attempts <= result.attempts) {
@@ -110,6 +112,13 @@ function MultiEngineXBlock(runtime, element) {
     var scenarioJSON = JSON.parse(scenario);
 
     eval(scenarioJSON.javascriptStudent)
+
+    //Save student state
+
+    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
+    function saveStudentState(saveStudentStateURL){
+        
+        };
     
     setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
