@@ -28,9 +28,10 @@ from settings import GIT_REPO_URL
 
 logger = logging.getLogger(__name__)
 
-_ = self.runtime.service(self, "i18n").ugettext
 
 class MultiEngineXBlock(XBlock):
+
+    _ = self.runtime.service(self, "i18n").ugettext
 
     # settings
     display_name = String(
