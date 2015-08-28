@@ -15,6 +15,7 @@ import logging
 from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import ugettext as _
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
@@ -31,11 +32,6 @@ logger = logging.getLogger(__name__)
 
 @XBlock.needs("i18n")
 class MultiEngineXBlock(XBlock):
-
-    @property
-    def _(self):
-        i18nService = self.runtime.service(self, 'i18n')
-        return i18nService.ugettext
 
     # settings
     display_name = String(
