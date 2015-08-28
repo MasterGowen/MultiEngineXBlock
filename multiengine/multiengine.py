@@ -29,96 +29,91 @@ from settings import GIT_REPO_URL
 logger = logging.getLogger(__name__)
 
 
-@XBlock.needs("i18n")
 class MultiEngineXBlock(XBlock):
-
-    def _(text):
-        """ translate text """
-        return self.runtime.service(self, "i18n").ugettext(text)
 
     # settings
     display_name = String(
-        display_name=_("Name"),
-        help=_("This name appears in the horizontal navigation at the top of "
-            "the page."),
-        default="MultiEngine",
+        display_name=u"Название",
+        help=u"Название задания, которое увидят студенты.",
+        default=u'MultiEngine',
         scope=Scope.settings
     )
 
     question = String(
-        display_name=_("Question"),
-        help=_("Question text here."),
-        default=_("Are you ready?"),
+        display_name=u"Вопрос",
+        help=u"Текст задания.",
+        default=u"Вы готовы?",
         scope=Scope.settings
     )
 
     correct_answer = JSONField(
-        display_name=_("Right answer"),
-        help=_("Hidden field for right answer in json."),
+        display_name=u"Правильный ответ",
+        help=u"Скрытое поле для правильного ответа в формате json.",
         default={},
         scope=Scope.settings
     )
 
     weight = Integer(
-        display_name=_("Weight"),
-        help=_("Max points value."),
+        display_name=u"Максимальное количество баллов",
+        help=(u"Максимальное количество баллов",
+              u"которое может получить студент."),
         default=100,
         scope=Scope.settings
     )
 
     grade_steps = Integer(
-        display_name=_("Grade steps"),
-        help=_("Number of grade steps."),
+        display_name=u"Шаг оценивания",
+        help=u"Количество диапазонов оценивания",
         default=0,
         scope=Scope.settings
     )
     scenario = String(
-        display_name=_("Scenario"),
-        help=_("Choice one of avaliable scenarios."),
+        display_name=u"Сценарий",
+        help=u"Выберите один из сценариев отображения задания.",
         scope=Scope.settings,
         default=None,
     )
 
     max_attempts = Integer(
-        display_name=_("Max attempts"),
-        help="",
+        display_name=u"Максимальное количество попыток",
+        help=u"",
         default=0,
         scope=Scope.settings
     )
 
     # user_state
     points = Integer(
-        display_name=_("Student points"),
+        display_name=u"Количество баллов студента",
         default=None,
         scope=Scope.user_state
     )
 
     answer = JSONField(
-        display_name=_("Student answer"),
+        display_name=u"Ответ пользователя",
         default={"answer": {}},
         scope=Scope.user_state
     )
 
     attempts = Integer(
-        display_name=_("Attempts number"),
+        display_name=u"Количество сделанных попыток",
         default=0,
         scope=Scope.user_state
     )
 
     student_view_json = String(
-        display_name=_("Scenario state for student view"),
+        display_name=u"Состояние сценария, видимое студенту",
         scope=Scope.settings
     )
 
     student_view_template = String(
-        display_name=_("Student view template"),
+        display_name=u"Шаблон сценария",
         default='',
         scope=Scope.settings
     )
 
     sequence = Boolean(
-        display_name=_("Check sequence option"),
-        help=_("Work not for all scenarios."),
+        display_name=u"Учитывать последовательность выбранных вариантов?",
+        help=u"Работает не для всех сценариев.",
         default=False,
         scope=Scope.settings
     )
@@ -226,7 +221,7 @@ class MultiEngineXBlock(XBlock):
             with scenario_file as jsfile:
                 scenario_content = jsfile.read()
         except:
-            scenario_content = 'alert(gettext("Scenario file not found!"));'
+            scenario_content = 'alert("Scenario file not found!");'
             logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
         return scenario_content
 
