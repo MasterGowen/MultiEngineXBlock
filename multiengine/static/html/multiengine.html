@@ -1,9 +1,13 @@
 <div class="multiengine_block">
     <h2 class="problem-header">{{display_name}} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">
         {% if points %}
-           <p> Набрано баллов: <span class="points">{{points}}</span></p></span></h2>
+           <p><span class="weight"> Набрано баллов: <span class="points">{{points}}</span></span></p>
+           </span>
+           </h2>
         {% else %}
-            (Max кoличество баллов: {{weight}})</span></h2>
+            <span class="weight">(Максимальное кoличество баллов: {{weight}})</span>
+            </span>
+            </h2>
         {% endif %}
 
     <style id="scenarioStyleStudent"></style>
