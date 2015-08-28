@@ -110,7 +110,7 @@ function MultiEngineXBlock(runtime, element) {
     var scenario = getScenario(scenarioURL);
     var scenarioJSON = JSON.parse(scenario);
 
-    eval(scenarioJSON.javascriptStudent)
+    eval('element= ' + element + ';' + scenarioJSON.javascriptStudent)
 
     //Save student state
 
