@@ -1,4 +1,4 @@
-
+from path import path
 USE_I18N=True
 USE_L10N = True
 TIME_ZONE = 'Asia/Yekaterinburg'
