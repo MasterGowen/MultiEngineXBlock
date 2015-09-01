@@ -116,10 +116,7 @@ function MultiEngineXBlock(runtime, element) {
     var y = uniqueId;
 
     function x(){
-        for (var i=0;i<=100000;i++) {
-            
-                setTimeout('console.log(y)', 5000);
-        }
+        console.log(y)
     };
    
 
@@ -146,6 +143,7 @@ function MultiEngineXBlock(runtime, element) {
         });
     });
 
-     x();
+
+     document.addEventListener('click', x());
 
 }
