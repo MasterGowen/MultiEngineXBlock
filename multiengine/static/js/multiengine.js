@@ -116,8 +116,8 @@ function MultiEngineXBlock(runtime, element) {
     var studentScript = document.createElement('script');
     studentScript.type = 'text/javascript';
     studentScript.id = 'script_'+uniqueId;
+    studentScript.text = scenarioJSON.javascriptStudent;
     document.body.appendChild(studentScript);
-    document.getElementById(studentScript.id).text = scenarioJSON.javascriptStudent;
 
     //Save student state
 
