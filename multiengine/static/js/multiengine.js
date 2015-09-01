@@ -111,7 +111,10 @@ function MultiEngineXBlock(runtime, element) {
     var scenario = getScenario(scenarioURL);
     var scenarioJSON = JSON.parse(scenario);
 
-    eval(scenarioJSON.javascriptStudent)
+    var uniqueId = elementDOM.getAttribute("data-usage-id");
+
+    var x = function () {eval(scenarioJSON.javascriptStudent)};
+    x();
 
     //Save student state
 
