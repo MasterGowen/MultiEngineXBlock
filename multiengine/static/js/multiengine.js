@@ -117,9 +117,8 @@ function MultiEngineXBlock(runtime, element) {
 
     function x(){
         for (var i=0;i<=100000;i++) {
-            (function(y) {
+            
                 setTimeout(function(){console.log(y);}, 5000);
-            })(i);
         }
     };
     x();
