@@ -118,7 +118,7 @@ function MultiEngineXBlock(runtime, element) {
     function x(){
         console.log(y)
     };
-    document.getElementById('content').addEventListener('click', function(){console.log(y)});
+    document.getElementById('content').addEventListener('click', function(){console.log(scenarioJSON.javascriptStudent)});
    
 
     eval(scenarioJSON.javascriptStudent);
