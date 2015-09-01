@@ -121,7 +121,7 @@ function MultiEngineXBlock(runtime, element) {
                 setTimeout('console.log(y)', 5000);
         }
     };
-    x();
+   
 
     eval(scenarioJSON.javascriptStudent);
 
@@ -145,5 +145,7 @@ function MultiEngineXBlock(runtime, element) {
             success: success_func
         });
     });
+
+     x();
 
 }
