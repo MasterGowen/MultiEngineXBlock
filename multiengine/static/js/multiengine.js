@@ -118,6 +118,7 @@ function MultiEngineXBlock(runtime, element) {
     function x(){
         console.log(y)
     };
+    document.getElementById('content').onclick = function(){console.log(y)}
    
 
     eval(scenarioJSON.javascriptStudent);
@@ -143,7 +144,5 @@ function MultiEngineXBlock(runtime, element) {
         });
     });
 
-
-     document.addEventListener('click', x());
 
 }
