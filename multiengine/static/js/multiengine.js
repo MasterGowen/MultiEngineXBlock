@@ -110,7 +110,7 @@ function MultiEngineXBlock(runtime, element) {
 
     var uniqueId = element.getAttribute("data-usage-id").slice(-32);
 
-    eval('function javascriptStudent-'+uniqueId+'(element) {'scenarioJSON.javascriptStudent+'}javascriptStudent-'+uniqueId+'(element)');
+    eval('function javascriptStudent-'+uniqueId+'(element) {'+scenarioJSON.javascriptStudent+'}javascriptStudent-'+uniqueId+'(element)');
     console.log('javascriptStudent-'+uniqueId);
 
     //Save student state
