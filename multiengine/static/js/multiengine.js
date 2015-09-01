@@ -4,8 +4,6 @@ function MultiEngineXBlock(runtime, element) {
 
         The description for ``someMethod``.
     */
-    var elementDOM = element;
-
     function forEachInCollection(collection, action) {
 		collection = collection || {};
 		for (var i = 0; i < collection.length; i++)
@@ -44,17 +42,17 @@ function MultiEngineXBlock(runtime, element) {
 	//TODO: Какой вид должен быть у результата выполнения функций
 	function getValueFild(idField) {
 		var parser = new DOMParser();
-		var value = elementDOM.querySelector('#' + idField);
+		var value = element.querySelector('#' + idField);
 		value = parser.parseFromString(value.value || value.innerHTML, 'text/html');
 		return value;
 	};
 
 	function setValueFild(idField, value) {
-		elementDOM.querySelector('#' + idField).value = value;
+		element.querySelector('#' + idField).value = value;
 	};
 
 	function setBlockHtml(idBlock, contentHtml) {
-		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
+		element.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
     function success_func(result) {
         $('.attempts', element).text(result.attempts);
