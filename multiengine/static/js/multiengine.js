@@ -111,16 +111,6 @@ function MultiEngineXBlock(runtime, element) {
     var scenario = getScenario(scenarioURL);
     var scenarioJSON = JSON.parse(scenario);
 
-    var uniqueId = elementDOM.getAttribute("data-usage-id");
-
-    var y = uniqueId;
-
-    function x(){
-        console.log(y)
-    };
-    document.getElementById('content').addEventListener('click', function(){console.log(scenarioJSON.javascriptStudent)});
-   
-
     eval(scenarioJSON.javascriptStudent);
 
 
