@@ -328,7 +328,6 @@ class MultiEngineXBlock(XBlock):
             "sequence": self.sequence,
             "scenario": self.scenario,
             "max_attempts": self.max_attempts,
-            "student_state_json": self.student_state_json,
             "student_view_template": self.student_view_template,
 
             "scenarios": scenarios,
@@ -486,7 +485,6 @@ class MultiEngineXBlock(XBlock):
         self.sequence = data.get('sequence')
         self.scenario = data.get('scenario')
         self.max_attempts = data.get('max_attempts')
-        self.student_state_json = data.get('student_state_json')
         self.student_view_template = data.get('student_view_template')
         return {'result': 'success'}
 
