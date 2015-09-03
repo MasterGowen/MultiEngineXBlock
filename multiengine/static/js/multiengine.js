@@ -70,7 +70,7 @@ function MultiEngineXBlock(runtime, element) {
     function success_save(result){
 
         $(element).find('.save_button').append('<span class="saved">Сохранено</span>');
-        setTimeout($(element).find('.saved').remove(), 3000);
+        $(element).find('.saved').delay( 3000 ).fadeOut( 400 );
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
