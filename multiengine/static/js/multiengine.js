@@ -125,7 +125,7 @@ function MultiEngineXBlock(runtime, element) {
 
 
 $(element).find('.Save').bind('click', function() {
-        var data = $(element).find('textarea[name=answer]').val();
+        var data = $(element).find('[name="answer"]').val();
 
         $.ajax({
             type: "POST",
