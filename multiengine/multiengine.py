@@ -404,15 +404,31 @@ class MultiEngineXBlock(XBlock):
     @XBlock.json_handler
     def save_student_state(self, data, suffix=''):
         """
-
-        Sample for testing!
-
+        Handler for saving student state (save student answer without checking).
         :param request:
         :param suffix:
         :return:
         """
         self.student_state_json = data
         return {'result': 'success'}
+
+
+    @XBlock.handler
+    def get_student_state(self, data, suffix=''):
+        """
+
+        Return student state as json.
+
+        :param request:
+        :param suffix:
+        :return:
+        """
+        
+        body = {"student_state_json": self.student_state_json,
+                "result": "success"
+                }
+        response = Response(body=body, content_type='application/json' )
+        return response
 
 
 
