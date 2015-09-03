@@ -68,9 +68,11 @@ function MultiEngineXBlock(runtime, element) {
     };
 
     function success_save(result){
+    	var id= generationID;
+        element.getElementsByClassName('.save_button')[0].appendChild('<span class="'+id+'">Сохранено</span>');
 
-        $(element).find('.save_button').append('<span class="saved">Сохранено</span>')
-            .delay(1500).queue(function() { $(element).find('.saved').remove(); });;
+        setTimeout(element.removeChild(element.getElementById(id)), 1000)
+            
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
