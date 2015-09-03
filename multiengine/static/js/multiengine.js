@@ -86,6 +86,9 @@ function MultiEngineXBlock(runtime, element) {
     //Возврат сценариев
     scenarioURL = runtime.handlerUrl(element, 'send_scenario');
 
+    // Сохранение ответа студента
+    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
+
 
     function getScenario(scenarioURL) {
         var xhr = new XMLHttpRequest();
@@ -116,12 +119,22 @@ function MultiEngineXBlock(runtime, element) {
 
     //Save student state
 
-    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
-    function saveStudentState(saveStudentStateURL){
-        
-        };
+    
     
     setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
+
+
+$(element).find('.Save').bind('click', function() {
+        var data = $(element).find('textarea[name=answer]').val();
+
+        $.ajax({
+            type: "POST",
+            url: saveStudentStateURL,
+            data: JSON.stringify(data),
+            success: success_func
+        });
+    });
+
 
     $(element).find('.Check').bind('click', function() {
         var data = $(element).find('textarea[name=answer]').val();
