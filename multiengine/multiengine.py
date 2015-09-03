@@ -100,7 +100,7 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.user_state
     )
 
-    student_state_json = String(
+    student_state_json = JSONField(
         display_name=u"Сохраненное состояние",
         scope=Scope.user_state
     )
