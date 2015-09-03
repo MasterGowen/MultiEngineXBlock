@@ -5,7 +5,10 @@ function MultiEngineXBlock(runtime, element) {
         The description for ``someMethod``.
     */
     var elementDOM = element,
-    mengine.studentAnswerJSON = {};
+    mengine={
+        studentAnswerJSON:{},
+        studentStateJSON:{}
+    };
 
     function forEachInCollection(collection, action) {
 		collection = collection || {};
@@ -41,6 +44,12 @@ function MultiEngineXBlock(runtime, element) {
 		answerJSON.answer = answer;
 		return JSON.stringify(answerJSON);
 	};
+
+    function generationJSON(type, dict) {
+        var objectJSON = {};
+        objectJSON[type.toString()] = dict;
+        return JSON.stringify(objectJSON);
+    };
 
 	//TODO: Какой вид должен быть у результата выполнения функций
 	function getValueFild(idField) {
@@ -142,13 +151,10 @@ function MultiEngineXBlock(runtime, element) {
         return xhr.responseText;
     };
 
-    var studentState = getStudentState(getStudentStateURL);
-    console.log(studentState);
-
-    var scenario = getScenario(scenarioURL);
-    var scenarioJSON = JSON.parse(scenario);
-
-    var uniqueId = elementDOM.getAttribute('data-usage-id');
+    var studentState = getStudentState(getStudentStateURL),
+        scenario = getScenario(scenarioURL),
+        scenarioJSON = JSON.parse(scenario),
+        uniqueId = elementDOM.getAttribute('data-usage-id');
 
     eval(scenarioJSON.javascriptStudent)
 
@@ -163,7 +169,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: studentAnswerJSON,
+            data: generationJSON('state', mengine.studentStateJSON),
             success: success_save
         });
     });
@@ -172,8 +178,14 @@ $(element).find('.Save').bind('click', function() {
     $(element).find('.Check').bind('click', function() {
         $.ajax({
             type: "POST",
+            url: saveStudentStateURL,
+            data: generationJSON('state', mengine.studentStateJSON),
+            success: success_save
+        });
+        $.ajax({
+            type: "POST",
             url: handlerUrl,
-            data: studentAnswerJSON,,
+            data: generationJSON('answer', mengine.studentAnswerJSON),
             success: success_func
         });
     });
