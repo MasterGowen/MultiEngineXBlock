@@ -63,9 +63,9 @@
                 <li class="action-item send_button" >
                 {% if past_due and answer_opportunity %}
                     <input class="check Check" type="button" value="Проверить">
-                    <span>
+                    <span class="save_button">
                         <input class="save Save" type="button" value="Сохранить">
-                    </span class="save_button">
+                    </span>
                     {% if max_attempts %}
                         <p>Попыток: <span class="attempts">{{attempts}}</span> из {{max_attempts}}</p>
                     {% endif %}
@@ -73,6 +73,7 @@
                     <p><strong>Попытки исчерпаны</strong></p>
                 {% elif answer_opportunity %}
                     <p><strong>Время для ответа истекло</strong></p>
+                    
                 {% endif %}
                 </li>
             </ul>

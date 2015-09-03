@@ -69,7 +69,7 @@ function MultiEngineXBlock(runtime, element) {
 
     function success_save(result){
         console.log('Состояние сохранено');
-        $(element).find('.Save').attr("disabled","disabled");
+        $(element).find('.save_button').appendChild('<p>Сохранено</p>');
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
