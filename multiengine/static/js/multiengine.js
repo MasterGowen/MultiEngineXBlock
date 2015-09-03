@@ -65,6 +65,11 @@ function MultiEngineXBlock(runtime, element) {
         if (result.max_attempts <= result.attempts) {
             $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
         };
+    };
+
+    function student_state_json(result){
+        console.log('Состояние сохранено');
+        $(element).find('.Save').attr("disabled","disabled");
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
@@ -131,7 +136,7 @@ $(element).find('.Save').bind('click', function() {
             type: "POST",
             url: saveStudentStateURL,
             data: JSON.stringify(data),
-            success: success_func
+            success: success_save
         });
     });
 
