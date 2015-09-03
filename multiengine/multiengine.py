@@ -100,7 +100,7 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.user_state
     )
 
-    student_state_json  = String(
+    student_state_json = String(
         display_name=u"Сохраненное состояние",
         scope=Scope.user_state
     )
@@ -270,7 +270,7 @@ class MultiEngineXBlock(XBlock):
             "correct_answer": self.correct_answer,
             "answer": self.answer,
             "attempts": self.attempts,
-            "student_state_json ": self.student_state_json ,
+            "student_state_json": self.student_state_json,
             "student_view_template": self.student_view_template,
             "scenario": self.scenario,
             "scenarios": scenarios,
@@ -328,7 +328,7 @@ class MultiEngineXBlock(XBlock):
             "sequence": self.sequence,
             "scenario": self.scenario,
             "max_attempts": self.max_attempts,
-            "student_state_json ": self.student_state_json ,
+            "student_state_json": self.student_state_json,
             "student_view_template": self.student_view_template,
 
             "scenarios": scenarios,
@@ -412,7 +412,7 @@ class MultiEngineXBlock(XBlock):
         :param suffix:
         :return:
         """
-        self.student_state_json  = data
+        self.student_state_json = data
         return {'result': 'success'}
 
 
@@ -486,7 +486,7 @@ class MultiEngineXBlock(XBlock):
         self.sequence = data.get('sequence')
         self.scenario = data.get('scenario')
         self.max_attempts = data.get('max_attempts')
-        self.student_state_json  = data.get('student_state_json ')
+        self.student_state_json = data.get('student_state_json')
         self.student_view_template = data.get('student_view_template')
         return {'result': 'success'}
 
