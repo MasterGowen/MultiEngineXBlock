@@ -67,7 +67,7 @@ function MultiEngineXBlock(runtime, element) {
         };
     };
 
-    function student_state_json(result){
+    function success_save(result){
         console.log('Состояние сохранено');
         $(element).find('.Save').attr("disabled","disabled");
     }
