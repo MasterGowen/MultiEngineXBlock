@@ -69,9 +69,8 @@ function MultiEngineXBlock(runtime, element) {
 
     function success_save(result){
 
-        $(element).find('.save_button').append('<span class="saved">Сохранено</span>');
-        $(element).find('.saved').delay( 1500 ).fadeOut( 300 );
-        $(element).find('.saved').remove();
+        $(element).find('.save_button').append('<span class="saved">Сохранено</span>')
+        .delay(1500).queue(function() { $(this).remove(); });;
     }
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
