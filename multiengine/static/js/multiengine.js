@@ -179,7 +179,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: generationJSON('state', mengine.studentStateJSON),
+            data: generateStudentAnswer,
             success: success_save
         });
         $.ajax({
