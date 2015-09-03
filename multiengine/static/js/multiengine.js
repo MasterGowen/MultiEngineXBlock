@@ -117,7 +117,7 @@ function MultiEngineXBlock(runtime, element) {
         xhr.onerror = function(e) {
             console.error(xhr.statusText);
         };
-        return xhr.responseText;
+        return xhr.responseText.student_state_json;
     };
 
 
