@@ -412,7 +412,7 @@ class MultiEngineXBlock(XBlock):
         :param suffix:
         :return:
         """
-        self.student_view_json = data.get('student_view_json')
+        self.student_view_json = data.get('answer')
 
         return {'result': 'success'}
 
