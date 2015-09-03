@@ -68,13 +68,12 @@ function MultiEngineXBlock(runtime, element) {
     };
 
     function success_save(result){
-    	var id= generationID;
     	var span = document.createElement('span');
     	span.innerHTML = 'Сохранено';
-    	span.id = id;
+    	span.classList.add('saved');
         element.getElementsByClassName('save_button')[0].appendChild(span);
 
-        setTimeout(element.removeChild(element.getElementById(id)), 1000)
+        setTimeout(element.removeChild(element.getElementsByClassName('saved')[0]), 1000)
             
     }
 
