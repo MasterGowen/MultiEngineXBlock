@@ -73,7 +73,7 @@ function MultiEngineXBlock(runtime, element) {
     	span.classList.add('saved');
         element.getElementsByClassName('save_button')[0].appendChild(span);
 
-        setTimeout(element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0]), 1000);
+        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);
         
             
     }
