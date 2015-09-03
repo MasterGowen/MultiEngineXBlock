@@ -4,7 +4,8 @@ function MultiEngineXBlock(runtime, element) {
 
         The description for ``someMethod``.
     */
-    var elementDOM = element;
+    var elementDOM = element,
+    mengine.studentAnswerJSON = {};
 
     function forEachInCollection(collection, action) {
 		collection = collection || {};
@@ -159,24 +160,20 @@ function MultiEngineXBlock(runtime, element) {
 
 
 $(element).find('.Save').bind('click', function() {
-        var data = $(element).find('[name="answer"]').val();
-
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: JSON.stringify(data),
+            data: studentAnswerJSON,
             success: success_save
         });
     });
 
 
     $(element).find('.Check').bind('click', function() {
-        var data = $(element).find('textarea[name=answer]').val();
-
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: JSON.stringify(data),
+            data: studentAnswerJSON,,
             success: success_func
         });
     });
