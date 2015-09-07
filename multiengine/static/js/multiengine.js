@@ -7,8 +7,16 @@ function MultiEngineXBlock(runtime, element) {
     var elementDOM = element,
     mengine={
         studentAnswerJSON:{},
-        studentStateJSON:{}
+        studentStateJSON:{},
+        genAnswerObj: function(){},
+        genJSON: function(type, dict) {
+            var objectJSON = {};
+            objectJSON[type.valueOf()] = dict;
+            return JSON.stringify(objectJSON);
+        }
+
     };
+
 
     function forEachInCollection(collection, action) {
 		collection = collection || {};
@@ -169,7 +177,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: generationJSON('state', mengine.studentStateJSON),
+            data: genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
     });
@@ -179,13 +187,13 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: generateStudentAnswer(),
+            data: genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: generationJSON('answer', mengine.studentAnswerJSON),
+            data: genJSON('answer', mengine.genAnswerObj()),
             success: success_func
         });
     });
