@@ -10,9 +10,12 @@ function MultiEngineXBlock(runtime, element) {
         studentStateJSON:{},
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
+            if (dict == undefined){
+                dict = {};
+            };
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
-            return JSON.stringify(objectJSON);
+            return JSON.stringify(JSON.stringify(objectJSON));
         }
 
     };
@@ -194,7 +197,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: JSON.stringify(mengine.genJSON('answer', mengine.genAnswerObj())),
+            data: mengine.genJSON('answer', mengine.genAnswerObj()),
             success: success_func
         });
     });
