@@ -193,7 +193,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: mengine.genJSON('answer', mengine.genAnswerObj()),
+            data: mengine.genJSON('answer', mengine.genAnswerObj()).toString(),
             success: success_func
         });
     });
