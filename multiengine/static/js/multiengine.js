@@ -25,7 +25,7 @@ function MultiEngineXBlock(runtime, element) {
 
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
-        },
+        }
 
     };
 
@@ -123,24 +123,7 @@ function MultiEngineXBlock(runtime, element) {
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
     var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
 
-    function getStudentState(getStudentStateURL){
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", getStudentStateURL, false);
-        xhr.send(null);
 
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                } else {
-                    console.error(xhr.statusText);
-                }
-            }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        return xhr.responseText;
-    };
 
 
     function getScenario(scenarioURL) {
