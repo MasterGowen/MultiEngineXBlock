@@ -174,6 +174,8 @@ function MultiEngineXBlock(runtime, element) {
 
 
 $(element).find('.Save').bind('click', function() {
+    console.log(mengine.genJSON('answer', mengine.genAnswerObj()));
+    console.log(mengine.genJSON('answer', mengine.genAnswerObj()).toString());
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
