@@ -1,4 +1,6 @@
 /* Javascript for MultiEngineXBlock. */
+var answer;
+
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
@@ -12,7 +14,7 @@ function MultiEngineXBlock(runtime, element) {
         genJSON: function(type, dict) {
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
-            console.log(typeof JSON.stringify(objectJSON))
+            answer = JSON.stringify(objectJSON);
             return JSON.stringify(objectJSON);
         }
 
