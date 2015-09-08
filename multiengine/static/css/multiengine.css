@@ -67,3 +67,9 @@ div.xblock-actions ul {
     color: white;
 
 }
+
+.saved{
+  margin: 8px;
+  display: inline-block;
+  color: green;
+}

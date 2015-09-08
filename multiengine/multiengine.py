@@ -100,9 +100,9 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.user_state
     )
 
-    student_view_json = String(
-        display_name=u"Состояние сценария, видимое студенту",
-        scope=Scope.settings
+    student_state_json = JSONField(
+        display_name=u"Сохраненное состояние",
+        scope=Scope.user_state
     )
 
     student_view_template = String(
@@ -270,7 +270,7 @@ class MultiEngineXBlock(XBlock):
             "correct_answer": self.correct_answer,
             "answer": self.answer,
             "attempts": self.attempts,
-            "student_view_json": self.student_view_json,
+            "student_state_json": self.student_state_json,
             "student_view_template": self.student_view_template,
             "scenario": self.scenario,
             "scenarios": scenarios,
@@ -328,7 +328,6 @@ class MultiEngineXBlock(XBlock):
             "sequence": self.sequence,
             "scenario": self.scenario,
             "max_attempts": self.max_attempts,
-            "student_view_json": self.student_view_json,
             "student_view_template": self.student_view_template,
 
             "scenarios": scenarios,
@@ -405,16 +404,31 @@ class MultiEngineXBlock(XBlock):
     @XBlock.json_handler
     def save_student_state(self, data, suffix=''):
         """
+        Handler for saving student state (save student answer without checking).
+        :param request:
+        :param suffix:
+        :return:
+        """
+        self.student_state_json = data
+        return {'result': 'success'}
 
-        Sample for testing!
+
+    @XBlock.handler
+    def get_student_state(self, data, suffix=''):
+        """
+
+        Return student state as json.
 
         :param request:
         :param suffix:
         :return:
         """
-        self.student_view_json = data.get('student_view_json')
-
-        return {'result': 'success'}
+        
+        body = {"student_state_json": self.student_state_json,
+                "result": "success"
+                }
+        response = Response(body=body, content_type='application/json' )
+        return response
 
 
 
@@ -487,7 +501,6 @@ class MultiEngineXBlock(XBlock):
         self.sequence = data.get('sequence')
         self.scenario = data.get('scenario')
         self.max_attempts = data.get('max_attempts')
-        self.student_view_json = data.get('student_view_json')
         self.student_view_template = data.get('student_view_template')
         return {'result': 'success'}
 
