@@ -13,9 +13,13 @@ function MultiEngineXBlock(runtime, element) {
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
             var objectJSON = {};
-            objectJSON[type.valueOf()] = dict;
-            answer = JSON.stringify(objectJSON);
-            answerObj = objectJSON;
+            if (type == 'answer'){
+                objectJSON.answer = dict;
+            }
+            else{
+                objectJSON.state = dict;
+            }
+
             return JSON.stringify(objectJSON);
         }
 
