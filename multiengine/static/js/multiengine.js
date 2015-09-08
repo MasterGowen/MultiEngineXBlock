@@ -174,8 +174,6 @@ function MultiEngineXBlock(runtime, element) {
 
 
 $(element).find('.Save').bind('click', function() {
-    console.log(mengine.genJSON('answer', mengine.genAnswerObj()));
-    console.log(mengine.genJSON('answer', mengine.genAnswerObj()).toString());
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
@@ -195,7 +193,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: mengine.genJSON('answer', mengine.genAnswerObj()).toString(),
+            data: "'"+ mengine.genJSON('answer', mengine.genAnswerObj())+"'",
             success: success_func
         });
     });
