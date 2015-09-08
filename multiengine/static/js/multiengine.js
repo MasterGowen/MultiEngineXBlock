@@ -167,7 +167,7 @@ function MultiEngineXBlock(runtime, element) {
         scenario = getScenario(scenarioURL),
         scenarioJSON = JSON.parse(scenario);
 
-        mengine.studentStateJSON = JSON.parse(getStudentState(getStudentStateURL)).student_state_json;
+        mengine.studentStateJSON = JSON.parse(studentState);
         console.log(mengine.studentStateJSON);
 
     eval(scenarioJSON.javascriptStudent)
