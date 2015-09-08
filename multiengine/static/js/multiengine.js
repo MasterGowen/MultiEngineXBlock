@@ -1,6 +1,4 @@
 /* Javascript for MultiEngineXBlock. */
-var answer, answerObj;
-
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
@@ -13,13 +11,7 @@ function MultiEngineXBlock(runtime, element) {
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
             var objectJSON = {};
-            if (type == 'answer'){
-                objectJSON.answer = dict;
-            }
-            else{
-                objectJSON.state = dict;
-            }
-
+            objectJSON[type.valueOf()] = dict;
             return JSON.stringify(objectJSON);
         }
 
@@ -198,11 +190,11 @@ $(element).find('.Save').bind('click', function() {
             data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
-        
+
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: mengine.genJSON('answer', mengine.genAnswerObj()),
+            data: JSON.stringify(mengine.genJSON('answer', mengine.genAnswerObj())),
             success: success_func
         });
     });
