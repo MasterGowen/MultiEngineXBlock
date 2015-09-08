@@ -7,7 +7,7 @@ function MultiEngineXBlock(runtime, element) {
     var elementDOM = element,
     mengine={
         studentAnswerJSON:{},
-        studentStateJSON:{},
+        studentStateJSON:'',
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
             if (dict == undefined){
@@ -16,7 +16,16 @@ function MultiEngineXBlock(runtime, element) {
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
             return JSON.stringify(JSON.stringify(objectJSON));
-        }
+        },
+        forEach: function(collection, action) {
+            collection = collection || {};
+            for (var i = 0; i < collection.length; i++)
+                action(collection[i]);
+        },
+
+        genID: function() {
+            return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
+        },
 
     };
 
@@ -44,24 +53,19 @@ function MultiEngineXBlock(runtime, element) {
 	};
 	//Функция генерации ID
 	function generationID() {
+    //DEPRECATED
 		return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
 	};
 	//Функция формирования правиольного отвнета
 	//Пример {name1:id1,name2:id2, name:{id3,id4}} передается в функцию
 	function generationAnswerJSON(answer) {
+        //DEPRECATED
 		var answerJSON = {
 			answer: {}
 		};
 		answerJSON.answer = answer;
 		return JSON.stringify(answerJSON);
 	};
-
-    function generationJSON(type, dict) {
-        var objectJSON = {};
-        objectJSON[type.valueOf()] = dict;
-        return JSON.stringify(objectJSON);
-    };
-
 	//TODO: Какой вид должен быть у результата выполнения функций
 	function getValueFild(idField) {
 		var parser = new DOMParser();
@@ -94,13 +98,10 @@ function MultiEngineXBlock(runtime, element) {
     	span.classList.add('saved');
         element.getElementsByClassName('save_button')[0].appendChild(span);
 
-        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);
-        
-            
-    }
+        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);            
+    };
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
-
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
     if ($(element).find('.update_scenarios_repo').length === 0) {
         var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
@@ -138,7 +139,7 @@ function MultiEngineXBlock(runtime, element) {
         xhr.onerror = function(e) {
             console.error(xhr.statusText);
         };
-        return xhr.responseText.student_state_json;
+        return xhr.responseText;
     };
 
 
@@ -165,7 +166,9 @@ function MultiEngineXBlock(runtime, element) {
     var studentState = getStudentState(getStudentStateURL),
         scenario = getScenario(scenarioURL),
         scenarioJSON = JSON.parse(scenario),
-        uniqueId = elementDOM.getAttribute('data-usage-id');
+        uniqueId = elementDOM.getAttribute('data-usage-id'),
+        mengine.studentStateJSON = getStudentState(getStudentStateURL);
+        console.log(mengine.studentStateJSON);
 
     eval(scenarioJSON.javascriptStudent)
 
