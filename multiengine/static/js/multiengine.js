@@ -12,7 +12,7 @@ function MultiEngineXBlock(runtime, element) {
         genJSON: function(type, dict) {
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
-            return JSON.stringify(objectJSON.toString());
+            return JSON.stringify(objectJSON.toSource());
         }
 
     };
