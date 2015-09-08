@@ -198,11 +198,11 @@ $(element).find('.Save').bind('click', function() {
             data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
-        console.log(typeof JSON.stringify(mengine.genJSON('answer', mengine.genAnswerObj())));
+        
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: JSON.stringify(mengine.genJSON('answer', mengine.genAnswerObj())),
+            data: mengine.genJSON('answer', mengine.genAnswerObj()),
             success: success_func
         });
     });
