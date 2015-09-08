@@ -177,7 +177,7 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: genJSON('state', mengine.genAnswerObj()),
+            data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
     });
@@ -187,13 +187,13 @@ $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
-            data: genJSON('state', mengine.genAnswerObj()),
+            data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: genJSON('answer', mengine.genAnswerObj()),
+            data: mengine.genJSON('answer', mengine.genAnswerObj()),
             success: success_func
         });
     });
