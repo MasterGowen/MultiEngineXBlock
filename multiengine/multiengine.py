@@ -641,10 +641,9 @@ class MultiEngineXBlock(XBlock):
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
                 result = int(round(result * self.weight))
                 self.runtime.publish(self, 'grade', {
-                    'value': self.points,
-                    'max_value': self.weight,
+                    'value': float(self.weight/self.points),
+                    'max_value': 1,  # self.weight,
                 })
-                self.runtime.publish(self, 'progress', {})
                 return result
 
             if settings['sequence'] is True:
