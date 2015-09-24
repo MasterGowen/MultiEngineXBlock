@@ -5,10 +5,18 @@ function MultiEngineXBlock(runtime, element) {
         The description for ``someMethod``.
     */
     var elementDOM = element,
-    mengine={
+
+    mengine = {
+        DOM: element,
+        saveStudentStateURL: runtime.handlerUrl(element,'save_student_state'),
+        getStudentStateURL: runtime.handlerUrl(element,'get_student_state'),
+
+
+
         studentAnswerJSON:{},
         studentStateJSON:'',
         genAnswerObj: function(){},
+
         genJSON: function(type, dict) {
             if (dict == undefined){
                 dict = {};
@@ -25,11 +33,26 @@ function MultiEngineXBlock(runtime, element) {
 
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
-        }
-
+        },
+        getData: function(requestURL){
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", requestURL, false);
+            xhr.send(null);
+            xhr.onload = function(e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            };
+            xhr.onerror = function(e) {
+                console.error(xhr.statusText);
+            };
+            return xhr.responseText;
     };
 
-
+    };
     function forEachInCollection(collection, action) {
 		collection = collection || {};
 		for (var i = 0; i < collection.length; i++)
@@ -85,7 +108,7 @@ function MultiEngineXBlock(runtime, element) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
         $(element).find('.weight').html('Набрано баллов: <span class="points"></span>');
-        $('.points', element).text(result.correct / result.weight * 100);
+        $('.points', element).text(result.correct);
 
         if (result.max_attempts <= result.attempts) {
             $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')

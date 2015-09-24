@@ -24,7 +24,7 @@ from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
 
-from settings import GIT_REPO_URL
+from settings import GIT_REPO_URL, GIT_BRANCH
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +167,8 @@ class MultiEngineXBlock(XBlock):
         """
         scenarios_repo = git.Repo.clone_from(
             GIT_REPO_URL,
-            self.SCENARIOS_ROOT
+            self.SCENARIOS_ROOT,
+            branch=GIT_BRANCH
         )
         scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
         latest = True
