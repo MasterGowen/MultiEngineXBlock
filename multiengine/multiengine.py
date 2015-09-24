@@ -31,6 +31,9 @@ logger = logging.getLogger(__name__)
 
 class MultiEngineXBlock(XBlock):
 
+    icon_class = 'problem'
+    has_score = True
+
     # settings
     display_name = String(
         display_name=u"Название",
@@ -118,7 +121,6 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.settings
     )
 
-    has_score = True
 
     MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
     SCENARIOS_ROOT = MULTIENGINE_ROOT + '/public/scenarios/'
@@ -642,6 +644,7 @@ class MultiEngineXBlock(XBlock):
                     'value': self.points,
                     'max_value': self.weight,
                 })
+                self.runtime.publish(self, 'progress', {})
                 return result
 
             if settings['sequence'] is True:
