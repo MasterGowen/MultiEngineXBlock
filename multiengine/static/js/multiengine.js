@@ -108,7 +108,7 @@ function MultiEngineXBlock(runtime, element) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
         $(element).find('.weight').html('Набрано баллов: <span class="points"></span>');
-        $('.points', element).text(result.correct / result.weight * 100);
+        $('.points', element).text(result.correct);
 
         if (result.max_attempts <= result.attempts) {
             $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
