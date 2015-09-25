@@ -1,24 +1,22 @@
-<div class="multiengine_block">
-    <h2 class="problem-header">{{display_name}} <span style="font-size: 70%;padding-left: 2em;text-transform: none;">
-        {% if points %}
-           <p><span class="weight"> Набрано баллов: <span class="points">{{points}}</span></span></p>
-           </span>
-           </h2>
-        {% else %}
-            <span class="weight">(Максимальное кoличество баллов: {{weight}})</span>
-            </span>
-            </h2>
-        {% endif %}
+
+    <h2 class="problem-header">{{display_name}}</h2>
+	<div class="problem-progress">
+		{% if points %}
+			<span class="weight"> Набрано баллов: <span class="points">{{points}}</span></span>
+		{% else %}
+			<span class="weight">(Максимальное кoличество баллов: {{weight}})</span>
+		{% endif %}
+
+	</div>
 
     <style id="scenarioStyleStudent"></style>
-    
+
     {% if not scenarios %}
         <div class="scenarios_alert">Сценарии не найдены.
         {% if is_course_staff %}
             Вы можете обновить сценарии. 
-            <a href="#" class="button update_scenarios_repo">
-                <i class="fa fa-refresh"></i> <i class="fa fa-github"></i>
-            </a>
+            <a href="#" class="button update_scenarios_repo">Обновить</a>
+            
             <div id="overlay" style="display:none">
 
                     <svg width='300px' height='300px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="overlay_icon">
@@ -39,10 +37,11 @@
         </div>
     {% else %}
 
-    	{% if question != '' %}
+
+<div class="problem">
+       	{% if question != '' %}
             <p id="question">{{question}}</p>
         {% endif %}
-
         {% if is_course_staff %}  
     	     <textarea name="answer" hidden="hidden" class="answer" type="text" rows=10 cols=50>{{answer}}</textarea>
         {% else %}
@@ -55,27 +54,30 @@
           <div id="student_view_template"></div>
         {% endif %}
 
-            <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
+        <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
 
-        <div class="xblock-actions" style="padding-top:2em;">
-            <ul>
-                <li class="action-item send_button" >
-                {% if past_due and answer_opportunity %}
-                    <input class="check Check" type="button" value="Проверить">
-                    <span class="save_button">
-                        <input class="save Save" type="button" value="Сохранить">
-                    </span>
+
+
+
+
+        <div class="action">
+	            {% if past_due and answer_opportunity %}
+                    <button class="check Check" data-checking="Проверка..." data-value="Проверить/последняя попытка"><span class="check-label">Проверить/последняя попытка</span><span class="sr"> ваш ответ</span></button>
+                    <button class="save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
+					<div class="submission_feedback" aria-live="polite">
                     {% if max_attempts %}
-                        <p>Попыток: <span class="attempts">{{attempts}}</span> из {{max_attempts}}</p>
+                     	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных
                     {% endif %}
+                    </div>
                 {% elif past_due %}
-                    <p><strong>Попытки исчерпаны</strong></p>
+                	<div class="submission_feedback" aria-live="polite">
+                    	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных
+                    </div>
                 {% elif answer_opportunity %}
-                    <p><strong>Время для ответа истекло</strong></p>
-
+                    <div class="submission_feedback" aria-live="polite">
+                    	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных<br />Время для ответа истекло
+                    </div>
                 {% endif %}
-                </li>
-            </ul>
+
     	</div>
     {% endif %}
-</div>
