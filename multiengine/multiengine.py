@@ -280,6 +280,56 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
+    @property
+    def course_id(self):
+        return self._serialize_opaque_key(self.xmodule_runtime.course_id)  # pylint:disable=E1101
+
+    def get_anonymous_user_id(self, username, course_id):
+        """
+        Get the anonymous user id from Xblock user service.
+        Args:
+            username(str): user's name entered by staff to get info.
+            course_id(str): course id.
+        Returns:
+            A unique id for (user, course) pair
+        """
+        return self.runtime.service(self, 'user').get_anonymous_user_id(username, course_id)
+
+    def get_student_item_dict(self, anonymous_user_id=None):
+        """Create a student_item_dict from our surrounding context.
+        See also: submissions.api for details.
+        Args:
+            anonymous_user_id(str): A unique anonymous_user_id for (user, course) pair.
+        Returns:
+            (dict): The student item associated with this XBlock instance. This
+                includes the student id, item id, and course id.
+        """
+
+        item_id = self._serialize_opaque_key(self.scope_ids.usage_id)
+
+        # This is not the real way course_ids should work, but this is a
+        # temporary expediency for LMS integration
+        if hasattr(self, "xmodule_runtime"):
+            course_id = self.course_id  # pylint:disable=E1101
+            if anonymous_user_id:
+                student_id = anonymous_user_id
+            else:
+                student_id = self.xmodule_runtime.anonymous_student_id  # pylint:disable=E1101
+        else:
+            course_id = "edX/Enchantment_101/April_1"
+            if self.scope_ids.user_id is None:
+                student_id = None
+            else:
+                student_id = unicode(self.scope_ids.user_id)
+
+        student_item_dict = dict(
+            student_id=student_id,
+            item_id=item_id,
+            course_id=course_id,
+            item_type='openassessment'
+        )
+        return student_item_dict
+
     @reify
     def block_id(self):
         """
@@ -310,7 +360,7 @@ class MultiEngineXBlock(XBlock):
         Get student's most recent submission.
         """
         submissions = submissions_api.get_submissions(
-            self.student_submission_id(submission_id))
+            self.get_student_item_dict)
         if submissions:
             # If I understand docs correctly, most recent submission should
             # be first
