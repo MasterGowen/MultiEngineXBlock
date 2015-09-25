@@ -367,7 +367,7 @@ class MultiEngineXBlock(XBlock):
         # Debug
 
         context['p'] = self.points
-        context['s'] = self.get_score()
+        context['s'] = score
 
         if answer_opportunity(self):
             context["answer_opportunity"] = True
