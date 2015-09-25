@@ -362,10 +362,10 @@ class MultiEngineXBlock(XBlock):
         student_item_dict = self.get_student_item_dict()
         submissions = submissions_api.get_submissions(
             student_item_dict)
-        if submissions:
+        #if submissions:
             # If I understand docs correctly, most recent submission should
             # be first
-            return submissions[0]
+        return submissions, student_item_dict
 
     def get_score(self, submission_id=None):
         """
