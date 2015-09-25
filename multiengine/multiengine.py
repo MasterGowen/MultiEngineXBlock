@@ -355,8 +355,8 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
-        score = submissions_api.get_score(
-            self.get_student_item_dict()
+        score = submissions_api.get_scores(
+            self.course_id(), self.xmodule_runtime.anonymous_student_id
         )
 
         if self.get_score() != self.points:
@@ -377,7 +377,7 @@ class MultiEngineXBlock(XBlock):
         # Debug
 
         context['p'] = self.points
-        context['s'] = score
+        context['score'] = score
 
         if answer_opportunity(self):
             context["answer_opportunity"] = True
