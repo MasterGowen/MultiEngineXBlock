@@ -19,6 +19,7 @@ from django.core.exceptions import PermissionDenied
 from student.models import user_by_anonymous_id
 from submissions import api as submissions_api
 from submissions.models import StudentItem as SubmissionsStudent
+from courseware.grades import get_score
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
@@ -284,56 +285,19 @@ class MultiEngineXBlock(XBlock):
     def course_id(self):
         return self._serialize_opaque_key(self.xmodule_runtime.course_id)  # pylint:disable=E1101
 
-    def get_anonymous_user_id(self, username, course_id):
-        """
-        Get the anonymous user id from Xblock user service.
-        Args:
-            username(str): user's name entered by staff to get info.
-            course_id(str): course id.
-        Returns:
-            A unique id for (user, course) pair
-        """
-        return self.runtime.service(self, 'user').get_anonymous_user_id(username, course_id)
+    @property
+    def student_id(self):
+        return self.xmodule_runtime.anonymous_student_id
 
-    def get_student_item_dict(self, anonymous_user_id=None):
-        """Create a student_item_dict from our surrounding context.
-        See also: submissions.api for details.
-        Args:
-            anonymous_user_id(str): A unique anonymous_user_id for (user, course) pair.
-        Returns:
-            (dict): The student item associated with this XBlock instance. This
-                includes the student id, item id, and course id.
-        """
+    @property
+    def student(self):
+        return self.host_block.runtime.get_real_user(self.host_block.runtime.anonymous_student_id)
+    
 
-        item_id = self._serialize_opaque_key(self.scope_ids.usage_id)
+    @property
+    def item_id(self):
+        return self._serialize_opaque_key(self.scope_ids.usage_id)
 
-        # This is not the real way course_ids should work, but this is a
-        # temporary expediency for LMS integration
-        if hasattr(self, "xmodule_runtime"):
-            course_id = self.course_id  # pylint:disable=E1101
-            if anonymous_user_id:
-                student_id = anonymous_user_id
-            else:
-                student_id = self.xmodule_runtime.anonymous_student_id  # pylint:disable=E1101
-
-        student_item_dict = dict(
-            student_id=student_id,
-            item_id=item_id,
-            course_id=course_id,
-            item_type='multiengine'
-        )
-        return student_item_dict
-
-    def get_score(self):
-        """
-        Return student's current score.
-        """
-        student_item_dict = self.get_student_item_dict()
-        score = submissions_api.get_score(
-            student_item_dict
-        )
-        #if score:
-        return score  # score['points_earned']
 
     def student_view(self, *args, **kwargs):
         """
@@ -355,9 +319,7 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
-        score = submissions_api.get_scores(
-            self.course_id(), self.xmodule_runtime.anonymous_student_id
-        )
+        score = get_score(self.course_id(), self.)
 
         if self.get_score() != self.points:
             self.runtime.publish(self, 'grade', {
