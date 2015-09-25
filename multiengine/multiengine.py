@@ -338,7 +338,7 @@ class MultiEngineXBlock(XBlock):
 
         if self.get_score() != self.points:
             self.runtime.publish(self, 'grade', {
-                'value': correct,
+                'value': self.points,
                 'max_value': self.weight,
             })
 
