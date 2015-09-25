@@ -315,12 +315,6 @@ class MultiEngineXBlock(XBlock):
                 student_id = anonymous_user_id
             else:
                 student_id = self.xmodule_runtime.anonymous_student_id  # pylint:disable=E1101
-        else:
-            course_id = "edX/Enchantment_101/April_1"
-            if self.scope_ids.user_id is None:
-                student_id = None
-            else:
-                student_id = unicode(self.scope_ids.user_id)
 
         student_item_dict = dict(
             student_id=student_id,
@@ -330,44 +324,7 @@ class MultiEngineXBlock(XBlock):
         )
         return student_item_dict
 
-    @reify
-    def block_id(self):
-        """
-        Return the usage_id of the block.
-        """
-        return self.scope_ids.usage_id
-
-    def student_submission_id(self, submission_id=None):
-        # pylint: disable=no-member
-        """
-        Returns dict required by the submissions app for creating and
-        retrieving submissions for a particular student.
-        """
-        if submission_id is None:
-            submission_id = self.xmodule_runtime.anonymous_student_id
-            assert submission_id != (
-                'MOCK', "Forgot to call 'personalize' in test."
-            )
-        return {
-            "student_id": submission_id,
-            "course_id": self.course_id,
-            "item_id": self.block_id,
-            "item_type": 'multiengine', 
-        }
-
-    def get_submission(self, submission_id=None):
-        """
-        Get student's most recent submission.
-        """
-        student_item_dict = self.get_student_item_dict()
-        submissions = submissions_api.get_submissions(
-            student_item_dict, 1)
-        #if submissions:
-            # If I understand docs correctly, most recent submission should
-            # be first
-        return submissions[0], student_item_dict
-
-    def get_score(self, submission_id=None):
+    def get_score(self):
         """
         Return student's current score.
         """
@@ -375,8 +332,8 @@ class MultiEngineXBlock(XBlock):
         score = submissions_api.get_score(
             student_item_dict
         )
-        if score:
-            return score['points_earned']
+        #if score:
+        return score  # score['points_earned']
 
     def student_view(self, *args, **kwargs):
         """
@@ -398,7 +355,6 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
-        student_id = self.student_submission_id()
         score = self.get_score()
 
         if self.get_score() != self.points:
