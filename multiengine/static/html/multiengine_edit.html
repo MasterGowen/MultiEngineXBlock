@@ -5,7 +5,7 @@
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="display_name">Название:</label>
         <input class="input setting-input" name="display_name" id="display_name" value="{{display_name}}" type="text" />
-        <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh">Обновить</i> <i class="fa fa-github"></i></a>
+        <a href="#" class="button action-primary update_scenarios_repo">Обновить</a>
       </div>
     </li>
     <div id='main-settings'>
@@ -48,7 +48,7 @@
               <option selected="selected">--------------</option>
             </select>
             <span class="scenario_alert" style="color:red;font-size:75%">Сценарии не найдены. Попробуйте обновить список сценариев из репозитория.</span>
-            <a href="#" class="button action-primary update_scenarios_repo"><i class="fa fa-refresh"></i> <i class="fa fa-github"></i></a>
+            <a href="#" class="button action-primary update_scenarios_repo">Обновить</a>
             {% endif %}
       {% else %}
             {% if scenarios %}
