@@ -355,7 +355,7 @@ class MultiEngineXBlock(XBlock):
         # Debug
 
         context['p'] = self.points
-        context['s'] = submissions_api.get_scores()
+        context['s'] = submissions_api.get_scores(self, self.xmodule_runtime.anonymous_student_id)
 
         if answer_opportunity(self):
             context["answer_opportunity"] = True
