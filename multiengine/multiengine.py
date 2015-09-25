@@ -348,11 +348,11 @@ class MultiEngineXBlock(XBlock):
         # Rescore student
         score = submissions_api.get_score(self.get_student_item_dict())
 
-        if score != self.points:
-            self.runtime.publish(self, 'grade', {
+        # It's temporary! It's crutch, not magick.
+        self.runtime.publish(self, 'grade', {
                 'value': self.points,
                 'max_value': self.weight,
-            })
+        })
 
         if self.max_attempts != 0:
             context["max_attempts"] = self.max_attempts
@@ -362,11 +362,6 @@ class MultiEngineXBlock(XBlock):
 
         if self.answer != '{}':
             context["points"] = self.points
-
-        # Debug
-
-        context['p'] = self.points
-        context['score'] = score
 
         if answer_opportunity(self):
             context["answer_opportunity"] = True
