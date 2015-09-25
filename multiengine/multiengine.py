@@ -19,8 +19,8 @@ from django.core.exceptions import PermissionDenied
 from student.models import user_by_anonymous_id
 from submissions import api as submissions_api
 from submissions.models import StudentItem as SubmissionsStudent
-from courseware.grades import get_score
 
+import xblock
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
 from xblock.fragment import Fragment
@@ -319,9 +319,9 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
-        score = get_score(self.course_id(), self.)
+        score = submissions_api.get_score(xblock.get_student_item_dict())
 
-        if self.get_score() != self.points:
+        if score != self.points:
             self.runtime.publish(self, 'grade', {
                 'value': self.points,
                 'max_value': self.weight,
