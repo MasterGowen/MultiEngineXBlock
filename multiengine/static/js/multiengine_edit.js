@@ -107,12 +107,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 	function toggleTabs() {};
 
 
-	// Окно редактирование RAW Code
-	var editor = CodeMirror.fromTextArea(elementDOM.querySelector('#student_view_template'), {
-		mode: "text/html",
-		tabMode: "indent",
-		lineNumbers: true
-	});
+
 	//jsDesign
 	//end
 
@@ -180,7 +175,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 				scenario: $(element).find('select[name=scenario]').val(),
 				max_attempts: $(element).find('input[name=max_attempts]').val(),
 				student_view_json: $(element).find('input[name=student_view_json]').val(),
-				student_view_template: editor.getValue(),
+				student_view_template: $(element).find('#student_view_template').val(),
 			};
 
 		$.post(handlerUrl, JSON.stringify(data)).done(function(response) {
