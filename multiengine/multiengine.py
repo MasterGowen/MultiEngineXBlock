@@ -16,6 +16,10 @@ from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
 
+from student.models import user_by_anonymous_id
+from submissions import api as submissions_api
+from submissions.models import StudentItem as SubmissionsStudent
+
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
 from xblock.fragment import Fragment
@@ -260,6 +264,34 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
+    def student_submission_id(self, submission_id=None):
+        # pylint: disable=no-member
+        """
+        Returns dict required by the submissions app for creating and
+        retrieving submissions for a particular student.
+        """
+        if submission_id is None:
+            submission_id = self.xmodule_runtime.anonymous_student_id
+            assert submission_id != (
+                'MOCK', "Forgot to call 'personalize' in test."
+            )
+        return {
+            "student_id": submission_id,
+            "course_id": self.course_id,
+            "item_id": self.block_id,
+            "item_type": 'multiengine', 
+        }
+
+    def get_score(self, submission_id=None):
+        """
+        Return student's current score.
+        """
+        score = submissions_api.get_score(
+            self.student_submission_id(submission_id)
+        )
+        if score:
+            return score['points_earned']
+
     def student_view(self, *args, **kwargs):
         """
         Отображение MultiEngineXBlock студенту (LMS).
@@ -278,6 +310,14 @@ class MultiEngineXBlock(XBlock):
             "scenario": self.scenario,
             "scenarios": scenarios,
         }
+
+        # Rescore student
+
+        if self.get_score() != self.points:
+            self.runtime.publish(self, 'grade', {
+                'value': correct,
+                'max_value': self.weight,
+            })
 
         if self.max_attempts != 0:
             context["max_attempts"] = self.max_attempts
