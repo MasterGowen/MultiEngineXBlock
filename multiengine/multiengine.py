@@ -359,8 +359,9 @@ class MultiEngineXBlock(XBlock):
         """
         Get student's most recent submission.
         """
+        student_item_dict = self.get_student_item_dict()
         submissions = submissions_api.get_submissions(
-            self.get_student_item_dict)
+            student_item_dict)
         if submissions:
             # If I understand docs correctly, most recent submission should
             # be first
