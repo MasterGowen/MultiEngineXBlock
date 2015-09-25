@@ -326,7 +326,7 @@ class MultiEngineXBlock(XBlock):
             student_id=student_id,
             item_id=item_id,
             course_id=course_id,
-            item_type='openassessment'
+            item_type='multiengine'
         )
         return student_item_dict
 
@@ -361,18 +361,19 @@ class MultiEngineXBlock(XBlock):
         """
         student_item_dict = self.get_student_item_dict()
         submissions = submissions_api.get_submissions(
-            student_item_dict)
+            student_item_dict, 1)
         #if submissions:
             # If I understand docs correctly, most recent submission should
             # be first
-        return submissions, student_item_dict
+        return submissions[0], student_item_dict
 
     def get_score(self, submission_id=None):
         """
         Return student's current score.
         """
+        student_item_dict = self.get_student_item_dict()
         score = submissions_api.get_score(
-            self.student_submission_id(submission_id)
+            student_item_dict
         )
         if score:
             return score['points_earned']
@@ -398,7 +399,7 @@ class MultiEngineXBlock(XBlock):
 
         # Rescore student
         student_id = self.student_submission_id()
-        score = self.get_submission()
+        score = self.get_score()
 
         if self.get_score() != self.points:
             self.runtime.publish(self, 'grade', {
