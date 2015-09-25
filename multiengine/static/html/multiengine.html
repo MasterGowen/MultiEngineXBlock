@@ -2,7 +2,7 @@
     <h2 class="problem-header">{{display_name}}</h2>
 	<div class="problem-progress">
 		{% if points %}
-			<me-span class="weight"> Набрано баллов: <me-span class="points">{{points}}</me-span></me-span>
+			<me-span class="weight"> Набрано баллов: <me-span class="points">{{points}} из {{weight}}</me-span></me-span>
 		{% else %}
 			<me-span class="weight">(Максимальное кoличество баллов: {{weight}})</me-span>
 		{% endif %}
@@ -36,8 +36,6 @@
         {% endif %}
         </div>
     {% else %}
-
-
 <div class="problem">
        	{% if question != '' %}
             <p id="question">{{question}}</p>
@@ -66,16 +64,16 @@
                     <button class="save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
 					<div class="submission_feedback" aria-live="polite">
                     {% if max_attempts %}
-                     	Вы отправили материалы на проверку <me-span class="attempts">{{attempts}}</me-span> раз из {{max_attempts}} 
+                     	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} 
                     {% endif %}
                     </div>
                 {% elif past_due %}
                 	<div class="submission_feedback" aria-live="polite">
-                    	Вы отправили материалы на проверку <me-span class="attempts">{{attempts}}</me-span> раз из {{max_attempts}} 
+                    	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} 
                     </div>
                 {% elif answer_opportunity %}
                     <div class="submission_feedback" aria-live="polite">
-                    	Вы отправили материалы на проверку <me-span class="attempts">{{attempts}}</me-span> раз из {{max_attempts}} <br />Время для ответа истекло
+                    	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} <br />Время для ответа истекло
                     </div>
                 {% endif %}
 
