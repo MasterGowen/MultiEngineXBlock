@@ -355,7 +355,9 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
-        score = self.get_score()
+        score = submissions_api.get_score(
+            self.get_student_item_dict()
+        )
 
         if self.get_score() != self.points:
             self.runtime.publish(self, 'grade', {
