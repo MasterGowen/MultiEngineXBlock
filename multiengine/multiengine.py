@@ -310,7 +310,7 @@ class MultiEngineXBlock(XBlock):
         Return student's current score.
         """
         score = submissions_api.get_score(
-            self.student_submission_id(submission_id)
+            self.student_submission_id(self.xmodule_runtime.anonymous_student_id)  # submission_id)
         )
         if score:
             return score['points_earned']
@@ -335,6 +335,7 @@ class MultiEngineXBlock(XBlock):
         }
 
         # Rescore student
+        student_id = self.student_submission_id()
 
         if self.get_score() != self.points:
             self.runtime.publish(self, 'grade', {
