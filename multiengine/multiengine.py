@@ -264,6 +264,13 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
+    @reify
+    def block_id(self):
+        """
+        Return the usage_id of the block.
+        """
+        return self.scope_ids.usage_id
+
     def student_submission_id(self, submission_id=None):
         # pylint: disable=no-member
         """
