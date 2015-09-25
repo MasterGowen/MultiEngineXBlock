@@ -168,13 +168,13 @@ function MultiEngineXBlock(runtime, element) {
 
         mengine.studentStateJSON = studentState;
 
-    eval(scenarioJSON.javascriptStudent)
+
 
     //Save student state
 
     
     
-    setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
+setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
 
 $(element).find('.Save').bind('click', function() {
@@ -202,5 +202,9 @@ $(element).find('.Save').bind('click', function() {
             success: success_func
         });
     });
+
+
+    // Сценарий
+        eval(scenarioJSON.javascriptStudent)
 
 }

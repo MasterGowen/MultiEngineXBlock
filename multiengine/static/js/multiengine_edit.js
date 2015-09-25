@@ -69,7 +69,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	//jsDesign
 	//start
-	// Функция которая должна отвечать за работу Вкладок RAW / View и следить за событием конвертирования (false or true)
+	// Функция которая должна отвечать за работу Вкладок "Основные", "Сценарий", "Расширенные"
 	
 	var tabList = '<li class="action-tabs is-active-tabs" id="main-settings-tab">Основные</li><li class="action-tabs" id="scenario-settings-tab">Сценарий</li><li class="action-tabs" id="advanced-settings-tab">Расширенные</li>';
 	document.getElementsByClassName("editor-modes action-list action-modes")[0].innerHTML = tabList;
