@@ -349,7 +349,12 @@ class MultiEngineXBlock(XBlock):
             context["past_due"] = True
 
         if self.answer != '{}':
-            context["points"] = self.get_score()  # self.points
+            context["points"] = self.points
+
+        # Debug
+
+        context['1'] = self.points
+        context['2'] = self.get_score()
 
         if answer_opportunity(self):
             context["answer_opportunity"] = True
