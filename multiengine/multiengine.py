@@ -33,6 +33,22 @@ from settings import GIT_REPO_URL, GIT_BRANCH
 logger = logging.getLogger(__name__)
 
 
+def reify(meth):
+    """
+    Decorator which caches value so it is only computed once.
+    Keyword arguments:
+    inst
+    """
+    def getter(inst):
+        """
+        Set value to meth name in dict and returns value.
+        """
+        value = meth(inst)
+        inst.__dict__[meth.__name__] = value
+        return value
+    return property(getter)
+
+
 class MultiEngineXBlock(XBlock):
 
     icon_class = 'problem'
