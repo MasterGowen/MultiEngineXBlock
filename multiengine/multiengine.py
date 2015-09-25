@@ -305,12 +305,23 @@ class MultiEngineXBlock(XBlock):
             "item_type": 'multiengine', 
         }
 
+    def get_submission(self, submission_id=None):
+        """
+        Get student's most recent submission.
+        """
+        submissions = submissions_api.get_submissions(
+            self.student_submission_id(submission_id))
+        if submissions:
+            # If I understand docs correctly, most recent submission should
+            # be first
+            return submissions[0]
+
     def get_score(self, submission_id=None):
         """
         Return student's current score.
         """
         score = submissions_api.get_score(
-            self.student_submission_id(self.xmodule_runtime.anonymous_student_id)  # submission_id)
+            self.student_submission_id(self, get_submission(self))  # submission_id)
         )
         if score:
             return score['points_earned']
