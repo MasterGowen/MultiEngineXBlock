@@ -1,4 +1,4 @@
-
+<div class="xblock xblock-student_view xblock-student_view-problem xmodule_display xmodule_CapaModule xblock-initialized">
     <h2 class="problem-header">{{display_name}}</h2>
 	<div class="problem-progress">
 		{% if points %}
@@ -37,7 +37,7 @@
         </div>
     {% else %}
 
-<div class="xblock xblock-student_view xblock-student_view-problem xmodule_display xmodule_CapaModule xblock-initialized">
+
 <div class="problem">
        	{% if question != '' %}
             <p id="question">{{question}}</p>
@@ -66,16 +66,16 @@
                     <button class="save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
 					<div class="submission_feedback" aria-live="polite">
                     {% if max_attempts %}
-                     	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных
+                     	Вы отправили материалы на проверку <qu class="attempts">{{attempts}}</qu> раз из {{max_attempts}} возможных
                     {% endif %}
                     </div>
                 {% elif past_due %}
                 	<div class="submission_feedback" aria-live="polite">
-                    	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных
+                    	Вы отправили материалы на проверку <qu class="attempts">{{attempts}}</qu> раз из {{max_attempts}} возможных
                     </div>
                 {% elif answer_opportunity %}
                     <div class="submission_feedback" aria-live="polite">
-                    	Вы отправили материалы на проверку <span class="attempts">{{attempts}}</span> раз из {{max_attempts}} возможных<br />Время для ответа истекло
+                    	Вы отправили материалы на проверку <qu class="attempts">{{attempts}}</qu> раз из {{max_attempts}} возможных<br />Время для ответа истекло
                     </div>
                 {% endif %}
 
