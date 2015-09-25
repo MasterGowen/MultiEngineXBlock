@@ -16,7 +16,7 @@
         {% if is_course_staff %}
             Вы можете обновить сценарии. 
             <a href="#" class="button update_scenarios_repo">Обновить</a>
-            
+
             <div id="overlay" style="display:none">
 
                     <svg width='300px' height='300px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="overlay_icon">
@@ -37,7 +37,7 @@
         </div>
     {% else %}
 
-
+<div class="xblock xblock-student_view xblock-student_view-problem xmodule_display xmodule_CapaModule xblock-initialized">
 <div class="problem">
        	{% if question != '' %}
             <p id="question">{{question}}</p>
@@ -62,7 +62,7 @@
 
         <div class="action">
 	            {% if past_due and answer_opportunity %}
-                    <button class="check Check" data-checking="Проверка..." data-value="Проверить/последняя попытка"><span class="check-label">Проверить/последняя попытка</span><span class="sr"> ваш ответ</span></button>
+                    <button class="check Check" data-checking="Проверка..." data-value="Проверить/последняя попытка"><span class="check-label">Проверить</span><span class="sr"> ваш ответ</span></button>
                     <button class="save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
 					<div class="submission_feedback" aria-live="polite">
                     {% if max_attempts %}
@@ -81,3 +81,4 @@
 
     	</div>
     {% endif %}
+    </div>
