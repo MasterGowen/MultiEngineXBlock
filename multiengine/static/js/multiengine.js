@@ -1,12 +1,18 @@
 /* Javascript for MultiEngineXBlock. */
+var el,rm;
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
         The description for ``someMethod``.
     */
-    var elementDOM = element,
+el = element;
+rm = runtime;
 
-    mengine = {
+    var elementDOM = element;
+    // *******
+    // MENGINE
+
+    var mengine = {
         // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
@@ -30,33 +36,37 @@ function MultiEngineXBlock(runtime, element) {
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
         },
-
         getData: function(requestURL) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", scenarioURL, false);
-            xhr.send(null);
+            if(requestURL){
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", requestURL, false);
+                xhr.send(null);
 
-            xhr.onload = function(e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        console.log('Data loading ... OK!');
-                    } else {
-                        console.error(xhr.statusText);
+                xhr.onload = function(e) {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log('Data loading ... OK!');
+                        } else {
+                            console.error(xhr.statusText);
+                        }
                     }
-                }
+                };
+                xhr.onerror = function(e) {
+                    console.error(xhr.statusText);
+                };
+                return xhr.responseText;
             };
-            xhr.onerror = function(e) {
-                console.error(xhr.statusText);
-            };
-            return xhr.responseText;
         }
+
+
 
     };
 
+    // MENGINE
+    // *******
 
     // **********************************
     // Функции для обратной совместимости
-
 
     function forEachInCollection(collection, action) {
 		collection = collection || {};
@@ -124,7 +134,6 @@ function MultiEngineXBlock(runtime, element) {
     // Функции для обратной совместимости
     // **********************************
 
-
     function success_save(result){
     	var span = document.createElement('span');
     	span.innerHTML = 'Сохранено';
@@ -133,8 +142,7 @@ function MultiEngineXBlock(runtime, element) {
         setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);            
     };
 
-    var handlerUrl = runtime.handlerUrl(element, 'student_submit');
-    console.log(handlerUrl);
+    
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
     if ($(element).find('.update_scenarios_repo').length === 0) {
         var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
@@ -150,26 +158,35 @@ function MultiEngineXBlock(runtime, element) {
     });
 
     //Возврат сценариев
-    scenarioURL = runtime.handlerUrl(element, 'send_scenario');
+    var scenarioURL = runtime.handlerUrl(element, 'send_scenario');
+    var handlerUrl = runtime.handlerUrl(element, 'student_submit');
 
-    // Сохранение ответа студента
-    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
-    var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
+
+
+
 
     var studentState = mengine.getData(getStudentStateURL);
-        scenario = mengine.getData(scenarioURL),
-        scenarioJSON = JSON.parse(scenario);
+
+    var scenario = mengine.getData(scenarioURL);
+
+    var scenarioJSON = JSON.parse(scenario);
 
     mengine.studentStateJSON = studentState;
 
 
 
-    //Save student state
+
 
     
     
     setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
+
+
+    //Save student state
+    // Сохранение ответа студента
+    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
+    var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
 
     $(element).find('.Save').bind('click', function() {
         $.ajax({

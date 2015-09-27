@@ -61,7 +61,7 @@
         <div class="action">
 	            {% if past_due and answer_opportunity %}
                     <button class="check Check" data-checking="Проверка..." data-value="Проверить/последняя попытка"><span class="check-label">Проверить</span><span class="sr"> ваш ответ</span></button>
-                    <button class="save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
+                    <button class="save Save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
 					<div class="submission_feedback" aria-live="polite">
                     {% if max_attempts %}
                      	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} 
