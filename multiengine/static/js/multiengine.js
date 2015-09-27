@@ -120,7 +120,7 @@ function MultiEngineXBlock(runtime, element) {
     	var span = document.createElement('span');
     	span.innerHTML = 'Сохранено';
     	span.classList.add('saved');
-        element.getElementsByClassName('save_button')[0].appendChild(span);
+        element.getElementsByClassName('action')[0].appendChild(span);
 
         setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);            
     };
