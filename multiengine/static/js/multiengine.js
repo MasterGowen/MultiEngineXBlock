@@ -1,18 +1,18 @@
 /* Javascript for MultiEngineXBlock. */
-var el,rm;
+
+if(!MultiEngineXBlockState) var MultiEngineXBlockState = [];
+
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
         The description for ``someMethod``.
     */
-el = element;
-rm = runtime;
-
     var elementDOM = element;
     // *******
     // MENGINE
 
     var mengine = {
+        id: elementDOM.getAttribute('data-usage-id').split(';')[5],
         // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
@@ -58,12 +58,11 @@ rm = runtime;
             };
         }
 
-
-
     };
 
     // MENGINE
     // *******
+
 
     // **********************************
     // Функции для обратной совместимости
@@ -139,7 +138,7 @@ rm = runtime;
     	span.innerHTML = 'Сохранено';
     	span.classList.add('saved');
         element.getElementsByClassName('action')[0].appendChild(span);
-        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);            
+        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);        
     };
 
     
@@ -159,34 +158,31 @@ rm = runtime;
 
     //Возврат сценариев
     var scenarioURL = runtime.handlerUrl(element, 'send_scenario');
-    var handlerUrl = runtime.handlerUrl(element, 'student_submit');
-
-
-
-
-
-    var studentState = mengine.getData(getStudentStateURL);
-
     var scenario = mengine.getData(scenarioURL);
-
     var scenarioJSON = JSON.parse(scenario);
 
-    mengine.studentStateJSON = studentState;
-
-
-
-
-
-    
-    
+    //Получение и передача CSS в шаблон
     setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
+    //Получение суденческого решения
+    var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
+    var studentState = mengine.getData(getStudentStateURL);
+    
+    // Сохранение состояния студета в mengine
+    mengine.studentStateJSON = studentState;
+    
 
+
+    
+    
+    
 
     //Save student state
     // Сохранение ответа студента
+    var handlerUrl = runtime.handlerUrl(element, 'student_submit');
+
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
-    var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
+
 
     $(element).find('.Save').bind('click', function() {
         $.ajax({
@@ -215,5 +211,14 @@ rm = runtime;
 
     // Сценарий
         eval(scenarioJSON.javascriptStudent)
+
+
+MultiEngineXBlockState.push(function(){
+    console.log(mengine.id);
+    console.log(scenarioJSON);
+    console.log(mengine.studentStateJSON);
+    console.log(mengine.genJSON('student_answer_state', mengine.genAnswerObj()));
+});
+
 
 }

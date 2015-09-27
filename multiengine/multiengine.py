@@ -494,17 +494,14 @@ class MultiEngineXBlock(XBlock):
     @XBlock.handler
     def get_student_state(self, data, suffix=''):
         """
-
         Return student state as json.
-
         :param request:
         :param suffix:
         :return:
         """
         
-        body = {"student_state_json": self.student_state_json,
-                "result": "success"
-                }
+        body = self.student_state_json #  body = {"student_state_json": self.student_state_json, "result": "success"}  это не работает!!!  отдавалось:'{"'
+
         response = Response(body=body, content_type='application/json' )
         return response
 
