@@ -7,8 +7,10 @@ function MultiEngineXBlock(runtime, element) {
     var elementDOM = element,
 
     mengine = {
+        // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
+        // Функция обявляемая в сцкеарии и описывающая процесс формирования обекта правильных значенией
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
             if (dict == undefined){
@@ -18,12 +20,13 @@ function MultiEngineXBlock(runtime, element) {
             objectJSON[type.valueOf()] = dict;
             return JSON.stringify(JSON.stringify(objectJSON));
         },
+
         forEach: function(collection, action) {
             collection = collection || {};
             for (var i = 0; i < collection.length; i++)
                 action(collection[i]);
         },
-
+        // Функция геренации ID
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
         },
@@ -51,7 +54,8 @@ function MultiEngineXBlock(runtime, element) {
     };
 
 
-
+    // **********************************
+    // Функции для обратной совместимости
 
 
     function forEachInCollection(collection, action) {
@@ -116,16 +120,21 @@ function MultiEngineXBlock(runtime, element) {
         };
     };
 
+
+    // Функции для обратной совместимости
+    // **********************************
+
+
     function success_save(result){
     	var span = document.createElement('span');
     	span.innerHTML = 'Сохранено';
     	span.classList.add('saved');
         element.getElementsByClassName('action')[0].appendChild(span);
-
         setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);            
     };
 
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
+    console.log(handlerUrl);
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
     if ($(element).find('.update_scenarios_repo').length === 0) {
         var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
@@ -159,10 +168,10 @@ function MultiEngineXBlock(runtime, element) {
 
     
     
-setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
+    setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
 
-$(element).find('.Save').bind('click', function() {
+    $(element).find('.Save').bind('click', function() {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
@@ -171,7 +180,6 @@ $(element).find('.Save').bind('click', function() {
         });
     });
 
-
     $(element).find('.Check').bind('click', function() {
         $.ajax({
             type: "POST",
@@ -179,7 +187,6 @@ $(element).find('.Save').bind('click', function() {
             data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
-
         $.ajax({
             type: "POST",
             url: handlerUrl,
