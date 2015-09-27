@@ -6,7 +6,7 @@ function MultiEngineXBlock(runtime, element) {
     */
     var elementDOM = element,
 
-    mengine={
+    mengine = {
         studentAnswerJSON:{},
         studentStateJSON:'',
         genAnswerObj: function(){},
@@ -26,9 +26,34 @@ function MultiEngineXBlock(runtime, element) {
 
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
+        },
+
+        getData: function(requestURL) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", scenarioURL, false);
+            xhr.send(null);
+
+            xhr.onload = function(e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log('Data loading ... OK!');
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            };
+            xhr.onerror = function(e) {
+                console.error(xhr.statusText);
+            };
+            return xhr.responseText;
         }
 
     };
+
+
+
+
+
     function forEachInCollection(collection, action) {
 		collection = collection || {};
 		for (var i = 0; i < collection.length; i++)
@@ -86,7 +111,7 @@ function MultiEngineXBlock(runtime, element) {
         $(element).find('.weight').html('Набрано баллов: <span class="points"></span>');
         $('.points', element).text(result.correct);
 
-        if (result.max_attempts <= result.attempts) {
+        if (result.max_attempts && result.max_attempts <= result.attempts) {
             $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
         };
     };
@@ -122,51 +147,11 @@ function MultiEngineXBlock(runtime, element) {
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
     var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
 
-    function getStudentState(getStudentStateURL){
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", getStudentStateURL, false);
-        xhr.send(null);
-
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                } else {
-                    console.error(xhr.statusText);
-                }
-            }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        return xhr.responseText;
-    };
-
-
-    function getScenario(scenarioURL) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", scenarioURL, false);
-        xhr.send(null);
-
-        xhr.onload = function(e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    console.log('Scenario loading ... OK!');
-                } else {
-                    console.error(xhr.statusText);
-                }
-            }
-        };
-        xhr.onerror = function(e) {
-            console.error(xhr.statusText);
-        };
-        return xhr.responseText;
-    };
-
-    var studentState = getStudentState(getStudentStateURL),
-        scenario = getScenario(scenarioURL),
+    var studentState = mengine.getData(getStudentStateURL);
+        scenario = mengine.getData(scenarioURL),
         scenarioJSON = JSON.parse(scenario);
 
-        mengine.studentStateJSON = studentState;
+    mengine.studentStateJSON = studentState;
 
 
 
