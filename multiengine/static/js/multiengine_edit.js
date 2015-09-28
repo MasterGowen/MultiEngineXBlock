@@ -208,7 +208,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 		return xhr.responseText;
 	};
 
-	var scenario = getScenario(scenarioURL);
+	var scenario = mengine.getData(scenarioURL);
 	var scenarioJSON = JSON.parse(scenario);
 
 	
