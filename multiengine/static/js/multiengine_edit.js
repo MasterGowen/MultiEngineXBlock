@@ -9,6 +9,65 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	var elementDOM = element[0];
 
+
+ var mengine = {
+        id: elementDOM.getAttribute('data-usage-id').split(';')[5],
+        // Объявление переменных
+        studentAnswerJSON:{},
+        studentStateJSON:'',
+        // Функция обявляемая в сцкеарии и описывающая процесс формирования обекта правильных значенией
+        genAnswerObj: function(){},
+        genJSON: function(type, dict) {
+            if (dict == undefined){
+                dict = {};
+            };
+            var objectJSON = {};
+            objectJSON[type.valueOf()] = dict;
+            return JSON.stringify(JSON.stringify(objectJSON));
+        },
+
+        forEach: function(collection, action) {
+            collection = collection || {};
+            for (var i = 0; i < collection.length; i++)
+                action(collection[i]);
+        },
+        // Функция геренации ID
+        genID: function() {
+            return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
+        },
+        getData: function(requestURL) {
+            if(requestURL){
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", requestURL, false);
+                xhr.send(null);
+
+                xhr.onload = function(e) {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log('Data loading ... OK!');
+                        } else {
+                            console.error(xhr.statusText);
+                        }
+                    }
+                };
+                xhr.onerror = function(e) {
+                    console.error(xhr.statusText);
+                };
+                return xhr.responseText;
+            };
+        }
+
+    };
+
+    // MENGINE
+    // *******
+
+
+
+
+
+
+
 	// Функция пробегания по элементам коллекции
 	function forEachInCollection(collection, action) {
 		collection = collection || {};
