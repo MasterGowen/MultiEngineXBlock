@@ -118,6 +118,10 @@ function MultiEngineXBlock(runtime, element) {
 	function setBlockHtml(idBlock, contentHtml) {
 		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
+
+
+    // Функции для обратной совместимости
+    // **********************************
     function success_func(result) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
@@ -130,8 +134,7 @@ function MultiEngineXBlock(runtime, element) {
     };
 
 
-    // Функции для обратной совместимости
-    // **********************************
+
 
     function success_save(result){
     	var span = document.createElement('span');
@@ -143,7 +146,7 @@ function MultiEngineXBlock(runtime, element) {
 
     
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
-    if ($(element).find('.update_scenarios_repo').length === 0) {
+    if ($(element).find('.update_scenarios_repo')) {
         var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
     };
 
