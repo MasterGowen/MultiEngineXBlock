@@ -1,6 +1,6 @@
 /* Javascript for MultiEngineXBlock. */
 
-if(!MultiEngineXBlockState) var MultiEngineXBlockState = [];
+if(!MultiEngineXBlockState) var MultiEngineXBlockState = {};
 
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
@@ -213,12 +213,11 @@ function MultiEngineXBlock(runtime, element) {
         eval(scenarioJSON.javascriptStudent)
 
 
-MultiEngineXBlockState.push(function(){
-    console.log(mengine.id);
+MultiEngineXBlockState[mengine.id.valueOf()] = function(){
     console.log(scenarioJSON);
     console.log(mengine.studentStateJSON);
     console.log(mengine.genJSON('student_answer_state', mengine.genAnswerObj()));
-});
+};
 
 
 }
