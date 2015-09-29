@@ -9,9 +9,10 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	var elementDOM = element[0];
 
-
+ // *******
+ // MENGINE
  var mengine = {
-        id: elementDOM.getAttribute('data-usage-id').split(';')[5],
+        id: elementDOM.getAttribute('data-usage-id'),//.split(';')[5],
         // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
@@ -214,7 +215,6 @@ function MultiEngineXBlockEdit(runtime, element) {
 	
 	setBlockHtml('scenarioTemplate', scenarioJSON.html);
 	setBlockHtml('scenarioStyle', scenarioJSON.css);
-	
 	eval(scenarioJSON.javascriptStudio);
 	
 

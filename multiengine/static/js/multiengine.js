@@ -12,7 +12,7 @@ function MultiEngineXBlock(runtime, element) {
     // MENGINE
 
     var mengine = {
-        id: elementDOM.getAttribute('data-usage-id').split(';')[5],
+        id: elementDOM.getAttribute('data-usage-id'),//.split(';')[5],
         // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
