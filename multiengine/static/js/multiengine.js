@@ -139,7 +139,6 @@ function MultiEngineXBlock(runtime, element) {
         element.getElementsByClassName('action')[0].appendChild(span);
         setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);        
     };
-
     
     //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
     if ($(element).find('.update_scenarios_repo')) {
@@ -189,18 +188,20 @@ function MultiEngineXBlock(runtime, element) {
     });
 
     $(element).find('.Check').bind('click', function() {
+                $.ajax({
+            type: "POST",
+            url: handlerUrl,
+            data: mengine.genJSON('answer', mengine.genAnswerObj()),
+            success: success_func
+        });
+
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
             data: mengine.genJSON('state', mengine.genAnswerObj()),
             success: success_save
         });
-        $.ajax({
-            type: "POST",
-            url: handlerUrl,
-            data: mengine.genJSON('answer', mengine.genAnswerObj()),
-            success: success_func
-        });
+
     });
 
     // Сценарий
