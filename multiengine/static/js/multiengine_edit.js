@@ -9,9 +9,9 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	var elementDOM = element[0];
 
- // *******
- // MENGINE
- var mengine = {
+	 // *******
+	 // MENGINE
+	var mengine = {
         id: elementDOM.getAttribute('data-usage-id'),//.split(';')[5],
         // Объявление переменных
         studentAnswerJSON:{},
@@ -63,12 +63,6 @@ function MultiEngineXBlockEdit(runtime, element) {
     // MENGINE
     // *******
 
-
-
-
-
-
-
 	// Функция пробегания по элементам коллекции
 	function forEachInCollection(collection, action) {
 		collection = collection || {};
@@ -104,7 +98,6 @@ function MultiEngineXBlockEdit(runtime, element) {
 		answerJSON.answer = answer;
 		return JSON.stringify(answerJSON);
 	};
-
 	//TODO: Какой вид должен быть у результата выполнения функций
 	function getValueFild(idField) {
 		var parser = new DOMParser();
@@ -121,11 +114,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
 
-	//Функции которые надо описать
-	function generationTamplate() {};
-	function conversionToRaw() {};
-	function conversionInRaw() {};
-	function actionsView(windowView, scenario) {};
+
 
 	//jsDesign
 	//start
@@ -164,10 +153,6 @@ function MultiEngineXBlockEdit(runtime, element) {
       document.querySelector('#advanced-settings').removeAttribute('hidden');
 	};
 
-	function toggleTabs() {};
-
-
-
 	//jsDesign
 	//end
 
@@ -184,7 +169,6 @@ function MultiEngineXBlockEdit(runtime, element) {
 			window.location.reload(false);
 		});
 	});
-
 
 	//TODO: Подгрузка сценапия
     scenarioURL = runtime.handlerUrl(element, 'send_scenario');
@@ -211,14 +195,10 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 	var scenario = mengine.getData(scenarioURL);
 	var scenarioJSON = JSON.parse(scenario);
-
 	
 	setBlockHtml('scenarioTemplate', scenarioJSON.html);
 	setBlockHtml('scenarioStyle', scenarioJSON.css);
 	eval(scenarioJSON.javascriptStudio);
-	
-
-
 
 	$(element).find('.save-button').bind('click', function() {
 		if(typeof scenarioSave == 'function'){
@@ -244,5 +224,4 @@ function MultiEngineXBlockEdit(runtime, element) {
 	$(element).find('.cancel-button').bind('click', function() {
 		runtime.notify('cancel', {});
 	});
-
 }

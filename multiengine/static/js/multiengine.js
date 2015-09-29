@@ -8,9 +8,9 @@ function MultiEngineXBlock(runtime, element) {
         The description for ``someMethod``.
     */
     var elementDOM = element;
+
     // *******
     // MENGINE
-
     var mengine = {
         id: elementDOM.getAttribute('data-usage-id'),//.split(';')[5],
         // Объявление переменных
@@ -57,9 +57,7 @@ function MultiEngineXBlock(runtime, element) {
                 return xhr.responseText;
             };
         }
-
     };
-
     // MENGINE
     // *******
 
@@ -134,8 +132,6 @@ function MultiEngineXBlock(runtime, element) {
     };
 
 
-
-
     function success_save(result){
     	var span = document.createElement('span');
     	span.innerHTML = 'Сохранено';
@@ -173,11 +169,8 @@ function MultiEngineXBlock(runtime, element) {
     
     // Сохранение состояния студета в mengine
     mengine.studentStateJSON = studentState;
-    
+   
 
-
-    
-    
     
 
     //Save student state
@@ -185,7 +178,6 @@ function MultiEngineXBlock(runtime, element) {
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
 
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
-
 
     $(element).find('.Save').bind('click', function() {
         $.ajax({
@@ -211,16 +203,10 @@ function MultiEngineXBlock(runtime, element) {
         });
     });
 
-
     // Сценарий
-        eval(scenarioJSON.javascriptStudent)
+    eval(scenarioJSON.javascriptStudent)
 
-
-MultiEngineXBlockState[mengine.id.valueOf()] = function(){
-    console.log(scenarioJSON);
-    console.log(mengine.studentStateJSON);
-    console.log(mengine.genJSON('student_answer_state', mengine.genAnswerObj()));
-};
-
-
+    MultiEngineXBlockState[mengine.id.valueOf()] = function(){
+        console.log(mengine.studentStateJSON);
+    };
 }
