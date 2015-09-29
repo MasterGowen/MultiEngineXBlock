@@ -2,7 +2,7 @@
     <h2 class="problem-header">{{display_name}}</h2>
 	<div class="problem-progress">
     {{points}}
-		{% if points %}
+		{% if points == 0 %}
 			<me-span class="weight"> Набрано баллов: <me-span class="points">{{points}} из {{weight}}</me-span></me-span>
 		{% else %}
 			<me-span class="weight">(Максимальное кoличество баллов: {{weight}})</me-span>
