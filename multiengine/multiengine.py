@@ -626,6 +626,7 @@ class MultiEngineXBlock(XBlock):
 
                 for key in correct_answer:
                     for value in correct_answer[key]:
+                        with_keyword = False
                         if value in keywords:
                             keyword = value
                             correct_values = correct_answer[key][keyword]
