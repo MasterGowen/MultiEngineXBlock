@@ -565,7 +565,7 @@ class MultiEngineXBlock(XBlock):
                                         if correct_variant_len > max_points_current:
                                             correct_variant_len = max_points_current
 
-                                checked += student_answer[key]
+                                checked += len(student_answer[key])
                                 correct += correct_variant_len
 
                         elif value in student_answer[key]:
