@@ -463,22 +463,6 @@ class MultiEngineXBlock(XBlock):
              """),
         ]
 
-    # Deprecated
-    @staticmethod
-    def download(path, filename):
-        """
-        Возвращает клиенту файл.
-        Deprecated.
-        """
-
-        res = Response(content_type='text/javascript', app_iter=None)
-        try:
-            res.body = open(path + filename, 'r').read()
-        except:
-            res.body = 'alert("Scenario file not found!");'
-            logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
-        return res
-
     @XBlock.json_handler
     def save_student_state(self, data, suffix=''):
         """
