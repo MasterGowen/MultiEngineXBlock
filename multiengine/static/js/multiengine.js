@@ -1,5 +1,4 @@
 /* Javascript for MultiEngineXBlock. */
-
 if(!MultiEngineXBlockState) var MultiEngineXBlockState = {};
 
 function MultiEngineXBlock(runtime, element) {
@@ -114,8 +113,6 @@ function MultiEngineXBlock(runtime, element) {
     // Функции для обратной совместимости
     // **********************************
    
-
-
     function success_func(result) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
@@ -140,7 +137,6 @@ function MultiEngineXBlock(runtime, element) {
             success: success_func
         });    
     };
-
     
     //Возврат сценариев
     var scenarioURL = runtime.handlerUrl(element, 'send_scenario');
@@ -157,9 +153,6 @@ function MultiEngineXBlock(runtime, element) {
     // Сохранение состояния студета в mengine
     mengine.studentStateJSON = studentState;
    
-
-    
-
     //Save student state
     // Сохранение ответа студента
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
@@ -190,6 +183,7 @@ function MultiEngineXBlock(runtime, element) {
     eval(scenarioJSON.javascriptStudent)
 
     MultiEngineXBlockState[mengine.id.valueOf()] = function(){
+        console.log(element);
         console.log(mengine.studentStateJSON);
     };
 }
