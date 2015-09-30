@@ -130,7 +130,7 @@ function MultiEngineXBlock(runtime, element) {
 
 
     function success_save(result){
-        setTimeout(function(){element.getElementsByClassName('Save')[0].innerHTML="Сохранить<span class="sr"> ваш ответ</span>"}, 1000);        
+        setTimeout(function(){element.getElementsByClassName('Save')[0].innerHTML='Сохранить<span class="sr"> ваш ответ</span>'}, 1000);        
     };
     function success_check(result){
         $.ajax({
