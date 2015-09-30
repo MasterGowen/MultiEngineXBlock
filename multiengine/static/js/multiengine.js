@@ -171,6 +171,7 @@ function MultiEngineXBlock(runtime, element) {
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
 
     $(element).find('.Save').bind('click', function() {
+            $(element).find('.Save').text("Сохраниение...");
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
