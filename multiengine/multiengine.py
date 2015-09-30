@@ -9,7 +9,7 @@ import json
 import os
 from path import path
 import git
-import shutil
+# import shutil
 import logging
 
 from django.template import Context, Template
@@ -28,8 +28,6 @@ from xblock.fragment import Fragment
 from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
-
-from settings import GIT_REPO_URL, GIT_BRANCH
 
 logger = logging.getLogger(__name__)
 
@@ -144,59 +142,16 @@ class MultiEngineXBlock(XBlock):
 
 
     MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
-    SCENARIOS_ROOT = MULTIENGINE_ROOT + '/public/scenarios/'
+    SCENARIOS_ROOT = MULTIENGINE_ROOT + '/scenarios/'
 
-    def is_repo(self):
-            repo_exists = False
-            if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
-                for file_item in os.listdir(self.SCENARIOS_ROOT):
-                    if file_item and file_item == '.git':
-                        repo_exists = True
-                    elif not file_item:
-                        pass
-                    else:
-                        pass
-            return repo_exists
 
-    @staticmethod
-    def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
-        """
-        Удаление локального репозитория сценариев
-        """
-        shutil.rmtree(scenarios_root, ignore_errors=True)
+    # @staticmethod
+    # def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
+    #     """
+    #     Удаление локального репозитория сценариев
+    #     """
+    #     shutil.rmtree(scenarios_root, ignore_errors=True)
     
-    def update_local_repo(self):
-        """
-        Обновление локального репозитория сценариев
-        """
-        latest = False
-        scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
-        scenarios_repo_remote = git.Remote(
-            scenarios_repo,
-            'master')
-        info = scenarios_repo_remote.fetch()[0]
-        remote_commit = info.commit
-        if scenarios_repo.commit().hexsha == remote_commit.hexsha:
-            latest = True
-    
-        while remote_commit.hexsha != scenarios_repo.commit().hexsha:
-            remote_commit = remote_commit.parents[0]
-        return latest
-
-    def clone_repo(self):
-        """
-        Клонирование репозитория со сценариями.
-        Адрес репозитория хранится в переменной GIT_REPO_URL в settings.py.
-        """
-        scenarios_repo = git.Repo.clone_from(
-            GIT_REPO_URL,
-            self.SCENARIOS_ROOT,
-            branch=GIT_BRANCH
-        )
-        scenarios_repo = git.Repo(self.SCENARIOS_ROOT)
-        latest = True
-        return scenarios_repo, latest
-
     def load_scenarios(self, keys=None):
         """
         Загрузка сценариев из локального репозитория в список.
