@@ -576,10 +576,12 @@ class MultiEngineXBlock(XBlock):
                             wrong_answers.append(value)
                             checked += 1
 
-                checks = {"result": correct / float(checked),
-                        "right_answers": right_answers,
-                        "wrong_answers": wrong_answers,
-                        }
+                checks = {"correct": correct,
+                          "checked": checked,
+                          "result": correct / float(checked),
+                          "right_answers": right_answers,
+                          "wrong_answers": wrong_answers,
+                          }
                 return checks
 
             def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
@@ -651,13 +653,15 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"]
+            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"], checks["checked"], checks["correct"]
 
         if answer_opportunity(self):
             checks = multicheck(student_answer, correct_answer, settings)
             correct = checks[0]
             right_answers = checks[1]
             wrong_answers = checks[2]
+            c1_testing = checks[3],
+            c2_testing = checks[4],
             self.points = correct
             self.attempts += 1
 
@@ -673,6 +677,8 @@ class MultiEngineXBlock(XBlock):
                     'max_attempts': self.max_attempts,
                     'right_answers': right_answers,
                     #"wrong_answers": wrong_answers,
+                    "c1_testing": c1_testing,
+                    "c2_testing": c2_testing
                     }
         else:
             return('Max attempts exception!')
