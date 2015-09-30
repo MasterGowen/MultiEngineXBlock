@@ -560,14 +560,13 @@ class MultiEngineXBlock(XBlock):
                                 for obj in correct_answer[key][keyword]:
                                     if max_entry_variant > len(set(student_answer[key])-set(obj)):
                                         max_entry_variant = len(set(student_answer[key])-set(obj))
-                                        correct_variant_len = len(set(student_answer[key]))
+                                        correct_variant_len = len(correct_answer[key][keyword])
 
                                         if correct_variant_len > max_points_current:
                                             correct_variant_len = max_points_current
 
                                 checked += len(correct_answer[key][keyword])
                                 correct += correct_variant_len
-
                         elif value in student_answer[key]:
                             right_answers.append(value)
                             checked += 1
