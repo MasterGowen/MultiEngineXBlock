@@ -149,20 +149,6 @@ function MultiEngineXBlock(runtime, element) {
     };
 
     
-    //TODO: Поиск плашки с сообщением, что ни один сценарий не поддерживается
-    if ($(element).find('.update_scenarios_repo')) {
-        var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
-    };
-
-    //TODO: Кнопка обновления сценариев
-    $(element).find('.update_scenarios_repo').bind('click', function() {
-        $(element).find("#overlay").css("display", "block");
-        var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
-        $.post(updateScenariosRepo).done(function(response) {
-            window.location.reload(false);
-        });
-    });
-
     //Возврат сценариев
     var scenarioURL = runtime.handlerUrl(element, 'send_scenario');
     var scenario = mengine.getData(scenarioURL);

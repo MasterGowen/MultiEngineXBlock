@@ -156,48 +156,17 @@ function MultiEngineXBlockEdit(runtime, element) {
 	//jsDesign
 	//end
 
-	//TODO: Кнопка обновления сценариев
-	if ($(element).find('.update_scenarios_repo').length === 0) {
-		var downloadUrl = runtime.handlerUrl(element, 'update_scenarios_repo');
-	};
 
-	//TODO: Кнопка обновления сценариев
-	$(element).find('.update_scenarios_repo').bind('click', function() {
-		$(element).find("#overlay").css("display", "block");
-		var updateScenariosRepo = runtime.handlerUrl(element, 'update_scenarios_repo');
-		$.post(updateScenariosRepo).done(function(response) {
-			window.location.reload(false);
-		});
-	});
 
 	//TODO: Подгрузка сценапия
     scenarioURL = runtime.handlerUrl(element, 'send_scenario');
-
-	function getScenario(scenarioURL) {
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", scenarioURL, false);
-		xhr.send(null);
-
-		xhr.onload = function(e) {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					console.error(xhr.statusText);
-				} else {
-					console.error(xhr.statusText);
-				}
-			}
-		};
-		xhr.onerror = function(e) {
-			console.error(xhr.statusText);
-		};
-		return xhr.responseText;
-	};
 
 	var scenario = mengine.getData(scenarioURL);
 	var scenarioJSON = JSON.parse(scenario);
 	
 	setBlockHtml('scenarioTemplate', scenarioJSON.html);
 	setBlockHtml('scenarioStyle', scenarioJSON.css);
+	
 	eval(scenarioJSON.javascriptStudio);
 
 	$(element).find('.save-button').bind('click', function() {
