@@ -523,69 +523,69 @@ class MultiEngineXBlock(XBlock):
                         length = len(element)
                 return length
 
-        def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
-            """
-            Вычисляет долю выполненных заданий без учета
-            последовательности элементов в области.
-            """
+            def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
+                """
+                Вычисляет долю выполненных заданий без учета
+                последовательности элементов в области.
+                """
 
-            right_answers = []
-            wrong_answers = []
+                right_answers = []
+                wrong_answers = []
 
-            for key in correct_answer:
-                for value in correct_answer[key]:
-                    with_keyword = False
-                    if value in keywords:
-                        if value == "or":
-                            keyword = value
-                            correct_values = correct_answer[key][keyword]
-                            for correct_value in correct_values:
-                                if len(set(correct_value) - set(student_answer[key])) == 0:
-                                    with_keyword = True
-                                    break
-                            if with_keyword:
-                                checked += len(student_answer[key])
-                                correct += len(student_answer[key])
-                            else:
-                                checked += len(student_answer[key])
-                        elif value == "or-and":
-                            keyword = value
-                            max_points_current = 0
-                            correct_variant_len = 0
-                            for obj in correct_answer[key][keyword]:
-                                if len(set(obj)) > max_points_current:
-                                    max_points_current = len(set(obj))
+                for key in correct_answer:
+                    for value in correct_answer[key]:
+                        with_keyword = False
+                        if value in keywords:
+                            if value == "or":
+                                keyword = value
+                                correct_values = correct_answer[key][keyword]
+                                for correct_value in correct_values:
+                                    if len(set(correct_value) - set(student_answer[key])) == 0:
+                                        with_keyword = True
+                                        break
+                                if with_keyword:
+                                    checked += len(student_answer[key])
+                                    correct += len(student_answer[key])
+                                else:
+                                    checked += len(student_answer[key])
+                            elif value == "or-and":
+                                keyword = value
+                                max_points_current = 0
+                                correct_variant_len = 0
+                                for obj in correct_answer[key][keyword]:
+                                    if len(set(obj)) > max_points_current:
+                                        max_points_current = len(set(obj))
 
-                            max_entry_variant = 0
-                            for obj in correct_answer[key][keyword]:
-                                if max_entry_variant < len(set(obj)):
-                                    max_entry_variant = len(set(obj))
-                                    correct_variant_len = len(correct_answer[key][keyword])
+                                max_entry_variant = 0
+                                for obj in correct_answer[key][keyword]:
+                                    if max_entry_variant < len(set(obj)):
+                                        max_entry_variant = len(set(obj))
+                                        correct_variant_len = len(correct_answer[key][keyword])
 
-                                    if correct_variant_len > max_points_current:
-                                        correct_variant_len = max_points_current
+                                        if correct_variant_len > max_points_current:
+                                            correct_variant_len = max_points_current
 
-                                for answer in set(student_answer[key]):
-                                    print(answer, obj)
-                                    if answer in obj:
-                                        correct += 1
-                            checked += correct_variant_len
+                                    for answer in set(student_answer[key]):
+                                        print(answer, obj)
+                                        if answer in obj:
+                                            correct += 1
+                                checked += correct_variant_len
 
-                    elif value in student_answer[key]:
-                        right_answers.append(value)
-                        checked += 1
-                        correct += 1
-                    else:
-                        wrong_answers.append(value)
-                        checked += 1
+                        elif value in student_answer[key]:
+                            right_answers.append(value)
+                            checked += 1
+                            correct += 1
+                        else:
+                            wrong_answers.append(value)
+                            checked += 1
 
-            checks = {"correct": correct,
-                      "checked": checked,
-                      "result": correct / float(checked),
-                      "right_answers": right_answers,
-                      "wrong_answers": wrong_answers,
-                      }
-            return checks
+                checks = {"correct": correct,
+                          "checked": checked,
+                          "result": correct / float(checked),
+                          "right_answers": right_answers,
+                          "wrong_answers": wrong_answers,
+                          }
+                return checks
 
             def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
                 """
