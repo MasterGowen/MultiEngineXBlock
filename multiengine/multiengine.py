@@ -552,6 +552,8 @@ class MultiEngineXBlock(XBlock):
                                 keyword = value
                                 max_points_current = 0
                                 correct_variant_len = 0
+                                checked_objects = []
+                                student_answer_key = student_answer[key]
                                 for obj in correct_answer[key][keyword]:
                                     if len(set(obj)) > max_points_current:
                                         max_points_current = len(set(obj))
@@ -565,10 +567,10 @@ class MultiEngineXBlock(XBlock):
                                         if correct_variant_len > max_points_current:
                                             correct_variant_len = max_points_current
 
-                                    for answer in set(student_answer[key]):
-                                        print(answer, obj)
-                                        if answer in obj:
+                                    for answer in copy.deepcopy(set(student_answer_key)):
+                                        if answer in obj and obj not in checked_objects:
                                             correct += 1
+                                            checked_objects.append(obj)
                                 checked += correct_variant_len
 
                         elif value in student_answer[key]:
