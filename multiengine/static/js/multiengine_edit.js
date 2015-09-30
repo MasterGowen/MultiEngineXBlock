@@ -116,8 +116,8 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 
-	//jsDesign
-	//start
+	//**************jsDesign*****************
+	//***************start*******************
 	// Функция которая должна отвечать за работу Вкладок "Основные", "Сценарий", "Расширенные"
 	
 	var tabList = '<li class="action-tabs is-active-tabs" id="main-settings-tab">Основные</li><li class="action-tabs" id="scenario-settings-tab">Сценарий</li><li class="action-tabs" id="advanced-settings-tab">Расширенные</li>';
@@ -152,9 +152,8 @@ function MultiEngineXBlockEdit(runtime, element) {
       document.querySelector('#scenario-settings').setAttribute('hidden', 'true'); 
       document.querySelector('#advanced-settings').removeAttribute('hidden');
 	};
-
-	//jsDesign
-	//end
+	//**************jsDesign*****************
+	//****************end********************
 
 
 
