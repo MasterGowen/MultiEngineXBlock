@@ -672,7 +672,7 @@ class MultiEngineXBlock(XBlock):
                     'attempts': self.attempts,
                     'max_attempts': self.max_attempts,
                     'right_answers': right_answers,
-                    "wrong_answers": wrong_answers,
+                    #"wrong_answers": wrong_answers,
                     }
         else:
             return('Max attempts exception!')
