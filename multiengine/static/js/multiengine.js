@@ -130,11 +130,7 @@ function MultiEngineXBlock(runtime, element) {
 
 
     function success_save(result){
-    	var span = document.createElement('span');
-    	span.innerHTML = 'Сохранено';
-    	span.classList.add('saved');
-        element.getElementsByClassName('action')[0].appendChild(span);
-        setTimeout(function(){element.getElementsByClassName('saved')[0].parentNode.removeChild(element.getElementsByClassName('saved')[0])}, 1000);        
+        setTimeout(function(){element.getElementsByClassName('Save')[0].innerHTML="Сохранить<span class="sr"> ваш ответ</span>"}, 1000);        
     };
     function success_check(result){
         $.ajax({
@@ -171,7 +167,7 @@ function MultiEngineXBlock(runtime, element) {
     var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
 
     $(element).find('.Save').bind('click', function() {
-            $(element).find('.Save').text("Сохраниение...");
+            $(element).find('.Save').text("Сохранение...");
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
