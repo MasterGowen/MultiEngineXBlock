@@ -536,27 +536,6 @@ class MultiEngineXBlock(XBlock):
 
         return response
 
-    @XBlock.handler
-    def update_scenarios_repo(self, request, suffix=''):
-        """
-        Обновление репозитория сценариев из внешнего git-репозитория.
-        """
-        #require(self.is_course_staff())  # TODO Узнать почему 403 в Студии
-        if self.is_repo():
-            try:
-                self.update_local_repo()
-            except:
-                self.clean_repo_path()
-                logger.debug("[MultiEngineXBlock]: " + "Clean repo path")
-                self.clone_repo()
-                logger.debug("[MultiEngineXBlock]: " + "Cloning repo...")
-        elif not self.is_repo():
-            self.clone_repo()
-            logger.debug("[MultiEngineXBlock]: " + "Cloning repo...")
-
-        response = Response(body='{"result": "success"}', content_type='application/json' )
-        return response
-
     # Deprecated
     @XBlock.handler
     def download_scenario(self, request, suffix=''):
