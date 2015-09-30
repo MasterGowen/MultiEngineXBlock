@@ -536,16 +536,6 @@ class MultiEngineXBlock(XBlock):
 
         return response
 
-    # Deprecated
-    @XBlock.handler
-    def download_scenario(self, request, suffix=''):
-        """
-        ! Deprecated !
-        Хендлер выгрузки файла сценария.
-        """
-        if self.scenario:
-            return self.download(self.SCENARIOS_ROOT, self.scenario + '.sc')
-
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
         self.display_name = data.get('display_name')
