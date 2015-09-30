@@ -26,7 +26,6 @@ function MultiEngineXBlock(runtime, element) {
             objectJSON[type.valueOf()] = dict;
             return JSON.stringify(JSON.stringify(objectJSON));
         },
-
         forEach: function(collection, action) {
             collection = collection || {};
             for (var i = 0; i < collection.length; i++)
@@ -41,7 +40,6 @@ function MultiEngineXBlock(runtime, element) {
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", requestURL, false);
                 xhr.send(null);
-
                 xhr.onload = function(e) {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
@@ -70,7 +68,6 @@ function MultiEngineXBlock(runtime, element) {
 		for (var i = 0; i < collection.length; i++)
 			action(collection[i]);
 	};
-
 	//Функция формирует список из детей переданнго в функцию элементов
 	function childList(value) {
 		var childList = [];
@@ -108,18 +105,17 @@ function MultiEngineXBlock(runtime, element) {
 		value = parser.parseFromString(value.value || value.innerHTML, 'text/html');
 		return value;
 	};
-
 	function setValueFild(idField, value) {
 		elementDOM.querySelector('#' + idField).value = value;
 	};
-
 	function setBlockHtml(idBlock, contentHtml) {
 		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
 	};
-
-
     // Функции для обратной совместимости
     // **********************************
+   
+
+
     function success_func(result) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
@@ -127,7 +123,8 @@ function MultiEngineXBlock(runtime, element) {
         $('.points', element).text(result.correct + ' из ' + result.weight);
 
         if (result.max_attempts && result.max_attempts <= result.attempts) {
-            $('.send_button', element).html('<p><strong>Попытки исчерпаны</strong></p>')
+            $('.check .Check', element).remove();
+            $('.save .Save', element).remove();
         };
     };
 
