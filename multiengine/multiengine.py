@@ -556,17 +556,18 @@ class MultiEngineXBlock(XBlock):
                                     if len(set(obj)) > max_points_current:
                                         max_points_current = len(set(obj))
 
-                                max_entry_variant = 999
+                                max_entry_variant = 0
                                 for obj in correct_answer[key][keyword]:
-                                    if max_entry_variant > len(set(student_answer[key])-set(obj)):
-                                        max_entry_variant = len(set(student_answer[key])-set(obj))
+                                    if max_entry_variant < len(set(obj)):
+                                        max_entry_variant = len(set(obj))
                                         correct_variant_len = len(correct_answer[key][keyword])
 
                                         if correct_variant_len > max_points_current:
                                             correct_variant_len = max_points_current
 
-                                checked += len(correct_answer[key][keyword])
-                                correct += correct_variant_len
+                                        if student_answer[key][0] in obj:
+                                            correct += 1
+                                checked += correct_variant_len
                         elif value in student_answer[key]:
                             right_answers.append(value)
                             checked += 1
