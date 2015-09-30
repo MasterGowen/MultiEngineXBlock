@@ -142,7 +142,7 @@ class MultiEngineXBlock(XBlock):
 
 
     MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
-    SCENARIOS_ROOT = MULTIENGINE_ROOT + '/scenarios/'
+    SCENARIOS_ROOT = '/edx/var/edxapp/multiengine/scenarios/'
 
 
     # @staticmethod
@@ -514,7 +514,7 @@ class MultiEngineXBlock(XBlock):
             возвращает долю совпавших значений.
             """
 
-            keywords = ('or', 'and', 'not')
+            keywords = ('or', 'and', 'not', 'or-and')
 
             def max_length(lst):
                 length = 0
@@ -536,17 +536,37 @@ class MultiEngineXBlock(XBlock):
                     for value in correct_answer[key]:
                         with_keyword = False
                         if value in keywords:
-                            keyword = value
-                            correct_values = correct_answer[key][keyword]
-                            for correct_value in correct_values:
-                                if len(set(correct_value) - set(student_answer[key])) == 0:
-                                    with_keyword = True
-                                    break
-                            if with_keyword:
-                                checked += len(student_answer[key])
-                                correct += len(student_answer[key])
-                            else:
-                                checked += len(student_answer[key])
+                            if value == "or":
+                                keyword = value
+                                correct_values = correct_answer[key][keyword]
+                                for correct_value in correct_values:
+                                    if len(set(correct_value) - set(student_answer[key])) == 0:
+                                        with_keyword = True
+                                        break
+                                if with_keyword:
+                                    checked += len(student_answer[key])
+                                    correct += len(student_answer[key])
+                                else:
+                                    checked += len(student_answer[key])
+                            elif value == "or-and":
+                                keyword = value
+                                max_points_current = 0
+                                correct_variant_len = 0
+                                for obj in correct_answer[key][keyword]:
+                                    if len(obj) > max_points_current:
+                                        max_points_current = len(obj)
+
+                                max_entry_variant = 999
+                                for obj in correct_answer[key][keyword]:
+                                    if max_entry_variant > len(set(student_answer[key])-set(obj)):
+                                        max_entry_variant = len(set(student_answer[key])-set(obj))
+                                        correct_variant_len = len(student_answer[key])
+
+                                        if correct_variant_len > max_points_current:
+                                            correct_variant_len = max_points_current
+
+                                checked += student_answer[key]
+                                correct += correct_variant_len
 
                         elif value in student_answer[key]:
                             right_answers.append(value)
