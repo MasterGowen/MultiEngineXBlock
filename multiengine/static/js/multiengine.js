@@ -120,8 +120,8 @@ function MultiEngineXBlock(runtime, element) {
         $('.points', element).text(result.correct + ' из ' + result.weight);
 
         if (result.max_attempts && result.max_attempts <= result.attempts) {
-            $('.check .Check', element).remove();
-            $('.save .Save', element).remove();
+            $('.Check', element).remove();
+            $('.Save', element).remove();
         };
     };
 
