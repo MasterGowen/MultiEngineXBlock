@@ -529,6 +529,8 @@ class MultiEngineXBlock(XBlock):
 
                 correct_answers_list = []
                 student_answers_list = []
+                for key in student_answer:
+                    student_answers_list += student_answer[key]
 
                 for key in correct_answer:
                     for value in correct_answer[key]:
@@ -561,7 +563,6 @@ class MultiEngineXBlock(XBlock):
                                 for obj in correct_answer[key][keyword]:
 
                                     correct_answers_list += obj
-                                    student_answers_list += student_answer_key
 
                                     if max_entry_variant < len(set(obj)):
                                         max_entry_variant = len(set(obj))
