@@ -548,6 +548,7 @@ class MultiEngineXBlock(XBlock):
                                 else:
                                     checked += len(student_answer[key])
                             elif value == "or-and":
+                                fail = False
                                 keyword = value
                                 max_points_current = 0
                                 correct_variant_len = 0
@@ -566,12 +567,14 @@ class MultiEngineXBlock(XBlock):
                                         if correct_variant_len > max_points_current:
                                             correct_variant_len = max_points_current
 
-                                    for answer in copy.deepcopy(set(student_answer_key)):
-                                        if answer in obj and obj not in checked_objects:
-                                            correct += 1
-                                            checked_objects.append(obj)
-                                checked += correct_variant_len
-
+                                        for answer in copy.deepcopy(set(student_answer_key)):
+                                            if answer in obj and obj not in checked_objects:
+                                                correct += 1
+                                                checked_objects.append(obj)
+                                            else:
+                                                fail = True
+                                    checked += correct_variant_len
+                                    
                         elif value in student_answer[key]:
                             right_answers.append(value)
                             checked += 1
@@ -580,9 +583,10 @@ class MultiEngineXBlock(XBlock):
                             wrong_answers.append(value)
                             checked += 1
 
-                checks = {"correct": correct,
-                          "checked": checked,
-                          "result": correct / float(checked),
+                if fail:
+                    correct = 0
+
+                checks = {"result": correct / float(checked),
                           "right_answers": right_answers,
                           "wrong_answers": wrong_answers,
                           }
@@ -657,15 +661,13 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"], checks["checked"], checks["correct"]
+            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"])
 
         if answer_opportunity(self):
             checks = multicheck(student_answer, correct_answer, settings)
             correct = checks[0]
             right_answers = checks[1]
             wrong_answers = checks[2]
-            c1_testing = checks[3],
-            c2_testing = checks[4],
             self.points = correct
             self.attempts += 1
 
@@ -681,11 +683,9 @@ class MultiEngineXBlock(XBlock):
                     'max_attempts': self.max_attempts,
                     'right_answers': right_answers,
                     #"wrong_answers": wrong_answers,
-                    "c1_testing": c1_testing,
-                    "c2_testing": c2_testing
                     }
         else:
-            return('Max attempts exception!')
+            return {"result": 'Max attempts exception!'}
 
     def past_due(self):
             """
