@@ -587,6 +587,7 @@ class MultiEngineXBlock(XBlock):
                             checked += 1
                             correct += 1
                         else:
+                            correct_answers_list.append(value)
                             wrong_answers.append(value)
                             checked += 1
 
