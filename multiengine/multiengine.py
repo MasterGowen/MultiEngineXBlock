@@ -661,7 +661,7 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"])
+            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"]
 
         if answer_opportunity(self):
             checks = multicheck(student_answer, correct_answer, settings)
