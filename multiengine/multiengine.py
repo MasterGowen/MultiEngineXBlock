@@ -524,6 +524,8 @@ class MultiEngineXBlock(XBlock):
 
             def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
 
+                fail = False
+
                 right_answers = []
                 wrong_answers = []
 
@@ -540,6 +542,7 @@ class MultiEngineXBlock(XBlock):
                                 keyword = value
                                 correct_values = correct_answer[key][keyword]
                                 for correct_value in correct_values:
+                                    correct_answers_list += correct_value
                                     if len(set(correct_value) - set(student_answer[key])) == 0:
                                         with_keyword = True
                                         break
@@ -549,7 +552,6 @@ class MultiEngineXBlock(XBlock):
                                 else:
                                     checked += len(student_answer[key])
                             elif value == "or-and":
-                                fail = False
                                 keyword = value
                                 max_points_current = 0
                                 correct_variant_len = 0
@@ -580,6 +582,7 @@ class MultiEngineXBlock(XBlock):
                                 checked += correct_variant_len
 
                         elif value in student_answer[key]:
+                            correct_answers_list.append(value)
                             right_answers.append(value)
                             checked += 1
                             correct += 1
@@ -588,6 +591,8 @@ class MultiEngineXBlock(XBlock):
                             checked += 1
 
                 if len(set(student_answers_list) - set(correct_answers_list)) or fail:
+                    print(set(student_answers_list))
+                    print(set(correct_answers_list))
                     correct = 0
 
                 checks = {"result": correct / float(checked),
