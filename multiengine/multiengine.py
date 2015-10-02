@@ -291,7 +291,7 @@ class MultiEngineXBlock(XBlock):
             "weight": self.weight,
             "question": self.question,
             "correct_answer": self.correct_answer,
-            "answer": self.answer,
+            #"answer": self.answer,
             "attempts": self.attempts,
             "student_state_json": self.student_state_json,
             "student_view_template": self.student_view_template,
