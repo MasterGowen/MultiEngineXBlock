@@ -304,8 +304,8 @@ class MultiEngineXBlock(XBlock):
 
         # It's temporary! It's crutch, not magick.
         self.runtime.publish(self, 'grade', {
-                'value': self.points,
-                'max_value': self.weight,
+                'value': str(self.points),
+                'max_value': str(self.weight),
         })
 
         if self.max_attempts != 0:
