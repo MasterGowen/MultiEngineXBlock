@@ -10,6 +10,7 @@ import os
 from path import path
 import logging
 import copy
+import ast
 
 from django.template import Context, Template
 from django.utils.encoding import smart_text
@@ -105,7 +106,7 @@ class MultiEngineXBlock(XBlock):
     # user_state
     points = Integer(
         display_name=u"Количество баллов студента",
-        default=None,
+        default=0,
         scope=Scope.user_state
     )
 
@@ -304,8 +305,8 @@ class MultiEngineXBlock(XBlock):
 
         # It's temporary! It's crutch, not magick.
         self.runtime.publish(self, 'grade', {
-                'value': str(self.points),
-                'max_value': str(self.weight),
+                'value': float(self.points),
+                'max_value': float(self.weight),
         })
 
         if self.max_attempts != 0:
@@ -494,7 +495,7 @@ class MultiEngineXBlock(XBlock):
         student_answer = student_json["answer"]
         self.answer = data
 
-        correct_json = json.loads(self.correct_answer)
+        correct_json = ast.literal_eval(self.correct_answer)
         correct_answer = correct_json["answer"]
 
         try:
