@@ -441,7 +441,7 @@ class MultiEngineXBlock(XBlock):
         
         body = self.student_state_json #  body = {"student_state_json": self.student_state_json, "result": "success"}  это не работает!!!  отдавалось:'{"'
 
-        response = Response(body=body, content_type='application/json' )
+        response = Response(body=body, charset='UTF-8',  content_type='application/json' )
         return response
 
 
@@ -471,7 +471,7 @@ class MultiEngineXBlock(XBlock):
                 "cssStudent": '',
             }
             
-        response = Response(body=json.dumps(context), content_type='text/plain')
+        response = Response(body=json.dumps(context), charset='UTF-8',  content_type='text/plain')
 
         return response
 
@@ -495,7 +495,10 @@ class MultiEngineXBlock(XBlock):
         student_answer = student_json["answer"]
         self.answer = data
 
-        correct_json = ast.literal_eval(self.correct_answer)
+        try:
+            correct_json = ast.literal_eval(self.correct_answer)
+        except:
+            correct_json = self.correct_answer
         correct_answer = correct_json["answer"]
 
         try:
