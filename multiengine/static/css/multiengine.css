@@ -1,10 +1,13 @@
 /*костыл*/
 [class*="view-"] .modal-lg.modal-editor .modal-content {
-  height: 609px;}
-[class*="view-"] .modal-window .editor-with-buttons.wrapper-comp-settings .list-input.settings-list {
-  height: 549px;
+    height: 609px;
 }
- /*конец*/ 
+
+[class*="view-"] .modal-window .editor-with-buttons.wrapper-comp-settings .list-input.settings-list {
+    height: 549px;
+}
+
+/*конец*/
 
 .CodeMirror {
     border: 1px solid grey;
@@ -15,38 +18,38 @@ div.xblock-actions ul {
 }
 
 .scenarios_alert {
-	padding: 5px;
-	background-color: #F26464;
-	color: white;
-	border-radius: 2px;
+    padding: 5px;
+    background-color: #F26464;
+    color: white;
+    border-radius: 2px;
 }
 
 .update_scenarios_repo {
-  padding: 5px;
-  border: 1px solid gray;
-  background-color: azure;
+    padding: 5px;
+    border: 1px solid gray;
+    background-color: azure;
 }
 
 #overlay {
-	background-color: rgb(0, 0, 0);
-	opacity: 0.7; /* Safari, Opera */
-	-moz-opacity:0.70; /* FireFox */
-	filter: alpha(opacity=70); /* IE */
-	z-index: 9999;
-	height: 100%;
-	width: 100%;
-	background-repeat:repeat;
-	position:fixed;
-	top: 0px;
-	left: 0px;
+    background-color: rgb(0, 0, 0);
+    opacity: 0.7; /* Safari, Opera */
+    -moz-opacity: 0.70; /* FireFox */
+    filter: alpha(opacity=70); /* IE */
+    z-index: 9999;
+    height: 100%;
+    width: 100%;
+    background-repeat: repeat;
+    position: fixed;
+    top: 0px;
+    left: 0px;
 }
 
 .overlay_icon {
-	width: 100%;
-	margin-top: 10em;
+    width: 100%;
+    margin-top: 10em;
 }
 
-.action-tabs{
+.action-tabs {
     margin-left: 10px;
     display: inline-block;
     padding: 3px 8px;
@@ -57,19 +60,19 @@ div.xblock-actions ul {
     cursor: pointer;
 }
 
-.action-tabs:hover{
+.action-tabs:hover {
     background: #d6d6d6 none repeat scroll 0% 0%;
     color: #4C4C4C;
 }
 
-.is-active-tabs{
+.is-active-tabs {
     background: #888 none repeat scroll 0% 0%;
     color: white;
 
 }
 
-.saved{
-  margin: 8px;
-  display: inline-block;
-  color: green;
+.saved {
+    margin: 8px;
+    display: inline-block;
+    color: green;
 }

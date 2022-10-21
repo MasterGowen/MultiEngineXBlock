@@ -16,7 +16,7 @@ from django.template import Context, Template
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
 
-from student.models import user_by_anonymous_id
+from common.djangoapps.student.models import user_by_anonymous_id
 from submissions import api as submissions_api
 from submissions.models import StudentItem as SubmissionsStudent
 
@@ -34,10 +34,11 @@ logger = logging.getLogger(__name__)
 
 def reify(meth):
     """
-    Decorator which caches value so it is only computed once.
+    Decorator which caches value, so it is only computed once.
     Keyword arguments:
     inst
     """
+
     def getter(inst):
         """
         Set value to meth name in dict and returns value.
@@ -45,105 +46,102 @@ def reify(meth):
         value = meth(inst)
         inst.__dict__[meth.__name__] = value
         return value
+
     return property(getter)
 
 
 class MultiEngineXBlock(XBlock):
-
     icon_class = 'problem'
     has_score = True
 
     # settings
     display_name = String(
-        display_name=u"Название",
-        help=u"Название задания, которое увидят студенты.",
-        default=u'MultiEngine',
+        display_name='Название',
+        help='Название задания, которое увидят студенты.',
+        default='MultiEngine',
         scope=Scope.settings
     )
 
     question = String(
-        display_name=u"Вопрос",
-        help=u"Текст задания.",
-        default=u"Вы готовы?",
+        display_name='Вопрос',
+        help='Текст задания.',
+        default='Вы готовы?',
         scope=Scope.settings
     )
 
     correct_answer = JSONField(
-        display_name=u"Правильный ответ",
-        help=u"Скрытое поле для правильного ответа в формате json.",
+        display_name='Правильный ответ',
+        help='Скрытое поле для правильного ответа в формате json.',
         default={},
         scope=Scope.settings
     )
 
     weight = Integer(
-        display_name=u"Максимальное количество баллов",
-        help=(u"Максимальное количество баллов",
-              u"которое может получить студент."),
+        display_name='Максимальное количество баллов',
+        help='Максимальное количество баллов которое может получить студент.',
         default=100,
         scope=Scope.settings
     )
 
     grade_steps = Integer(
-        display_name=u"Шаг оценивания",
-        help=u"Количество диапазонов оценивания",
+        display_name='Шаг оценивания',
+        help='Количество диапазонов оценивания',
         default=0,
         scope=Scope.settings
     )
     scenario = String(
-        display_name=u"Сценарий",
-        help=u"Выберите один из сценариев отображения задания.",
+        display_name='Сценарий',
+        help='Выберите один из сценариев отображения задания.',
         scope=Scope.settings,
         default=None,
     )
 
     max_attempts = Integer(
-        display_name=u"Максимальное количество попыток",
-        help=u"",
+        display_name='Максимальное количество попыток',
+        help='',
         default=0,
         scope=Scope.settings
     )
 
     # user_state
     points = Integer(
-        display_name=u"Количество баллов студента",
+        display_name='Количество баллов студента',
         default=0,
         scope=Scope.user_state
     )
 
     answer = JSONField(
-        display_name=u"Ответ пользователя",
-        default={"answer": {}},
+        display_name='Ответ пользователя',
+        default={'answer': {}},
         scope=Scope.user_state
     )
 
     attempts = Integer(
-        display_name=u"Количество сделанных попыток",
+        display_name='Количество сделанных попыток',
         default=0,
         scope=Scope.user_state
     )
 
     student_state_json = JSONField(
-        display_name=u"Сохраненное состояние",
+        display_name='Сохраненное состояние',
         scope=Scope.user_state
     )
 
     student_view_template = String(
-        display_name=u"Шаблон сценария",
+        display_name='Шаблон сценария',
         default='',
         scope=Scope.settings
     )
 
     sequence = Boolean(
-        display_name=u"Учитывать последовательность выбранных вариантов?",
-        help=u"Работает не для всех сценариев.",
+        display_name='Учитывать последовательность выбранных вариантов?',
+        help='Работает не для всех сценариев.',
         default=False,
         scope=Scope.settings
     )
 
-
     MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
     SCENARIOS_ROOT = '/edx/var/edxapp/multiengine/scenarios/'
-
 
     # @staticmethod
     # def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
@@ -151,7 +149,7 @@ class MultiEngineXBlock(XBlock):
     #     Удаление локального репозитория сценариев
     #     """
     #     shutil.rmtree(scenarios_root, ignore_errors=True)
-    
+
     def load_scenarios(self, keys=None):
         """
         Загрузка сценариев из локального репозитория в список.
@@ -165,8 +163,8 @@ class MultiEngineXBlock(XBlock):
             'javascriptStudio::',
             'css::',
             'cssStudent::',
-            ]
-        if keys == "get":
+        ]
+        if keys == 'get':
             return _sc_keys
 
         if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
@@ -179,9 +177,9 @@ class MultiEngineXBlock(XBlock):
                             _current_key = line.strip().strip(':')
                         else:
                             if _current_key in _scenario_content:
-                                _scenario_content[_current_key] += line.decode('utf-8')
+                                _scenario_content[_current_key] += line
                             else:
-                                _scenario_content[_current_key] = line.strip().decode('utf-8')
+                                _scenario_content[_current_key] = line.strip()
                 return _scenario_content
 
             for scenario_file in os.listdir(self.SCENARIOS_ROOT):
@@ -201,7 +199,7 @@ class MultiEngineXBlock(XBlock):
                 scenario_content = jsfile.read()
         except:
             scenario_content = 'alert("Scenario file not found!");'
-            logger.debug("[MultiEngineXBlock]: " + "Scenario file not found!")
+            logger.debug('[MultiEngineXBlock]: Scenario file not found!')
         return scenario_content
 
     send_button = ''
@@ -212,7 +210,7 @@ class MultiEngineXBlock(XBlock):
         Handy helper for getting resources from our kit.
         """
         data = pkg_resources.resource_string(__name__, path)
-        return data.decode("utf8")
+        return data.decode('utf8')
 
     def load_resources(self, js_urls, css_urls, fragment):
         """
@@ -238,7 +236,7 @@ class MultiEngineXBlock(XBlock):
 
     @property
     def course_id(self):
-        return self._serialize_opaque_key(self.xmodule_runtime.course_id)  # pylint:disable=E1101
+        return str(self.xmodule_runtime.course_id)  # pylint: disable=no-member
 
     def get_anonymous_user_id(self, username, course_id):
         """
@@ -261,11 +259,11 @@ class MultiEngineXBlock(XBlock):
                 includes the student id, item id, and course id.
         """
 
-        item_id = self._serialize_opaque_key(self.scope_ids.usage_id)
+        item_id = str(self.scope_ids.usage_id)
 
         # This is not the real way course_ids should work, but this is a
         # temporary expediency for LMS integration
-        if hasattr(self, "xmodule_runtime"):
+        if hasattr(self, 'xmodule_runtime'):
             course_id = self.course_id  # pylint:disable=E1101
             if anonymous_user_id:
                 student_id = anonymous_user_id
@@ -280,24 +278,23 @@ class MultiEngineXBlock(XBlock):
         )
         return student_item_dict
 
-
     def student_view(self, *args, **kwargs):
         """
         Отображение MultiEngineXBlock студенту (LMS).
         """
-        
+
         scenarios = self.load_scenarios
         context = {
-            "display_name": self.display_name,
-            "weight": self.weight,
-            "question": self.question,
-            "correct_answer": self.correct_answer,
-            #"answer": self.answer,
-            "attempts": self.attempts,
-            "student_state_json": self.student_state_json,
-            "student_view_template": self.student_view_template,
-            "scenario": self.scenario,
-            "scenarios": scenarios,
+            'display_name': self.display_name,
+            'weight': self.weight,
+            'question': self.question,
+            'correct_answer': self.correct_answer,
+            # 'answer': self.answer,
+            'attempts': self.attempts,
+            'student_state_json': self.student_state_json,
+            'student_view_template': self.student_view_template,
+            'scenario': self.scenario,
+            'scenarios': scenarios,
         }
 
         # Rescore student
@@ -305,21 +302,21 @@ class MultiEngineXBlock(XBlock):
 
         # It's temporary! It's crutch, not magick.
         self.runtime.publish(self, 'grade', {
-                'value': float(self.points),
-                'max_value': float(self.weight),
+            'value': float(self.points),
+            'max_value': float(self.weight),
         })
 
         if self.max_attempts != 0:
-            context["max_attempts"] = self.max_attempts
+            context['max_attempts'] = self.max_attempts
 
         if self.past_due():
-            context["past_due"] = True
+            context['past_due'] = True
 
         if self.answer != '{}':
-            context["points"] = self.points
+            context['points'] = self.points
 
         if answer_opportunity(self):
-            context["answer_opportunity"] = True
+            context['answer_opportunity'] = True
 
         if self.is_course_staff() is True or self.is_instructor() is True:
             context['is_course_staff'] = True
@@ -353,22 +350,21 @@ class MultiEngineXBlock(XBlock):
         scenarios = self.load_scenarios()
 
         context = {
-            "display_name": self.display_name,
-            "weight": self.weight,
-            "question": self.question,
-            "correct_answer": self.correct_answer,
-            "answer": self.answer,
-            "sequence": self.sequence,
-            "scenario": self.scenario,
-            "max_attempts": self.max_attempts,
-            "student_view_template": self.student_view_template,
-
-            "scenarios": scenarios,
+            'display_name': self.display_name,
+            'weight': self.weight,
+            'question': self.question,
+            'correct_answer': self.correct_answer,
+            'answer': self.answer,
+            'sequence': self.sequence,
+            'scenario': self.scenario,
+            'max_attempts': self.max_attempts,
+            'student_view_template': self.student_view_template,
+            'scenarios': scenarios,
         }
 
         if self.scenario:
             scenario_content = self.get_scenario_content(self.scenario)
-            context["scenario_content"] = scenario_content
+            context['scenario_content'] = scenario_content
 
         fragment = Fragment()
         fragment.add_content(
@@ -379,7 +375,7 @@ class MultiEngineXBlock(XBlock):
         )
 
         js_urls = (
-            "static/js/multiengine_edit.js",
+            'static/js/multiengine_edit.js',
         )
 
         css_urls = (
@@ -393,11 +389,11 @@ class MultiEngineXBlock(XBlock):
             correct_answer = json.loads(self.correct_answer)
         except:
             correct_answer = json.loads('{}')
-            logger.debug("[MultiEngineXBlock]: " + "Empty correct answer!")
+            logger.debug('[MultiEngineXBlock]: Empty correct answer!')
 
         correct_answer = json.dumps(correct_answer)
 
-        context["correct_answer"] = correct_answer
+        context['correct_answer'] = correct_answer
 
         return fragment
 
@@ -429,7 +425,6 @@ class MultiEngineXBlock(XBlock):
         self.student_state_json = data
         return {'result': 'success'}
 
-
     @XBlock.handler
     def get_student_state(self, data, suffix=''):
         """
@@ -438,13 +433,11 @@ class MultiEngineXBlock(XBlock):
         :param suffix:
         :return:
         """
-        
-        body = self.student_state_json #  body = {"student_state_json": self.student_state_json, "result": "success"}  это не работает!!!  отдавалось:'{"'
 
-        response = Response(body=body, charset='UTF-8',  content_type='application/json' )
+        body = self.student_state_json  # body = {'student_state_json': self.student_state_json, 'result': 'success'}  это не работает!!!  отдавалось:'{"'
+
+        response = Response(body=body, charset='UTF-8', content_type='application/json')
         return response
-
-
 
     @XBlock.handler
     def send_scenario(self, request, suffix=''):
@@ -454,24 +447,24 @@ class MultiEngineXBlock(XBlock):
         scenarios = self.load_scenarios()
         if smart_text(self.scenario) in scenarios:
             context = {}
-            _sc_keys = self.load_scenarios("get")
+            _sc_keys = self.load_scenarios('get')
             for key in _sc_keys:
                 key = key.strip(':')
                 if key in scenarios[smart_text(self.scenario)]:
                     context[key] = scenarios[smart_text(self.scenario)][key].strip()
-           
+
         else:
             context = {
-                "name": '',
-                "html": 'Scenario not found',
-                "css": '',
-                "javascriptStudent": '',
-                "javascriptStudio": '',
-                "description": '',
-                "cssStudent": '',
+                'name': '',
+                'html': 'Scenario not found',
+                'css': '',
+                'javascriptStudent': '',
+                'javascriptStudio': '',
+                'description': '',
+                'cssStudent': '',
             }
-            
-        response = Response(body=json.dumps(context), charset='UTF-8',  content_type='text/plain')
+
+        response = Response(body=json.dumps(context), charset='UTF-8', content_type='text/plain')
 
         return response
 
@@ -492,17 +485,17 @@ class MultiEngineXBlock(XBlock):
 
         student_json = json.loads(data)
 
-        student_answer = student_json["answer"]
+        student_answer = student_json['answer']
         self.answer = data
 
         try:
             correct_json = ast.literal_eval(self.correct_answer)
         except:
             correct_json = self.correct_answer
-        correct_answer = correct_json["answer"]
+        correct_answer = correct_json['answer']
 
         try:
-            settings = correct_json["settings"]
+            settings = correct_json['settings']
         except:
             settings = {}
 
@@ -542,7 +535,7 @@ class MultiEngineXBlock(XBlock):
                     for value in correct_answer[key]:
                         with_keyword = False
                         if value in keywords:
-                            if value == "or":
+                            if value == 'or':
                                 keyword = value
                                 correct_values = correct_answer[key][keyword]
                                 for correct_value in correct_values:
@@ -555,7 +548,7 @@ class MultiEngineXBlock(XBlock):
                                     correct += len(student_answer[key])
                                 else:
                                     checked += len(student_answer[key])
-                            elif value == "or-and":
+                            elif value == 'or-and':
                                 keyword = value
                                 max_points_current = 0
                                 correct_variant_len = 0
@@ -600,18 +593,18 @@ class MultiEngineXBlock(XBlock):
                     print(set(correct_answers_list))
                     correct = 0
 
-                checks = {"result": correct / float(checked),
-                          "right_answers": right_answers,
-                          "wrong_answers": wrong_answers,
-                          "checked": checked
+                checks = {'result': correct / float(checked),
+                          'right_answers': right_answers,
+                          'wrong_answers': wrong_answers,
+                          'checked': checked
                           }
                 return checks
 
             def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
-                """
+                '''
                 Вычисляет долю выполненных заданий с учетом
                 последовательности элементов в области.
-                """
+                '''
                 right_answers = []
                 wrong_answers = []
 
@@ -658,10 +651,10 @@ class MultiEngineXBlock(XBlock):
                                 else:
                                     wrong_answers += student_answer[key]
 
-                checks = {"result": correct / float(checked),
-                        "right_answers": right_answers,
-                        "wrong_answers": wrong_answers,
-                        }
+                checks = {'result': correct / float(checked),
+                          'right_answers': right_answers,
+                          'wrong_answers': wrong_answers,
+                          }
                 return checks
 
             def _result_postproduction(result):  # , settings['postproduction_rule']=None):
@@ -676,7 +669,7 @@ class MultiEngineXBlock(XBlock):
             else:
                 pass
 
-            return _result_postproduction(checks["result"]), checks["right_answers"], checks["wrong_answers"]
+            return _result_postproduction(checks['result']), checks['right_answers'], checks['wrong_answers']
 
         if answer_opportunity(self):
             checks = multicheck(student_answer, correct_answer, settings)
@@ -697,20 +690,20 @@ class MultiEngineXBlock(XBlock):
                     'attempts': self.attempts,
                     'max_attempts': self.max_attempts,
                     'right_answers': right_answers,
-                    #"wrong_answers": wrong_answers,
+                    # 'wrong_answers': wrong_answers,
                     }
         else:
-            return {"result": 'Max attempts exception!'}
+            return {'result': 'Max attempts exception!'}
 
     def past_due(self):
-            """
-            Проверка, истекла ли дата для выполнения задания.
-            """
-            due = get_extended_due_date(self)
-            if due is not None:
-                if _now() > due:
-                    return False
-            return True
+        """
+        Проверка, истекла ли дата для выполнения задания.
+        """
+        due = get_extended_due_date(self)
+        if due is not None:
+            if _now() > due:
+                return False
+        return True
 
     def is_course_staff(self):
         """
@@ -723,22 +716,6 @@ class MultiEngineXBlock(XBlock):
         Проверка, является ли пользователь инструктором.
         """
         return self.xmodule_runtime.get_user_role() == 'instructor'
-
-    def _serialize_opaque_key(self, key):
-        """
-        Gracefully handle opaque keys, both before and after the transition.
-        https://github.com/edx/edx-platform/wiki/Opaque-Keys
-        Currently uses `to_deprecated_string()` to ensure that new keys
-        are backwards-compatible with keys we store in ORA2 database models.
-        Args:
-            key (unicode or OpaqueKey subclass): The key to serialize.
-        Returns:
-            unicode
-        """
-        if hasattr(key, 'to_deprecated_string'):
-            return key.to_deprecated_string()
-        else:
-            return unicode(key)
 
 
 def answer_opportunity(self):
@@ -763,13 +740,13 @@ def _resource(path):  # pragma: NO COVER
     Handy helper for getting resources from our kit.
     """
     data = pkg_resources.resource_string(__name__, path)
-    return data.decode("utf8")
+    return data.decode('utf8')
 
 
 def render_template(template_path, context=None):
-    """
+    '''
     Evaluate a template by resource path, applying the provided context.
-    """
+    '''
     if context is None:
         context = {}
 
@@ -779,14 +756,14 @@ def render_template(template_path, context=None):
 
 
 def load_resource(resource_path):
-    """
+    '''
     Gets the content of a resource
-    """
+    '''
     try:
         resource_content = pkg_resources.resource_string(__name__, resource_path)
         return smart_text(resource_content)
     except EnvironmentError:
-        logger.debug("[MultiEngineXBlock]: " + "Probably not found static resource!")
+        logger.debug('[MultiEngineXBlock]: Probably not found static resource!')
 
 
 def require(assertion):

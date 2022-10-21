@@ -7,7 +7,7 @@ from setuptools import setup
 def package_data(pkg, roots):
     """Generic function to find package_data.
 
-    All of the files under each of the `roots` will be declared as package
+    All files under each of the `roots` will be declared as package
     data for package `pkg`.
 
     """
@@ -22,8 +22,17 @@ def package_data(pkg, roots):
 
 setup(
     name='multiengine-xblock',
-    version='0.1',
-    description='multiengine XBlock',   # TODO: write a better description.
+    version='0.2',
+    description='multiengine XBlock',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: Django :: 3.2',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
+    ],
     packages=[
         'multiengine',
     ],

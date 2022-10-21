@@ -1,7 +1,7 @@
 function MultiEngineXBlockEdit(runtime, element) {
 	// Перенос DOM структуры блока в отдельную переменную
 	// HELP
-	// Запросы доступные для работы с переменноой elementDOM
+	// Запросы доступные для работы с переменной elementDOM
 	// querySelector  --- elementNodeList
 	// querySelectorAll --- NodeList
 	// getElementByTegName --- HTMLCollection
@@ -16,12 +16,12 @@ function MultiEngineXBlockEdit(runtime, element) {
         // Объявление переменных
         studentAnswerJSON:{},
         studentStateJSON:'',
-        // Функция обявляемая в сцкеарии и описывающая процесс формирования обекта правильных значенией
+        // Функция объявляемая в сценарии и описывающая процесс формирования объекта правильных значений
         genAnswerObj: function(){},
         genJSON: function(type, dict) {
-            if (dict == undefined){
+            if (dict === undefined){
                 dict = {};
-            };
+            }
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
             return JSON.stringify(JSON.stringify(objectJSON));
@@ -32,7 +32,7 @@ function MultiEngineXBlockEdit(runtime, element) {
             for (var i = 0; i < collection.length; i++)
                 action(collection[i]);
         },
-        // Функция геренации ID
+        // Функция генерации ID
         genID: function() {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
         },
@@ -55,9 +55,8 @@ function MultiEngineXBlockEdit(runtime, element) {
                     console.error(xhr.statusText);
                 };
                 return xhr.responseText;
-            };
+            }
         }
-
     };
 
     // MENGINE
@@ -68,7 +67,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 		collection = collection || {};
 		for (var i = 0; i < collection.length; i++)
 			action(collection[i]);
-	};
+	}
 
 	//Функция формирует список из детей переданнго в функцию элементов
 	function childList(value) {
@@ -79,17 +78,17 @@ function MultiEngineXBlockEdit(runtime, element) {
 		  return;
 		};*/
 		for (var i = 0; i < value.length; i++) {
-			if (value[i].nodeType == 1) {
+			if (value[i].nodeType === 1) {
 				childList.push(value[i])
-			};
-		};
+			}
+		}
 		return childList;
-	};
+	}
 	//Функция генерации ID
 	function generationID() {
 		return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
-	};
-	//Функция формирования правиольного отвнета
+	}
+	//Функция формирования правильного ответа
 	//Пример {name1:id1,name2:id2, name:{id3,id4}} передается в функцию
 	function generationAnswerJSON(answer) {
 		var answerJSON = {
@@ -97,7 +96,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 		};
 		answerJSON.answer = answer;
 		return JSON.stringify(answerJSON);
-	};
+	}
 	//TODO: Какой вид должен быть у результата выполнения функций
 	function getValueFild(idField) {
 		var parser = new DOMParser();
@@ -157,7 +156,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 
 
 
-	//TODO: Подгрузка сценапия
+	//TODO: Подгрузка сценария
     scenarioURL = runtime.handlerUrl(element, 'send_scenario');
 
 	var scenario = mengine.getData(scenarioURL);
@@ -171,7 +170,7 @@ function MultiEngineXBlockEdit(runtime, element) {
 	$(element).find('.save-button').bind('click', function() {
 		if(typeof scenarioSave == 'function'){
 		    scenarioSave();
-	    };
+	    }
 		var handlerUrl = runtime.handlerUrl(element, 'studio_submit'),
 			data = {
 				display_name: $(element).find('input[name=display_name]').val(),
