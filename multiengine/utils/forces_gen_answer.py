@@ -1,6 +1,6 @@
 import json
 
-student_state =  {"iF":["xiF_90","xiF_0"],"iE":["iE_90"]}
+student_state = {"iF": ["xiF_90", "xiF_0"], "iE": ["iE_90"]}
 tolerances = {}
 
 
@@ -9,6 +9,7 @@ def _revert_arrow(variant):
         return True
     else:
         return False
+
 
 for key in student_state:
     tolerances[key] = {}
@@ -39,7 +40,6 @@ for key in student_state:
                     variant_list.append(variant[0] + '_' + str(int(variant[1]) + delta))
 
         or_dict["or-and"].append(variant_list)
-
 
         student_state[key] = or_dict
 answer = {}

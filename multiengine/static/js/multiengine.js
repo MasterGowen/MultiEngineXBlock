@@ -1,11 +1,11 @@
 /* Javascript for MultiEngineXBlock. */
-if(!MultiEngineXBlockState) var MultiEngineXBlockState = {};
+if (!MultiEngineXBlockState) var MultiEngineXBlockState = {};
 
 function MultiEngineXBlock(runtime, element) {
     /**:SomeClass.prototype.someMethod( reqArg[, optArg1[, optArg2 ] ] )
 
-        The description for ``someMethod``.
-    */
+     The description for ``someMethod``.
+     */
     var elementDOM = element;
 
     // *******
@@ -13,33 +13,35 @@ function MultiEngineXBlock(runtime, element) {
     var mengine = {
         id: elementDOM.getAttribute('data-usage-id'),//.split(';')[5],
         // Объявление переменных
-        studentAnswerJSON:{},
-        studentStateJSON:'',
-        // Функция обявляемая в сцкеарии и описывающая процесс формирования обекта правильных значенией
-        genAnswerObj: function(){},
-        genJSON: function(type, dict) {
-            if (dict == undefined){
+        studentAnswerJSON: {},
+        studentStateJSON: '',
+        // Функция объявляемая в сценарии и описывающая процесс формирования объекта правильных значений
+        genAnswerObj: function () {
+        },
+        genJSON: function (type, dict) {
+            if (dict === undefined) {
                 dict = {};
-            };
+            }
+
             var objectJSON = {};
             objectJSON[type.valueOf()] = dict;
             return JSON.stringify(JSON.stringify(objectJSON));
         },
-        forEach: function(collection, action) {
+        forEach: function (collection, action) {
             collection = collection || {};
             for (var i = 0; i < collection.length; i++)
                 action(collection[i]);
         },
-        // Функция геренации ID
-        genID: function() {
+        // Функция генерации ID
+        genID: function () {
             return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
         },
-        getData: function(requestURL) {
-            if(requestURL){
+        getData: function (requestURL) {
+            if (requestURL) {
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", requestURL, false);
                 xhr.send(null);
-                xhr.onload = function(e) {
+                xhr.onload = function (e) {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             console.log('Data loading ... OK!');
@@ -48,11 +50,11 @@ function MultiEngineXBlock(runtime, element) {
                         }
                     }
                 };
-                xhr.onerror = function(e) {
+                xhr.onerror = function (e) {
                     console.error(xhr.statusText);
                 };
                 return xhr.responseText;
-            };
+            }
         }
     };
     // MENGINE
@@ -63,56 +65,63 @@ function MultiEngineXBlock(runtime, element) {
     // Функции для обратной совместимости
 
     function forEachInCollection(collection, action) {
-		collection = collection || {};
-		for (var i = 0; i < collection.length; i++)
-			action(collection[i]);
-	};
-	//Функция формирует список из детей переданнго в функцию элементов
-	function childList(value) {
-		var childList = [];
-		var value = value.children || value.childNodes;
-		/*if(!val.length){
-		  console.log('Attention!: '+ typeof(val) + ' has no children')
-		  return;
-		};*/
-		for (var i = 0; i < value.length; i++) {
-			if (value[i].nodeType == 1) {
-				childList.push(value[i])
-			};
-		};
-		return childList;
-	};
-	//Функция генерации ID
-	function generationID() {
-    //DEPRECATED
-		return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
-	};
-	//Функция формирования правиольного отвнета
-	//Пример {name1:id1,name2:id2, name:{id3,id4}} передается в функцию
-	function generationAnswerJSON(answer) {
+        collection = collection || {};
+        for (var i = 0; i < collection.length; i++)
+            action(collection[i]);
+    }
+
+    //Функция формирует список из детей переданного в функцию элементов
+    function childList(value) {
+        var childList = [];
+        var value = value.children || value.childNodes;
+        /*if(!val.length){
+          console.log('Attention!: '+ typeof(val) + ' has no children')
+          return;
+        };*/
+        for (var i = 0; i < value.length; i++) {
+            if (value[i].nodeType == 1) {
+                childList.push(value[i])
+            }
+        }
+        return childList;
+    }
+
+    //Функция генерации ID
+    function generationID() {
         //DEPRECATED
-		var answerJSON = {
-			answer: {}
-		};
-		answerJSON.answer = answer;
-		return JSON.stringify(answerJSON);
-	};
-	//TODO: Какой вид должен быть у результата выполнения функций
-	function getValueFild(idField) {
-		var parser = new DOMParser();
-		var value = elementDOM.querySelector('#' + idField);
-		value = parser.parseFromString(value.value || value.innerHTML, 'text/html');
-		return value;
-	};
-	function setValueFild(idField, value) {
-		elementDOM.querySelector('#' + idField).value = value;
-	};
-	function setBlockHtml(idBlock, contentHtml) {
-		elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
-	};
+        return 'id' + Math.random().toString(16).substr(2, 8).toUpperCase();
+    }
+
+    //Функция формирования правильного ответа
+    //Пример {name1:id1,name2:id2, name:{id3,id4}} передается в функцию
+    function generationAnswerJSON(answer) {
+        //DEPRECATED
+        var answerJSON = {
+            answer: {}
+        };
+        answerJSON.answer = answer;
+        return JSON.stringify(answerJSON);
+    }
+
+    //TODO: Какой вид должен быть у результата выполнения функций
+    function getValueFild(idField) {
+        var parser = new DOMParser();
+        var value = elementDOM.querySelector('#' + idField);
+        value = parser.parseFromString(value.value || value.innerHTML, 'text/html');
+        return value;
+    }
+
+    function setValueFild(idField, value) {
+        elementDOM.querySelector('#' + idField).value = value;
+    }
+
+    function setBlockHtml(idBlock, contentHtml) {
+        elementDOM.querySelector('#' + idBlock).innerHTML = contentHtml;
+    }
+
     // Функции для обратной совместимости
     // **********************************
-   
+
     function success_func(result) {
         //console.log("Количество баллов: " + result.correct/result.weight*100 + " ОТВЕТОВ: " + result.attempts);
         $('.attempts', element).text(result.attempts);
@@ -122,22 +131,26 @@ function MultiEngineXBlock(runtime, element) {
         if (result.max_attempts && result.max_attempts <= result.attempts) {
             $('.Check', element).remove();
             $('.Save', element).remove();
-        };
-    };
+        }
+
+    }
 
 
-    function success_save(result){
-        setTimeout(function(){element.getElementsByClassName('Save')[0].innerHTML='Сохранить<span class="sr"> ваш ответ</span>'}, 1000);        
-    };
-    function success_check(result){
+    function success_save(result) {
+        setTimeout(function () {
+            element.getElementsByClassName('Save')[0].innerHTML = 'Сохранить<span class="sr"> ваш ответ</span>'
+        }, 1000);
+    }
+
+    function success_check(result) {
         $.ajax({
             type: "POST",
             url: handlerUrl,
             data: mengine.genJSON('answer', mengine.genAnswerObj()),
             success: success_func
-        });    
-    };
-    
+        });
+    }
+
     //Возврат сценариев
     var scenarioURL = runtime.handlerUrl(element, 'send_scenario');
     var scenario = mengine.getData(scenarioURL);
@@ -146,21 +159,21 @@ function MultiEngineXBlock(runtime, element) {
     //Получение и передача CSS в шаблон
     setBlockHtml('scenarioStyleStudent', scenarioJSON.cssStudent);
 
-    //Получение суденческого решения
-    var getStudentStateURL = runtime.handlerUrl(element,'get_student_state');
+    //Получение студенческого решения
+    var getStudentStateURL = runtime.handlerUrl(element, 'get_student_state');
     var studentState = mengine.getData(getStudentStateURL);
-    
-    // Сохранение состояния студета в mengine
+
+    // Сохранение состояния студена в mengine
     mengine.studentStateJSON = studentState;
-   
+
     //Save student state
     // Сохранение ответа студента
     var handlerUrl = runtime.handlerUrl(element, 'student_submit');
 
-    var saveStudentStateURL = runtime.handlerUrl(element,'save_student_state');
+    var saveStudentStateURL = runtime.handlerUrl(element, 'save_student_state');
 
-    $(element).find('.Save').bind('click', function() {
-            $(element).find('.Save').text("Сохранение...");
+    $(element).find('.Save').bind('click', function () {
+        $(element).find('.Save').text("Сохранение...");
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
@@ -169,7 +182,7 @@ function MultiEngineXBlock(runtime, element) {
         });
     });
 
-    $(element).find('.Check').bind('click', function() {
+    $(element).find('.Check').bind('click', function () {
         $.ajax({
             type: "POST",
             url: saveStudentStateURL,
@@ -182,7 +195,7 @@ function MultiEngineXBlock(runtime, element) {
     // Сценарий
     eval(scenarioJSON.javascriptStudent)
 
-    MultiEngineXBlockState[mengine.id.valueOf()] = function(){
+    MultiEngineXBlockState[mengine.id.valueOf()] = function () {
         console.log(element);
         console.log(mengine.studentStateJSON);
     };
