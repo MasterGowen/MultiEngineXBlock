@@ -1,48 +1,111 @@
+"""
+Модуль для генерации допустимых значений углов с учетом толерансов.
+
+Этот модуль обрабатывает исходное состояние студента и генерирует 
+допустимые диапазоны значений с учетом угловых толерансов.
+"""
+
 import json
-
-student_state = {"iF": ["xiF_90", "xiF_0"], "iE": ["iE_90"]}
-tolerances = {}
+from typing import Dict, List, Any
 
 
-def _revert_arrow(variant):
-    if variant[0] == 'x':
-        return True
-    else:
-        return False
+def _should_revert_arrow(variant: str) -> bool:
+    """
+    Определяет, нужно ли инвертировать направление стрелки.
+    
+    Args:
+        variant (str): Вариант значения
+        
+    Returns:
+        bool: True, если вариант начинается с 'x', иначе False
+    """
+    return variant.startswith('x')
 
 
-for key in student_state:
-    tolerances[key] = {}
-    or_dict = {}
-    or_dict["or-and"] = []
-    for variant in student_state[key]:
-        tolerance = [[-1, 0, 1]]
+def _normalize_angle(angle: int) -> int:
+    """
+    Нормализует угол в диапазон [0, 360).
+    
+    Args:
+        angle (int): Исходный угол
+        
+    Returns:
+        int: Нормализованный угол
+    """
+    return angle % 360
 
-        if _revert_arrow(variant):
-            tmp_tolerance = []
-            for delta in tolerance[0]:
-                tmp_tolerance.append(180 + delta)
-                variant = variant.replace('x', '')
-            tolerance.append(tmp_tolerance)
 
-        tolerances[key][variant] = tolerance
+def generate_tolerances(student_state: Dict[str, List[str]]) -> Dict[str, Any]:
+    """
+    Генерирует допустимые значения с учетом толерансов для каждого элемента.
+    
+    Args:
+        student_state (Dict[str, List[str]]): Исходное состояние с ключами и вариантами
+        
+    Returns:
+        Dict[str, Any]: Словарь с допустимыми значениями для каждого ключа
+    """
+    tolerances = {}
+    result = {}
+    
+    # Базовые толерансы [-1, 0, 1]
+    BASE_TOLERANCE = [-1, 0, 1]
+    
+    for key, variants in student_state.items():
+        tolerances[key] = {}
+        or_dict = {"or-and": []}
+        
+        for variant in variants:
+            # Создаем список толерансов
+            tolerance_values = [BASE_TOLERANCE.copy()]
+            
+            # Если нужно инвертировать стрелку, добавляем дополнительные толерансы
+            clean_variant = variant
+            if _should_revert_arrow(variant):
+                inverted_tolerance = [180 + delta for delta in BASE_TOLERANCE]
+                tolerance_values.append(inverted_tolerance)
+                clean_variant = variant.replace('x', '', 1)
+            
+            tolerances[key][clean_variant] = tolerance_values
+            
+            # Разбираем вариант на компоненты
+            variant_parts = clean_variant.split('_')
+            base_name = variant_parts[0]
+            base_angle = int(variant_parts[1])
+            
+            # Генерируем все возможные варианты с учетом толерансов
+            variant_list = []
+            for tolerance_group in tolerance_values:
+                for delta in tolerance_group:
+                    new_angle = base_angle + delta
+                    normalized_angle = _normalize_angle(new_angle)
+                    variant_list.append(f"{base_name}_{normalized_angle}")
+            
+            or_dict["or-and"].append(variant_list)
+        
+        result[key] = or_dict
+    
+    return result
 
-        variant = variant.split('_')
 
-        variant_list = []
-        for tolerance_item in tolerance:
-            for delta in tolerance_item:
-                if int(variant[1]) + delta >= 360:
-                    variant_list.append(variant[0] + '_' + str(int(variant[1]) + delta - 360))
-                elif int(variant[1]) + delta < 0:
-                    variant_list.append(variant[0] + '_' + str(int(variant[1]) + delta + 360))
-                else:
-                    variant_list.append(variant[0] + '_' + str(int(variant[1]) + delta))
+def main() -> None:
+    """
+    Основная функция для генерации и вывода результата.
+    """
+    # Исходные данные
+    student_state = {
+        "iF": ["xiF_90", "xiF_0"], 
+        "iE": ["iE_90"]
+    }
+    
+    # Генерация толерансов
+    processed_state = generate_tolerances(student_state)
+    
+    # Формирование и вывод результата
+    answer = {"answer": processed_state}
+    answer_json = json.dumps(answer, ensure_ascii=False)
+    print(answer_json)
 
-        or_dict["or-and"].append(variant_list)
 
-        student_state[key] = or_dict
-answer = {}
-answer["answer"] = student_state
-answer_json = json.dumps(answer)
-print(answer_json)
+if __name__ == "__main__":
+    main()
