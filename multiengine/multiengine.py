@@ -13,7 +13,6 @@ import copy
 import ast
 
 from django.template import Context, Template
-from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
 
 from common.djangoapps.student.models import user_by_anonymous_id
@@ -28,6 +27,11 @@ from xblock.fragment import Fragment
 from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
+
+try:
+    from django.utils.encoding import smart_text
+except ImportError:
+    from django.utils.encoding import smart_str as smart_text
 
 logger = logging.getLogger(__name__)
 
