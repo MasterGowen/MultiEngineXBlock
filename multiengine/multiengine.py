@@ -7,7 +7,7 @@ import pkg_resources
 import pytz
 import json
 import os
-from path import path
+from pathlib import Path
 import logging
 import copy
 import ast
@@ -28,10 +28,8 @@ from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
 
-try:
-    from django.utils.encoding import smart_text
-except ImportError:
-    from django.utils.encoding import smart_str as smart_text
+# Django 4.2 использует smart_str вместо smart_text
+from django.utils.encoding import smart_str
 
 logger = logging.getLogger(__name__)
 
@@ -144,8 +142,8 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.settings
     )
 
-    MULTIENGINE_ROOT = path(__file__).abspath().dirname().dirname() + '/multiengine'
-    SCENARIOS_ROOT = '/edx/var/edxapp/multiengine/scenarios/'
+    MULTIENGINE_ROOT = Path(__file__).absolute().parent.parent / 'multiengine'
+    SCENARIOS_ROOT = Path('/edx/var/edxapp/multiengine/scenarios/')
 
     # @staticmethod
     # def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
@@ -171,11 +169,11 @@ class MultiEngineXBlock(XBlock):
         if keys == 'get':
             return _sc_keys
 
-        if os.path.exists(self.SCENARIOS_ROOT) and os.path.isdir(self.SCENARIOS_ROOT):
+        if self.SCENARIOS_ROOT.exists() and self.SCENARIOS_ROOT.is_dir():
 
             def _scenario_parser(scenario_file):
                 _scenario_content = {}
-                with open(self.SCENARIOS_ROOT + scenario_file) as scf:
+                with open(self.SCENARIOS_ROOT / scenario_file, 'r', encoding='utf-8') as scf:
                     for line in scf:
                         if any(ext in line for ext in _sc_keys):
                             _current_key = line.strip().strip(':')
@@ -186,9 +184,9 @@ class MultiEngineXBlock(XBlock):
                                 _scenario_content[_current_key] = line.strip()
                 return _scenario_content
 
-            for scenario_file in os.listdir(self.SCENARIOS_ROOT):
-                if scenario_file.endswith(".sc"):
-                    scenarios[os.path.splitext(scenario_file)[0]] = _scenario_parser(scenario_file)
+            for scenario_file in self.SCENARIOS_ROOT.iterdir():
+                if scenario_file.suffix == ".sc":
+                    scenarios[scenario_file.stem] = _scenario_parser(scenario_file.name)
 
         return scenarios
 
@@ -197,7 +195,7 @@ class MultiEngineXBlock(XBlock):
         Получение текста сценария.
         """
         try:
-            scenario_file = open(self.SCENARIOS_ROOT + scenario + '.cs', 'r')
+            scenario_file = open(self.SCENARIOS_ROOT / f"{scenario}.cs", 'r', encoding='utf-8')
 
             with scenario_file as jsfile:
                 scenario_content = jsfile.read()
@@ -287,7 +285,7 @@ class MultiEngineXBlock(XBlock):
         Отображение MultiEngineXBlock студенту (LMS).
         """
 
-        scenarios = self.load_scenarios
+        scenarios = self.load_scenarios()
         context = {
             'display_name': self.display_name,
             'weight': self.weight,
@@ -449,13 +447,13 @@ class MultiEngineXBlock(XBlock):
         Отправляет сценарий пользователю.
         """
         scenarios = self.load_scenarios()
-        if smart_text(self.scenario) in scenarios:
+        if smart_str(self.scenario) in scenarios:
             context = {}
             _sc_keys = self.load_scenarios('get')
             for key in _sc_keys:
                 key = key.strip(':')
-                if key in scenarios[smart_text(self.scenario)]:
-                    context[key] = scenarios[smart_text(self.scenario)][key].strip()
+                if key in scenarios[smart_str(self.scenario)]:
+                    context[key] = scenarios[smart_str(self.scenario)][key].strip()
 
         else:
             context = {
@@ -736,7 +734,7 @@ def _now():
     """
     Получение текущих даты и времени.
     """
-    return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    return datetime.datetime.now(datetime.timezone.utc)
 
 
 def _resource(path):  # pragma: NO COVER
@@ -765,7 +763,7 @@ def load_resource(resource_path):
     '''
     try:
         resource_content = pkg_resources.resource_string(__name__, resource_path)
-        return smart_text(resource_content)
+        return smart_str(resource_content)
     except EnvironmentError:
         logger.debug('[MultiEngineXBlock]: Probably not found static resource!')
 
