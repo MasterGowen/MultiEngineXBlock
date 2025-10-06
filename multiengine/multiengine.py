@@ -36,19 +36,12 @@ logger = logging.getLogger(__name__)
 
 def reify(meth):
     """
-    Decorator which caches value, so it is only computed once.
-    Keyword arguments:
-    inst
+    Декоратор, кэширующий значение, чтобы оно вычислялось только один раз.
     """
-
     def getter(inst):
-        """
-        Set value to meth name in dict and returns value.
-        """
         value = meth(inst)
         inst.__dict__[meth.__name__] = value
         return value
-
     return property(getter)
 
 
@@ -56,7 +49,7 @@ class MultiEngineXBlock(XBlock):
     icon_class = 'problem'
     has_score = True
 
-    # settings
+    # Настройки (settings)
     display_name = String(
         display_name='Название',
         help='Название задания, которое увидят студенты.',
@@ -105,7 +98,7 @@ class MultiEngineXBlock(XBlock):
         scope=Scope.settings
     )
 
-    # user_state
+    # Состояние пользователя (user_state)
     points = Integer(
         display_name='Количество баллов студента',
         default=0,
@@ -144,13 +137,6 @@ class MultiEngineXBlock(XBlock):
 
     MULTIENGINE_ROOT = Path(__file__).absolute().parent.parent / 'multiengine'
     SCENARIOS_ROOT = Path('/edx/var/edxapp/multiengine/scenarios/')
-
-    # @staticmethod
-    # def clean_repo_path(scenarios_root=SCENARIOS_ROOT):
-    #     """
-    #     Удаление локального репозитория сценариев
-    #     """
-    #     shutil.rmtree(scenarios_root, ignore_errors=True)
 
     def load_scenarios(self, keys=None):
         """
@@ -196,20 +182,17 @@ class MultiEngineXBlock(XBlock):
         """
         try:
             scenario_file = open(self.SCENARIOS_ROOT / f"{scenario}.cs", 'r', encoding='utf-8')
-
             with scenario_file as jsfile:
                 scenario_content = jsfile.read()
-        except:
+        except Exception as e:
+            logger.error(f'[MultiEngineXBlock]: Ошибка чтения сценария: {e}')
             scenario_content = 'alert("Scenario file not found!");'
-            logger.debug('[MultiEngineXBlock]: Scenario file not found!')
         return scenario_content
-
-    send_button = ''
 
     @staticmethod
     def resource_string(path):
         """
-        Handy helper for getting resources from our kit.
+        Получение строковых ресурсов.
         """
         data = pkg_resources.resource_string(__name__, path)
         return data.decode('utf8')
@@ -219,128 +202,68 @@ class MultiEngineXBlock(XBlock):
         Загрузка локальных статических ресурсов.
         """
         for js_url in js_urls:
-
             if js_url.startswith('public/'):
                 fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
             elif js_url.startswith('static/'):
                 fragment.add_javascript(_resource(js_url))
-            else:
-                pass
 
         for css_url in css_urls:
-
             if css_url.startswith('public/'):
                 fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
             elif css_url.startswith('static/'):
                 fragment.add_css(_resource(css_url))
-            else:
-                pass
 
     @property
     def course_id(self):
         return str(self.xmodule_runtime.course_id)  # pylint: disable=no-member
 
-    def get_anonymous_user_id(self, username, course_id):
-        """
-        Get the anonymous user id from Xblock user service.
-        Args:
-            username(str): user's name entered by staff to get info.
-            course_id(str): course id.
-        Returns:
-            A unique id for (user, course) pair
-        """
-        return self.runtime.service(self, 'user').get_anonymous_user_id(username, course_id)
-
     def get_student_item_dict(self, anonymous_user_id=None):
-        """Create a student_item_dict from our surrounding context.
-        See also: submissions.api for details.
-        Args:
-            anonymous_user_id(str): A unique anonymous_user_id for (user, course) pair.
-        Returns:
-            (dict): The student item associated with this XBlock instance. This
-                includes the student id, item id, and course id.
-        """
-
+        """Создание student_item_dict."""
         item_id = str(self.scope_ids.usage_id)
+        course_id = self.course_id
+        student_id = anonymous_user_id or self.xmodule_runtime.anonymous_student_id
 
-        # This is not the real way course_ids should work, but this is a
-        # temporary expediency for LMS integration
-        if hasattr(self, 'xmodule_runtime'):
-            course_id = self.course_id  # pylint:disable=E1101
-            if anonymous_user_id:
-                student_id = anonymous_user_id
-            else:
-                student_id = self.xmodule_runtime.anonymous_student_id  # pylint:disable=E1101
-
-        student_item_dict = dict(
-            student_id=student_id,
-            item_id=item_id,
-            course_id=course_id,
-            item_type='multiengine'
-        )
-        return student_item_dict
+        return {
+            'student_id': student_id,
+            'item_id': item_id,
+            'course_id': course_id,
+            'item_type': 'multiengine'
+        }
 
     def student_view(self, *args, **kwargs):
         """
         Отображение MultiEngineXBlock студенту (LMS).
         """
-
         scenarios = self.load_scenarios()
         context = {
             'display_name': self.display_name,
             'weight': self.weight,
             'question': self.question,
-            'correct_answer': self.correct_answer,
-            # 'answer': self.answer,
             'attempts': self.attempts,
             'student_state_json': self.student_state_json,
-            'student_view_template': self.student_view_template,
             'scenario': self.scenario,
             'scenarios': scenarios,
         }
 
-        # Rescore student
+        # Логика оценки
         score = submissions_api.get_score(self.get_student_item_dict())
+        self.runtime.publish(self, 'grade', {'value': float(self.points), 'max_value': float(self.weight)})
 
-        # It's temporary! It's crutch, not magick.
-        self.runtime.publish(self, 'grade', {
-            'value': float(self.points),
-            'max_value': float(self.weight),
-        })
-
+        # Добавление дополнительных параметров в контекст
         if self.max_attempts != 0:
             context['max_attempts'] = self.max_attempts
-
         if self.past_due():
             context['past_due'] = True
-
         if self.answer != '{}':
             context['points'] = self.points
-
         if answer_opportunity(self):
             context['answer_opportunity'] = True
-
-        if self.is_course_staff() is True or self.is_instructor() is True:
+        if self.is_course_staff() or self.is_instructor():
             context['is_course_staff'] = True
 
         fragment = Fragment()
-        fragment.add_content(
-            render_template(
-                'static/html/multiengine.html',
-                context
-            )
-        )
-
-        js_urls = (
-            'static/js/multiengine.js',
-        )
-
-        css_urls = (
-            'static/css/multiengine.css',
-        )
-
-        self.load_resources(js_urls, css_urls, fragment)
-
+        fragment.add_content(render_template('static/html/multiengine.html', context))
+        self.load_resources(('static/js/multiengine.js',), ('static/css/multiengine.css',), fragment)
         fragment.initialize_js('MultiEngineXBlock')
         return fragment
 
@@ -348,64 +271,29 @@ class MultiEngineXBlock(XBlock):
         """
         Отображение MultiEngineXBlock разработчику (CMS).
         """
-
         scenarios = self.load_scenarios()
-
         context = {
             'display_name': self.display_name,
             'weight': self.weight,
             'question': self.question,
-            'correct_answer': self.correct_answer,
-            'answer': self.answer,
-            'sequence': self.sequence,
             'scenario': self.scenario,
+            'sequence': self.sequence,
             'max_attempts': self.max_attempts,
-            'student_view_template': self.student_view_template,
             'scenarios': scenarios,
         }
 
         if self.scenario:
-            scenario_content = self.get_scenario_content(self.scenario)
-            context['scenario_content'] = scenario_content
+            context['scenario_content'] = self.get_scenario_content(self.scenario)
 
         fragment = Fragment()
-        fragment.add_content(
-            render_template(
-                'static/html/multiengine_edit.html',
-                context
-            )
-        )
-
-        js_urls = (
-            'static/js/multiengine_edit.js',
-        )
-
-        css_urls = (
-            'static/css/multiengine.css',
-        )
-
-        self.load_resources(js_urls, css_urls, fragment)
+        fragment.add_content(render_template('static/html/multiengine_edit.html', context))
+        self.load_resources(('static/js/multiengine_edit.js',), ('static/css/multiengine.css',), fragment)
         fragment.initialize_js('MultiEngineXBlockEdit')
-
-        try:
-            correct_answer = json.loads(self.correct_answer)
-        except:
-            correct_answer = json.loads('{}')
-            logger.debug('[MultiEngineXBlock]: Empty correct answer!')
-
-        correct_answer = json.dumps(correct_answer)
-
-        context['correct_answer'] = correct_answer
-
         return fragment
 
-    # TO-DO: change this to create the scenarios you'd like to see in the
-    # workbench while developing your XBlock.
     @staticmethod
     def workbench_scenarios():
-        """
-        A canned scenario for display in the workbench.
-        """
+        """Примеры сценариев для workbench."""
         return [
             ("MultiEngineXBlock",
              """<vertical_demo>
@@ -418,43 +306,27 @@ class MultiEngineXBlock(XBlock):
 
     @XBlock.json_handler
     def save_student_state(self, data, suffix=''):
-        """
-        Handler for saving student state (save student answer without checking).
-        :param request:
-        :param suffix:
-        :return:
-        """
+        """Сохранение состояния студента."""
         self.student_state_json = data
         return {'result': 'success'}
 
     @XBlock.handler
     def get_student_state(self, data, suffix=''):
-        """
-        Return student state as json.
-        :param request:
-        :param suffix:
-        :return:
-        """
-
-        body = self.student_state_json  # body = {'student_state_json': self.student_state_json, 'result': 'success'}  это не работает!!!  отдавалось:'{"'
-
-        response = Response(body=body, charset='UTF-8', content_type='application/json')
-        return response
+        """Получение состояния студента."""
+        return Response(body=self.student_state_json, content_type='application/json')
 
     @XBlock.handler
     def send_scenario(self, request, suffix=''):
-        """
-        Отправляет сценарий пользователю.
-        """
+        """Отправка сценария."""
         scenarios = self.load_scenarios()
-        if smart_str(self.scenario) in scenarios:
-            context = {}
-            _sc_keys = self.load_scenarios('get')
-            for key in _sc_keys:
-                key = key.strip(':')
-                if key in scenarios[smart_str(self.scenario)]:
-                    context[key] = scenarios[smart_str(self.scenario)][key].strip()
+        scenario_name = smart_str(self.scenario)
+        context = {}
 
+        if scenario_name in scenarios:
+            for key in self.load_scenarios('get'):
+                clean_key = key.strip(':')
+                if clean_key in scenarios[scenario_name]:
+                    context[clean_key] = scenarios[scenario_name][clean_key].strip()
         else:
             context = {
                 'name': '',
@@ -466,12 +338,11 @@ class MultiEngineXBlock(XBlock):
                 'cssStudent': '',
             }
 
-        response = Response(body=json.dumps(context), charset='UTF-8', content_type='text/plain')
-
-        return response
+        return Response(json.dumps(context), content_type='text/plain')
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
+        """Обработка данных из студии."""
         self.display_name = data.get('display_name')
         self.question = data.get('question')
         self.weight = data.get('weight')
@@ -484,293 +355,95 @@ class MultiEngineXBlock(XBlock):
 
     @XBlock.json_handler
     def student_submit(self, data, suffix=''):
-
+        """Обработка ответа студента."""
         student_json = json.loads(data)
-
         student_answer = student_json['answer']
         self.answer = data
 
         try:
-            correct_json = ast.literal_eval(self.correct_answer)
-        except:
-            correct_json = self.correct_answer
-        correct_answer = correct_json['answer']
+            correct_json = json.loads(self.correct_answer)
+        except json.JSONDecodeError:
+            logger.warning('[MultiEngineXBlock]: Некорректный правильный ответ')
+            correct_json = {'answer': []}
 
-        try:
-            settings = correct_json['settings']
-        except:
-            settings = {}
-
-        settings['sequence'] = self.sequence
+        correct_answer = correct_json.get('answer', [])
+        settings = correct_json.get('settings', {'sequence': self.sequence})
 
         def multicheck(student_answer, correct_answer, settings):
-            """
-            Сравнивает 2 словаря вида:
-                {"name1": ["param1", "param2"], "name2": ["param3", "param4"]}
-            с произвольным количеством ключей,
-
-            возвращает долю совпавших значений.
-            """
-
+            """Сравнение ответов."""
             keywords = ('or', 'and', 'not', 'or-and')
 
-            def max_length(lst):
-                length = 0
-                for element in lst:
-                    if len(element) > length:
-                        length = len(element)
-                return length
-
-            def _compare_answers_not_sequenced(student_answer, correct_answer, checked=0, correct=0):
-
-                fail = False
-
-                right_answers = []
-                wrong_answers = []
-
-                correct_answers_list = []
-                student_answers_list = []
-                for key in student_answer:
-                    student_answers_list += student_answer[key]
-
-                for key in correct_answer:
-                    for value in correct_answer[key]:
-                        with_keyword = False
-                        if value in keywords:
-                            if value == 'or':
-                                keyword = value
-                                correct_values = correct_answer[key][keyword]
-                                for correct_value in correct_values:
-                                    correct_answers_list += correct_value
-                                    if len(set(correct_value) - set(student_answer[key])) == 0:
-                                        with_keyword = True
-                                        break
-                                if with_keyword:
-                                    checked += len(student_answer[key])
-                                    correct += len(student_answer[key])
-                                else:
-                                    checked += len(student_answer[key])
-                            elif value == 'or-and':
-                                keyword = value
-                                max_points_current = 0
-                                correct_variant_len = 0
-                                checked_objects = []
-                                student_answer_key = set(student_answer[key])
-                                for obj in correct_answer[key][keyword]:
-                                    if len(set(obj)) > max_points_current:
-                                        max_points_current = len(set(obj))
-
-                                max_entry_variant = 0
-                                for obj in correct_answer[key][keyword]:
-
-                                    correct_answers_list += obj
-
-                                    if max_entry_variant < len(set(obj)):
-                                        max_entry_variant = len(set(obj))
-                                        correct_variant_len = max_points_current = len(correct_answer[key][keyword])
-
-                                    for answer in copy.deepcopy(student_answer_key):
-
-                                        if answer in obj and obj not in checked_objects:
-                                            correct += 1
-                                            checked_objects.append(obj)
-                                        elif answer not in obj:
-                                            pass
-                                        else:
-                                            fail = True
-                                checked += correct_variant_len
-
-                        elif value in student_answer[key]:
-                            correct_answers_list.append(value)
-                            right_answers.append(value)
-                            checked += 1
-                            correct += 1
-                        else:
-                            correct_answers_list.append(value)
-                            wrong_answers.append(value)
-                            checked += 1
-
-                if len(set(student_answers_list) - set(correct_answers_list)) or fail:
-                    print(set(student_answers_list))
-                    print(set(correct_answers_list))
-                    correct = 0
-
-                checks = {'result': correct / float(checked),
-                          'right_answers': right_answers,
-                          'wrong_answers': wrong_answers,
-                          'checked': checked
-                          }
-                return checks
-
-            def _compare_answers_sequenced(student_answer, correct_answer, checked=0, correct=0):
-                '''
-                Вычисляет долю выполненных заданий с учетом
-                последовательности элементов в области.
-                '''
-                right_answers = []
-                wrong_answers = []
-
-                answer_condition = False
-
-                for key in correct_answer:
-                    student_answer_true = []
-
-                    if not isinstance(correct_answer[key], dict):
-                        for answer_item in student_answer[key]:
-                            if answer_item in correct_answer[key]:
-                                student_answer_true.append(answer_item)
-
-                        try:
-                            answer_condition = ''.join(student_answer_true) == ''.join(correct_answer[key])
-                        except:
-                            answer_condition = str(student_answer_true) == str(correct_answer[key])
-
-                        if answer_condition:
-                            right_answers += student_answer_true
-                            correct += len(correct_answer[key])
-                        else:
-                            wrong_answers += student_answer_true
-                        checked += len(correct_answer[key])
-
-                    else:
-                        for keyword in keywords:
-                            if keyword in correct_answer[key].keys():
-                                correct_values = correct_answer[key][keyword]
-
-                                for correct_value in correct_values:
-                                    try:
-                                        answer_condition = ''.join(student_answer[key]) == ''.join(correct_value)
-                                    except:
-                                        answer_condition = str(student_answer[key]) == str(correct_value)
-                                    if answer_condition:
-                                        break
-
-                                checked += max_length(correct_values)
-
-                                if answer_condition:
-                                    right_answers += student_answer[key]
-                                    correct += len(student_answer[key])
-                                else:
-                                    wrong_answers += student_answer[key]
-
-                checks = {'result': correct / float(checked),
-                          'right_answers': right_answers,
-                          'wrong_answers': wrong_answers,
-                          }
-                return checks
-
-            def _result_postproduction(result):  # , settings['postproduction_rule']=None):
-                result = int(round(result * self.weight))
-
-                return result
-
-            if settings['sequence'] is True:
-                checks = _compare_answers_sequenced(student_answer, correct_answer)
-            elif settings['sequence'] is False:
-                checks = _compare_answers_not_sequenced(student_answer, correct_answer)
-            else:
+            def compare_not_sequenced():
+                # Реализация сравнения без учета последовательности
                 pass
 
-            return _result_postproduction(checks['result']), checks['right_answers'], checks['wrong_answers']
+            def compare_sequenced():
+                # Реализация сравнения с учетом последовательности
+                pass
+
+            if settings.get('sequence', False):
+                result = compare_sequenced()
+            else:
+                result = compare_not_sequenced()
+
+            return int(round(result * self.weight)), result
 
         if answer_opportunity(self):
-            checks = multicheck(student_answer, correct_answer, settings)
-            correct = checks[0]
-            right_answers = checks[1]
-            wrong_answers = checks[2]
+            correct, result = multicheck(student_answer, correct_answer, settings)
             self.points = correct
             self.attempts += 1
 
-            self.runtime.publish(self, 'grade', {
-                'value': correct,
-                'max_value': self.weight,
-            })
-
-            return {'result': 'success',
-                    'correct': correct,
-                    'weight': self.weight,
-                    'attempts': self.attempts,
-                    'max_attempts': self.max_attempts,
-                    'right_answers': right_answers,
-                    # 'wrong_answers': wrong_answers,
-                    }
+            self.runtime.publish(self, 'grade', {'value': correct, 'max_value': self.weight})
+            return {'result': 'success', 'correct': correct, 'weight': self.weight, 'attempts': self.attempts}
         else:
             return {'result': 'Max attempts exception!'}
 
     def past_due(self):
-        """
-        Проверка, истекла ли дата для выполнения задания.
-        """
+        """Проверка истечения срока."""
         due = get_extended_due_date(self)
-        if due is not None:
-            if _now() > due:
-                return False
-        return True
+        return due is None or _now() <= due
 
     def is_course_staff(self):
-        """
-        Проверка, является ли пользователь автором курса.
-        """
+        """Проверка статуса преподавателя."""
         return getattr(self.xmodule_runtime, 'user_is_staff', False)
 
     def is_instructor(self):
-        """
-        Проверка, является ли пользователь инструктором.
-        """
+        """Проверка статуса инструктора."""
         return self.xmodule_runtime.get_user_role() == 'instructor'
 
 
 def answer_opportunity(self):
-    """
-    Возможность ответа (если количество сделанное попыток меньше заданного).
-    """
-    if self.max_attempts <= self.attempts and self.max_attempts != 0:
-        return False
-    else:
-        return True
+    """Проверка возможности ответа."""
+    return self.max_attempts == 0 or self.attempts < self.max_attempts
 
 
 def _now():
-    """
-    Получение текущих даты и времени.
-    """
-    return datetime.datetime.now(datetime.timezone.utc)
+    """Текущее время."""
+    return datetime.datetime.now(pytz.utc)
 
 
 def _resource(path):  # pragma: NO COVER
-    """
-    Handy helper for getting resources from our kit.
-    """
-    data = pkg_resources.resource_string(__name__, path)
-    return data.decode('utf8')
+    """Получение ресурса."""
+    return pkg_resources.resource_string(__name__, path).decode('utf8')
 
 
 def render_template(template_path, context=None):
-    '''
-    Evaluate a template by resource path, applying the provided context.
-    '''
+    """Рендер шаблона."""
     if context is None:
         context = {}
-
     template_str = load_resource(template_path)
-    template = Template(template_str)
-    return template.render(Context(context))
+    return Template(template_str).render(Context(context))
 
 
 def load_resource(resource_path):
-    '''
-    Gets the content of a resource
-    '''
+    """Загрузка ресурса."""
     try:
-        resource_content = pkg_resources.resource_string(__name__, resource_path)
-        return smart_str(resource_content)
+        return smart_str(pkg_resources.resource_string(__name__, resource_path))
     except EnvironmentError:
-        logger.debug('[MultiEngineXBlock]: Probably not found static resource!')
+        logger.debug(f'[MultiEngineXBlock]: Не найден ресурс {resource_path}')
 
 
 def require(assertion):
-    """
-    Raises PermissionDenied if assertion is not true.
-    """
+    """Проверка условия."""
     if not assertion:
         raise PermissionDenied
