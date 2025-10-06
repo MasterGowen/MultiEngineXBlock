@@ -1,0 +1,3 @@
+[submodule "multiengine/scenarios"]
+	path = multiengine/scenarios
+	url = https://github.com/MasterGowen/multiengine-scenarios.git
