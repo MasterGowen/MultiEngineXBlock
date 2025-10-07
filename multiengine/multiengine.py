@@ -151,7 +151,7 @@ class MultiEngineXBlock(XBlock):
 
     # Константы путей
     MULTIENGINE_ROOT = Path(__file__).absolute().parent.parent / 'multiengine'
-    SCENARIOS_ROOT = Path('/openedx/src/multiengine/scenarios/')
+    SCENARIOS_ROOT = MULTIENGINE_ROOT / 'scenarios'
 
     def load_scenarios(self, keys: Optional[str] = None) -> Union[Dict[str, Dict[str, str]], List[str]]:
         """
