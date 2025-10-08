@@ -67,7 +67,6 @@ setup(
     name="multiengine-xblock",
     version="0.3.0",
     description="multiengine XBlock",
-    long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/MasterGowen/MultiEngineXBlock",
     author="UrFU.Online",
