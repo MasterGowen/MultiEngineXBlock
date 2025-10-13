@@ -400,7 +400,7 @@ class MultiEngineXBlock(XBlock):
         Returns:
             Response: HTTP ответ с состоянием студента
         """
-        return Response(body=json.dumps(self.student_state_json), content_type='application/json')
+        return Response(body=json.dumps(self.student_state_json), content_type='application/json', charset="utf-8" )
 
     @XBlock.handler
     def send_scenario(self, request, suffix: str = '') -> Response:
