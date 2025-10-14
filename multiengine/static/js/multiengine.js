@@ -193,6 +193,7 @@ function MultiEngineXBlock(runtime, element) {
     });
 
     // Сценарий
+    console.log(scenarioJSON.javascriptStudent)
     eval(scenarioJSON.javascriptStudent)
 
     MultiEngineXBlockState[mengine.id.valueOf()] = function () {

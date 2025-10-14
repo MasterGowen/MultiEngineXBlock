@@ -1,8 +1,19 @@
+<!--
+Student view template for the MultiEngine XBlock.
+This template renders the student-facing interface for interactive problems.
+It displays:
+- Problem title and progress information
+- Question content
+- Answer input area (hidden textarea)
+- Student view content from templates
+- Action buttons (Check/Save)
+- Attempt counter and due date information
+-->
 <div class="xblock xblock-student_view xblock-student_view-problem xmodule_display xmodule_CapaModule xblock-initialized">
     <h2 class="problem-header">{{display_name}}</h2>
 	<div class="problem-progress">
         {% if weight %}
-		    {% if points == 0 or points %}
+		    {% if points %}
 			    <me-span class="weight"> Набрано баллов: <me-span class="points">{{points}} из {{weight}}</me-span></me-span>
 		    {% else %}
 			    <me-span class="weight">(Максимальное кoличество баллов: {{weight}})</me-span>
@@ -33,25 +44,37 @@
         {% endif %}
 
         <div class="student_view_json" hidden="hidden">{{student_view_json}}</div>
+        <code class="json" hidden="hidden" >{{context}}</code>
+        <code>{{student_view_template}}</code>
 
 
         <div class="action">
-	            {% if past_due and answer_opportunity %}
-                    <button class="check Check" data-checking="Проверка..." data-value="Проверить/последняя попытка"><span class="check-label">Проверить</span><span class="sr"> ваш ответ</span></button>
-                    <button class="save Save" data-value="Сохранить">Сохранить<span class="sr"> ваш ответ</span></button>
-					<div class="submission_feedback" aria-live="polite">
-                    {% if max_attempts %}
-                     	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} 
+	            <div class="submission_feedback" aria-live="polite">
+                {% if max_attempts %}
+                    Использовано попыток: <me-span class="attempts">{{ attempts }}</me-span> из {{ max_attempts }}
+                {% else %}
+                    Попытки не ограничены
+                {% endif %}
+
+                {% if past_due %}
+                    <br />Время для ответа истекло
+                {% endif %}
+                </div>
+
+                {% if not past_due and has_attempts_left %}
+                <button class="check Check" data-checking="Проверка..." data-value="Проверить">
+                    <span class="check-label">
+                    {% if is_last_attempt %}
+                        Последняя попытка
+                    {% else %}
+                        Проверить
                     {% endif %}
-                    </div>
-                {% elif past_due %}
-                	<div class="submission_feedback" aria-live="polite">
-                    	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} 
-                    </div>
-                {% elif answer_opportunity %}
-                    <div class="submission_feedback" aria-live="polite">
-                    	Использовано попыток: <me-span class="attempts">{{attempts}}</me-span> из {{max_attempts}} <br />Время для ответа истекло
-                    </div>
+                    </span>
+                    <span class="sr"> ваш ответ</span>
+                </button>
+                <button class="save Save" data-value="Сохранить">
+                    Сохранить<span class="sr"> ваш ответ</span>
+                </button>
                 {% endif %}
 
     	</div>

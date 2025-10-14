@@ -4,11 +4,14 @@ XBlock для проверки json-объектов, сформированны
 Поддерживает различные типы заданий через систему сценариев.
 """
 
+
+import copy
 import datetime
 import pkg_resources
 import pytz
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Union
 
@@ -22,16 +25,28 @@ from submissions.models import StudentItem as SubmissionsStudent
 import xblock
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String, JSONField, Boolean
-from xblock.fragment import Fragment
+from web_fragments.fragment import Fragment
+
+from xblock.utils.resources import ResourceLoader
+
+from xblock.exceptions import JsonHandlerError
+
+resource_loader = ResourceLoader(__name__)
+
+
 
 from xmodule.util.duedate import get_extended_due_date
 
 from webob.response import Response
 
-# Django 4.2 использует smart_str вместо smart_text
-from django.utils.encoding import smart_str
+from django.utils.encoding import force_str
 
 logger = logging.getLogger(__name__)
+
+ITEM_TYPE = "multiengine"
+ATTR_KEY_ANONYMOUS_USER_ID = 'edx-platform.anonymous_user_id'
+ATTR_KEY_USER_IS_STAFF = 'edx-platform.user_is_staff'
+ATTR_KEY_USER_ROLE = 'edx-platform.user_role'
 
 
 def reify(meth):
@@ -50,8 +65,15 @@ def reify(meth):
         return value
     return property(getter)
 
+def utcnow():
+    """
+    Get current date and time in UTC
+    """
+    return datetime.datetime.now(tz=pytz.utc)
 
-@XBlock.needs("i18n")
+
+@XBlock.wants('settings')
+@XBlock.needs("i18n", "user")
 class MultiEngineXBlock(XBlock):
     """
     XBlock для многофункциональной проверки ответов студентов.
@@ -133,7 +155,8 @@ class MultiEngineXBlock(XBlock):
 
     student_state_json = JSONField(
         display_name='Сохраненное состояние',
-        scope=Scope.user_state
+        scope=Scope.user_state,
+        default={},
     )
 
     student_view_template = String(
@@ -153,7 +176,7 @@ class MultiEngineXBlock(XBlock):
     MULTIENGINE_ROOT = Path(__file__).absolute().parent.parent / 'multiengine'
     SCENARIOS_ROOT = MULTIENGINE_ROOT / 'scenarios'
 
-    def load_scenarios(self, keys: Optional[str] = None) -> Union[Dict[str, Dict[str, str]], List[str]]:
+    def load_scenarios(self, keys: Optional[str] = None):
         """
         Загрузка сценариев из локального репозитория в список.
         
@@ -211,7 +234,7 @@ class MultiEngineXBlock(XBlock):
             str: Содержимое сценария или сообщение об ошибке
         """
         try:
-            scenario_path = self.SCENARIOS_ROOT / f"{scenario}.cs"
+            scenario_path = self.SCENARIOS_ROOT / f"{scenario}.sc"
             if scenario_path.exists():
                 with open(scenario_path, 'r', encoding='utf-8') as jsfile:
                     scenario_content = jsfile.read()
@@ -223,19 +246,12 @@ class MultiEngineXBlock(XBlock):
             scenario_content = 'alert("Scenario file not found!");'
         return scenario_content
 
-    @staticmethod
-    def resource_string(path: str) -> str:
+    def resource_string(self, path):
         """
-        Получение строковых ресурсов.
-        
-        Args:
-            path (str): Путь к ресурсу
-            
-        Returns:
-            str: Содержимое ресурса
+        Retrieve string contents for the file path
         """
-        data = pkg_resources.resource_string(__name__, path)
-        return data.decode('utf8')
+        path = os.path.join('static', path)
+        return resource_loader.load_unicode(path)
 
     def load_resources(self, js_urls: tuple, css_urls: tuple, fragment: Fragment) -> None:
         """
@@ -250,39 +266,45 @@ class MultiEngineXBlock(XBlock):
             if js_url.startswith('public/'):
                 fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
             elif js_url.startswith('static/'):
-                fragment.add_javascript(_resource(js_url))
+                fragment.add_javascript(load_resource(js_url))
 
         for css_url in css_urls:
             if css_url.startswith('public/'):
                 fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
             elif css_url.startswith('static/'):
-                fragment.add_css(_resource(css_url))
+                fragment.add_css(load_resource(css_url))
 
-    @property
-    def course_id(self) -> str:
-        """Получение ID курса."""
-        return str(self.xmodule_runtime.course_id)
-
-    def get_student_item_dict(self, anonymous_user_id: Optional[str] = None) -> Dict[str, str]:
+    @reify
+    def block_id(self):
         """
-        Создание student_item_dict для системы отправки.
-        
-        Args:
-            anonymous_user_id (Optional[str]): Анонимный ID пользователя
-            
-        Returns:
-            Dict[str, str]: Словарь с информацией о студенте и задании
+        Return the usage_id of the block.
         """
-        item_id = str(self.scope_ids.usage_id)
-        course_id = self.course_id
-        student_id = anonymous_user_id or self.xmodule_runtime.anonymous_student_id
+        return str(self.scope_ids.usage_id)
+    
+    @reify
+    def block_course_id(self):
+        """
+        Return the course_id of the block.
 
+        Note: if this block is used in a Content Library, the returned ID will be the library's ID.
+        """
+        return str(self.context_key)
+
+    def get_student_item_dict(self, student_id=None):
+        """
+        Returns dict required by the submissions app for creating and
+        retrieving submissions for a particular student.
+        """
+        if student_id is None and (user_service := self.runtime.service(self, 'user')):
+            student_id = user_service.get_current_user().opt_attrs.get(ATTR_KEY_ANONYMOUS_USER_ID)
+            assert student_id != ("MOCK", "Forgot to call 'personalize' in test.")
         return {
-            'student_id': student_id,
-            'item_id': item_id,
-            'course_id': course_id,
-            'item_type': 'multiengine'
+            "student_id": student_id,
+            "course_id": self.block_course_id,
+            "item_id": self.block_id,
+            "item_type": ITEM_TYPE,
         }
+
 
     def student_view(self, *args, **kwargs) -> Fragment:
         """
@@ -292,6 +314,8 @@ class MultiEngineXBlock(XBlock):
             Fragment: HTML фрагмент для отображения студенту
         """
         scenarios = self.load_scenarios()
+
+        
         context = {
             'display_name': self.display_name,
             'weight': self.weight,
@@ -301,6 +325,9 @@ class MultiEngineXBlock(XBlock):
             'scenario': self.scenario,
             'scenarios': scenarios,
         }
+
+        # Make a copy of the context and put it into the context itself in the context field
+        context['context'] = json.dumps(context)
 
         # Логика оценки
         try:
@@ -315,22 +342,26 @@ class MultiEngineXBlock(XBlock):
             {'value': float(self.points), 'max_value': float(self.weight)}
         )
 
-        # Добавление дополнительных параметров в контекст
-        if self.max_attempts != 0:
-            context['max_attempts'] = self.max_attempts
-        if self.past_due():
-            context['past_due'] = True
-        if self.answer != '{}':
-            context['points'] = self.points
-        if answer_opportunity(self):
-            context['answer_opportunity'] = True
-        if self.is_course_staff() or self.is_instructor():
-            context['is_course_staff'] = True
+        context.update({
+            'max_attempts': self.max_attempts if self.max_attempts != 0 else None,
+            'past_due': bool(self.past_due()),
+            'points': self.points if self.answer != '{}' else None,
+            'has_attempts_left': has_attempts_left(self),
+            'is_course_staff': self.is_course_staff() or self.is_instructor(),
+        })
+
+        if self.max_attempts > 0 and has_attempts_left(self):
+            context['is_last_attempt'] = (self.attempts == self.max_attempts - 1)
 
         fragment = Fragment()
         fragment.add_content(render_template('static/html/multiengine.html', context))
         self.load_resources(('static/js/multiengine.js',), ('static/css/multiengine.css',), fragment)
+
+        self.include_theme_files(fragment)
+
         fragment.initialize_js('MultiEngineXBlock')
+        # TODO: возможно добавлять контекст в js
+        # fragment.initialize_js('MultiEngineXBlock', self.get_configuration())
         return fragment
 
     def studio_view(self, *args, **kwargs) -> Fragment:
@@ -400,7 +431,8 @@ class MultiEngineXBlock(XBlock):
         Returns:
             Response: HTTP ответ с состоянием студента
         """
-        return Response(body=json.dumps(self.student_state_json), content_type='application/json', charset="utf-8" )
+        logger.warning(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {self.student_state_json} \n\n\n")
+        return Response(json_body=self.student_state_json)
 
     @XBlock.handler
     def send_scenario(self, request, suffix: str = '') -> Response:
@@ -415,7 +447,7 @@ class MultiEngineXBlock(XBlock):
             Response: HTTP ответ со сценарием
         """
         scenarios = self.load_scenarios()
-        scenario_name = smart_str(self.scenario)
+        scenario_name = force_str(self.scenario)
         context: Dict[str, str] = {}
 
         if scenario_name in scenarios:
@@ -435,7 +467,7 @@ class MultiEngineXBlock(XBlock):
                 'cssStudent': '',
             }
 
-        return Response(json.dumps(context), content_type='text/plain')
+        return Response(json_body=context, content_type='application/json')
 
     @XBlock.json_handler
     def studio_submit(self, data: Dict[str, Any], suffix: str = '') -> Dict[str, str]:
@@ -506,7 +538,7 @@ class MultiEngineXBlock(XBlock):
             
             return int(round(result * self.weight)), result
 
-        if answer_opportunity(self):
+        if has_attempts_left(self):
             try:
                 correct, result = multicheck(student_answer, correct_answer, settings)
                 self.points = correct
@@ -525,38 +557,64 @@ class MultiEngineXBlock(XBlock):
         else:
             return {'result': 'Max attempts exception!'}
 
-    def past_due(self) -> bool:
+    def past_due(self):
         """
-        Проверка истечения срока сдачи.
+        Проверка, прошла ли дата окончания задания.
+        
+        Метод учитывает возможный льготный период (grace period) при определении
+        даты закрытия задания. Если льготный период определен, дата закрытия
+        будет равна дате окончания + льготный период.
         
         Returns:
-            bool: True если срок не истек, False если истек
+            bool: True если текущее время позже даты закрытия, иначе False
+            
+        Note:
+            graceperiod и due определены в InheritanceMixin и используются
+            автоматически в edX, но для unit тестов их нужно замокать.
         """
         due = get_extended_due_date(self)
-        return due is not None and _now() <= due
+        try:
+            graceperiod = self.graceperiod
+        except AttributeError:
+            # graceperiod and due are defined in InheritanceMixin
+            # It's used automatically in edX but the unit tests will need to mock it out
+            graceperiod = None
 
-    def is_course_staff(self) -> bool:
-        """
-        Проверка статуса преподавателя.
-        
-        Returns:
-            bool: True если пользователь является преподавателем
-        """
-        return getattr(self.xmodule_runtime, 'user_is_staff', False)
+        if graceperiod is not None and due:
+            close_date = due + graceperiod
+        else:
+            close_date = due
 
-    def is_instructor(self) -> bool:
+        if close_date is not None:
+            return utcnow() > close_date
+        return False
+
+    def is_course_staff(self):
+        """
+        Check if user is course staff.
+        """
+        if user_service := self.runtime.service(self, 'user'):
+            return user_service.get_current_user().opt_attrs.get(ATTR_KEY_USER_IS_STAFF)
+        return False
+
+    
+    def is_instructor(self):
         """
         Проверка статуса инструктора.
         
         Returns:
             bool: True если пользователь является инструктором
         """
-        return getattr(self.xmodule_runtime, 'get_user_role', lambda: '')() == 'instructor'
+        if user_service := self.runtime.service(self, 'user'):
+            return user_service.get_current_user().opt_attrs.get(ATTR_KEY_USER_ROLE) == "instructor"
+        return False
 
 
-def answer_opportunity(instance: MultiEngineXBlock) -> bool:
+def has_attempts_left(instance: MultiEngineXBlock) -> bool:
     """
-    Проверка возможности ответа (учитывая ограничения по количеству попыток).
+    Вернуть True, если студент может подать еще одну попытку.
+    
+    Примечание: В Open edX max_attempts==0 означает неограниченные попытки.
     
     Args:
         instance (MultiEngineXBlock): Экземпляр блока
@@ -576,22 +634,6 @@ def _now() -> datetime.datetime:
     """
     return datetime.datetime.now(pytz.utc)
 
-
-def _resource(path: str) -> str:
-    """
-    Получение ресурса по пути.
-    
-    Args:
-        path (str): Путь к ресурсу
-        
-    Returns:
-        str: Содержимое ресурса
-    """
-    try:
-        return pkg_resources.resource_string(__name__, path).decode('utf8')
-    except Exception as e:  # pragma: NO COVER
-        logger.debug(f'[MultiEngineXBlock]: Ошибка загрузки ресурса {path}: {e}')
-        return ''
 
 
 def render_template(template_path: str, context: Optional[Dict[str, Any]] = None) -> str:
@@ -624,9 +666,9 @@ def load_resource(resource_path: str) -> str:
         str: Содержимое ресурса или пустая строка при ошибке
     """
     try:
-        return smart_str(pkg_resources.resource_string(__name__, resource_path))
-    except EnvironmentError:
-        logger.debug(f'[MultiEngineXBlock]: Не найден ресурс {resource_path}')
+        return resource_loader.load_unicode(resource_path)
+    except EnvironmentError as e:
+        logger.warning(f'[MultiEngineXBlock]: Не найден ресурс {resource_path}: {e}')
         return ''
 
 
