@@ -50,6 +50,7 @@
             {% endif %}
       {% else %}
             {% if scenarios %}
+            
             <select class="input setting-input" name="scenario" id="scenario" disabled="disabled">
                 {% for filename, sc in scenarios.items %}
                   {% if filename == scenario %}
