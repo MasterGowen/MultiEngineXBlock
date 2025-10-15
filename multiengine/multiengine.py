@@ -403,9 +403,9 @@ class MultiEngineXBlock(XBlock):
                 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'b', 'i', 'u', 'strong', 'em'
             }
             allowed_attrs = {
-                '*': ['class', 'id', 'style', 'title'],
-                'a': ['href', 'target'],
-                'img': ['src', 'alt', 'width', 'height']
+                '*': {'class', 'id', 'style', 'title'},
+                'a': {'href', 'target'},
+                'img': {'src', 'alt', 'width', 'height'}
             }
             self.student_view_template = nh3_clean(
                 raw_template,
